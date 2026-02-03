@@ -85,35 +85,34 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 
 
-  /* custom colors - PURPLE VARIANT */
---color-primary: #8C42FF;         /* main purple */
---color-primary-dark: #7326E6;    /* darker purple */
---color-primary-darker: #5C0FCC;  /* darkest purple */
---color-primary-light: #E5CCFF;   /* light purple */
---color-primary-lighter: #F2E6FF; /* very light purple */
+  /*custom colors */
+  --color-primary: #00ACC1;
+  --color-primary-dark: #0097A7;
+  --color-primary-darker: #00838F;
+  --color-primary-light:#CFFAFE;
+  --color-primary-lighter:#E0F7FA;
 
-/* secondary - analogous purple tone */
---color-secondary: #B366FF;       /* lighter secondary purple */
---color-secondary-dark: #9933E6;  /* darker secondary */
---color-secondary-darker: #5C1A99;/* darkest secondary */
---color-secondary-light: #D9B3FF; /* light secondary */
+  --color-secondary: #22d3ee;
+  --color-secondary-dark: #06b6d4;
+  --color-secondary-darker: #164e63;
+  --color-secondary-light:#80deea;
 
-/* accents and feedback */
---color-accent: #CC80FF;          /* purple accent */
---color-muted: #E0B2FF;           /* muted/pastel purple */
---color-destructive: #FF6B6B;     /* red-ish destructive stays for contrast */
+  --color-accent: #A5D6A7;
+  --color-muted: #C8E6C9;
+  --color-destructive: #F87171;
 
-/* Additional colors */
---color-gray: #6b7280;            /* gray stays neutral */
---color-textlightdark: #ffffff;   /* text white stays */
---color-bglightdark: #000000;     /* background black stays */
+  /* Additional colors */
+  --color-gray: #6b7280;
+  --color-textlightdark: #ffffff;
+  --color-bglightdark:#000000;
 
-/* table phone screen color */
---table: #A500FF;                 /* bright purple for tables */
+  /* table phone screen color */
+   --table: #7888e4;
 
-/* app font */
---app-font:;
 
+  /* app font */
+  --app-font:;
+  
 }
 
 .dark {
