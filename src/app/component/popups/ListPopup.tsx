@@ -18,6 +18,7 @@ interface ListPopupProps {
   submitLabel: string;
   onClose: () => void;
   multiSelect?: boolean;
+  children?: React.ReactNode;
 }
 
 
@@ -29,7 +30,8 @@ export default function ListPopup({
   onSubmit,
   submitLabel,
   onClose,
-  multiSelect
+  multiSelect,
+  children
 }: ListPopupProps) {
   return (
     <PopupMenu onClose={onClose}>
@@ -41,6 +43,7 @@ export default function ListPopup({
             {title.split(" ").slice(1).join(" ")}
           </span>
         </h2>
+        {children}
 
         <div className="max-h-[40vh] flex flex-col gap-2 overflow-y-auto">
           {list.length > 0 ? (

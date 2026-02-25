@@ -56,7 +56,7 @@ export function NavMain({
                     <SidebarMenuButton
                       tooltip={item.title}
                       className={`cursor-pointer text-[16px] 
-                        ${isActive ? "bg-[var(--color-primary)] text-white" : " hover:bg-gray-200"}`}
+                        ${isActive ? "bg-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white text-white" : " hover:bg-gray-200 dark:hover:bg-[var(--color-primary-darker)] dark:hover:text-white"}`}
                     >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
@@ -74,7 +74,7 @@ export function NavMain({
                         const isSubActive = pathname === subItem.url
                         return (
                           <SidebarMenuSubItem key={subItem.title} >
-                            <SidebarMenuSubButton asChild className={` text-[var(--color-lightdark)] hover:bg-gray-200  ${isSubActive ? " bg-[var(--color-primary)] text-white" : ""}`}>
+                            <SidebarMenuSubButton asChild className={` text-[var(--color-lightdark)] hover:bg-gray-200 dark:hover:bg-[var(--color-primary-darker)]  ${isSubActive ? " bg-[var(--color-primary)] text-white" : ""}`}>
                               <Link href={subItem.url}>
                                 <span>
                                   {subItem.title}

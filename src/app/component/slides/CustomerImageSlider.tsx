@@ -31,7 +31,7 @@ export default function CustomerImageSlider({ images }: ImageSliderProps) {
   };
 
   return (
-    <div className="relative overflow-hidden  bg-gray-300 h-[400px]">
+    <div className="relative overflow-hidden  bg-gray-300 dark:bg-[var(--color-secondary-darker)] h-[400px]">
       {/* Slides */}
       <div
         className="flex h-full transition-transform duration-300 ease-out"

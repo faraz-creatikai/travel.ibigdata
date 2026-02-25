@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { MdPhone, MdEmail } from "react-icons/md";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaEye, FaWhatsapp } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import PopupMenu from "@/app/component/popups/PopupMenu";
 import { GoArrowLeft } from "react-icons/go";
 import CustomerImageSlider from "@/app/component/slides/CustomerImageSlider";
+import { UserPlus } from "lucide-react";
 export interface LabelConfig {
     key: string;
     label: string;
@@ -31,9 +32,13 @@ interface LeadsSectionProps<T extends Record<string, any>> {
     onWhatsappClick?: (lead: T) => void;
     onMailClick?: (lead: T) => void;
     onFavourite?: (lead: T) => void;
+    onViewFollowup?: (id: string, Name: string) => void;
+    onGoogleMapViewAddress?: (Address: string) => void;
     loader?: boolean;
     hasMoreCustomers?: boolean; // like desktop
     fetchMore?: () => Promise<void>; // async fetch more
+    duplicateContacts?: Record<string, boolean>;
+    onViewDuplicate?: (contactNumber: string) => void;
 }
 
 export default function CustomerTable<T extends Record<string, any>>({
@@ -45,9 +50,13 @@ export default function CustomerTable<T extends Record<string, any>>({
     onWhatsappClick,
     onMailClick,
     onFavourite,
+    onViewFollowup,
     loader,
     hasMoreCustomers,
-    fetchMore
+    fetchMore,
+    duplicateContacts,
+    onViewDuplicate,
+    onGoogleMapViewAddress,
 }: LeadsSectionProps<T>) {
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -118,7 +127,7 @@ export default function CustomerTable<T extends Record<string, any>>({
             {
                 viewAll && (
                     <PopupMenu onClose={() => { setViewAll(false) }}>
-                        <div className="  bg-white relative w-full h-full   flex flex-col">
+                        <div className="  bg-white dark:bg-[var(--color-childbgdark)] relative w-full h-full   flex flex-col">
                             <button className=" absolute top-3 left-3 cursor-pointer z-[2000] bg-gray-100/50 rounded-full p-1 self-end mb-1 " onClick={() => {
                                 setViewAll(false)
                                 setViewLeadData(null)
@@ -132,34 +141,40 @@ export default function CustomerTable<T extends Record<string, any>>({
                             />
 
 
-                            <div className=" max-h-[calc(80vh-240px)] absolute top-[380px] w-full bg-white overflow-y-auto px-4 py-6 rounded-t-3xl ">
-                                 <h2 className=" text-2xl font-bold text-center mb-8 text-[var(--color-secondary-darker)]">Customer Information</h2>
+                            <div className=" max-h-[calc(80vh-240px)] absolute top-[380px] w-full bg-white dark:bg-[var(--color-childbgdark)] overflow-y-auto px-4 py-6 rounded-t-3xl ">
+                                <h2 className=" text-2xl font-bold text-center mb-8 text-[var(--color-primary)]">Customer Information</h2>
                                 {allLabelLeads?.map((item, j) => (
                                     <div
                                         key={j}
-                                        className="mb-2 grid grid-cols-[1fr_auto_2fr] items-center gap-4"
+                                        className={`flex ${viewLeadData?.[item.key]?.length > 30 && "flex-col gap-2"} my-1 justify-between p-3 bg-gray-50 dark:bg-[var(--color-secondary-darker)] rounded-lg`}
                                     >
-                                        <span className="font-semibold text-black">
+                                        <span className="font-semibold text-gray-700 dark:text-[var(--color-txtlight)] text-sm">
                                             {item.label}
                                         </span>
 
-                                        <span className="text-gray-500">-</span>
-
-
-                                        {
-                                            item.label === "Contact No" ? (
-                                                <a
-                                                    href={`tel:+91${viewLeadData?.[item.key] ?? ""}`}
-                                                    className="text-cyan-600 visited:text-purple-600"
-                                                >
-                                                    {viewLeadData?.[item.key] ?? ""}
-                                                </a>
-                                            ) : (
-                                                <span className="text-gray-700">
-                                                    {viewLeadData?.[item.key] ?? ""}
-                                                </span>
-                                            )
-                                        }
+                                        {item.label === "Contact No" ? (
+                                            <a
+                                                href={`tel:+91${viewLeadData?.[item.key] ?? ""}`}
+                                                className="text-[var(--color-primary)] font-medium hover:underline text-sm"
+                                            >
+                                                {viewLeadData?.[item.key] ?? ""}
+                                            </a>
+                                        ) : item.label === "Address" ? (
+                                            <span
+                                                className="text-[var(--color-primary)] cursor-pointer underline text-sm text-right max-w-[60%]"
+                                            /*  onClick={() => {
+                                               setSelectedAddress(viewLeadData?.[item.key]);
+                                               setIsMapOpen(true);
+                                             }} */
+                                             onClick={() => onGoogleMapViewAddress?.(viewLeadData?.[item.key])}
+                                            >
+                                                {viewLeadData?.[item.key] ?? ""}
+                                            </span>
+                                        ) : (
+                                            <span className={`text-gray-900 dark:text-[var(--color-txtlight)] font-medium text-right max-w-[60%] text-sm ${(viewLeadData?.[item.key]?.length > 30) && "flex-col gap-2 max-w-full"} `}>
+                                                <p className="  text-left"> {viewLeadData?.[item.key] ?? ""}</p>
+                                            </span>
+                                        )}
 
                                     </div>
 
@@ -177,7 +192,7 @@ export default function CustomerTable<T extends Record<string, any>>({
                     </div>
                 )}
                 {paginatedLeads.map((lead, index) => (
-                    <div key={index} className="w-full  bg-white shadow-md rounded-xl overflow-hidden border border-gray-200 mb-0">
+                    <div key={index} className="w-full  bg-white dark:bg-[var(--color-childbgdark)] shadow-md rounded-xl overflow-hidden border border-gray-200 dark:border-none dark:my-2 mb-0">
                         <div className="bg-[var(--color-primary)] h-2"></div>
 
                         <div className="flex justify-between items-start p-4">
@@ -187,13 +202,13 @@ export default function CustomerTable<T extends Record<string, any>>({
                                         key={j}
                                         className="mb-2 grid grid-cols-[max-content_auto_1fr] items-center gap-2"
                                     >
-                                        <span className="font-semibold text-black">
+                                        <span className="font-semibold text-black dark:text-[var(--color-primary-light)]">
                                             {item.label}
                                         </span>
 
                                         <span className="text-gray-500">-</span>
 
-                                        <span className="text-gray-700 break-words line-clamp-2">
+                                        <span className="text-gray-700 dark:text-[var(--color-primary-lighter)] break-words line-clamp-2">
                                             {String(lead[item.key])}
                                         </span>
                                     </div>
@@ -209,26 +224,51 @@ export default function CustomerTable<T extends Record<string, any>>({
                                      setViewLeadData(lead)
                                     }
                             } >View All</button> */}
-                                <div className=" bg-gray-300 w-[120px] h-[80px] grid place-items-center rounded-md  self-end">
-                                    <img width={120} className=" w-[60px] h-[60px] " src={lead.SitePlan?.length > 0 ? lead.SitePlan : "/siteplan2.png"} onClick={() => {
+
+
+                                <div className=" bg-gray-300 overflow-hidden dark:bg-[var(--color-secondary-darker)] w-[120px] h-[80px] grid place-items-center rounded-md  self-end">
+                                    <img width={120} className={`  ${lead.SitePlan?.length>0? "w-full object-cover":"w-[60px] h-[60px]"}`} src={lead.SitePlan?.length > 0 ? lead.SitePlan : "/siteplan2.png"} onClick={() => {
                                         setViewAll(true)
                                         setViewLeadData(lead)
                                     }} />
                                 </div>
-                                <button
-                                    onClick={() => onFavourite?.(lead)}
-                                    className="p-2 bg-gray-100 self-end rounded-full shadow"
-                                >
+                                <div className=" flex justify-between w-full">
 
-                                    {lead.isFavourite ? <IoIosHeart size={20} className="text-[var(--color-primary)]" /> : <AiOutlineHeart size={20} className="text-[var(--color-primary)]" />}
-                                </button>
-                                <button
-                                    onClick={() => onEdit?.(lead._id)}
-                                    className=" p-2 bg-gray-100 self-end rounded-full shadow"
-                                >
-                                    <MdEdit size={20} className="text-[var(--color-primary)]" />
+                                    <button
+                                        className="p-2 bg-[var(--color-primary-lighter)] dark:bg-[var(--color-primary)] self-end rounded-full shadow"
+                                        onClick={() => {
+                                            onViewFollowup?.(lead._id, lead.Name)
+                                        }}>
+                                        <UserPlus size={18} className="text-[var(--color-primary)] dark:text-white" />
+                                    </button>
+                                    <button
+                                        onClick={() => onFavourite?.(lead)}
+                                        className="p-2 bg-gray-100 dark:bg-[var(--color-primary)] self-end rounded-full shadow"
+                                    >
 
-                                </button>
+                                        {lead.isFavourite ? <IoIosHeart size={20} className="text-[var(--color-primary)] dark:text-white" /> : <AiOutlineHeart size={20} className="text-[var(--color-primary)] dark:text-white" />}
+                                    </button>
+                                </div>
+                                <div className=" flex justify-between w-full">
+                                    {duplicateContacts?.[String(lead.ContactNumber)] ? (
+                                        <button
+                                            onClick={() =>
+                                                onViewDuplicate?.(String(lead.ContactNumber))
+                                            }
+                                            className="p-2 bg-[var(--color-primary-lighter)] dark:bg-[var(--color-primary)] self-end rounded-full shadow"
+                                        >
+                                            <FaEye size={18} className="text-[var(--color-primary)] dark:text-white" />
+                                        </button>
+                                    ) : <div />}
+                                    <button
+                                        onClick={() => onEdit?.(lead._id)}
+                                        className=" p-2 bg-gray-100 dark:bg-[var(--color-primary)]  self-end rounded-full shadow"
+                                    >
+                                        <MdEdit size={20} className="text-[var(--color-primary)] dark:text-white" />
+
+                                    </button>
+
+                                </div>
                             </div>
 
                         </div>

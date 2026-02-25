@@ -1,23 +1,110 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+"use client";
 
-const data = [
-  { name: 'Sep', projects: 10, earnings: 10.6 },
-  { name: 'Oct', projects: 14, earnings: 14.2 },
-  { name: 'Nov', projects: 15, earnings: 20.5 },
-  { name: 'Dec', projects: 16, earnings: 18.3 },
-  
-];
+import React, { useEffect, useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useDashboardData } from "../data/useDashboardSectionOne";
+import { getAllCustomerFollowups } from "@/store/customerFollowups";
+
+type ChartMonth = {
+  name: string;
+  followups: number;
+};
 
 const Dashboard = () => {
+  const { followupByMonths, setFollowupByMonths } = useDashboardData();
+  const [chartData, setChartData] = useState<ChartMonth[]>([]);
+
+  const fetchAllFollowups = async () => {
+    const apiData = await getAllCustomerFollowups();
+    if (!apiData) return [];
+
+    const now = new Date();
+
+    // Convert DD-MM-YYYY to Date
+    const parseDDMMYYYY = (dateStr: string) => {
+      const [day, month, year] = dateStr.split("-");
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    };
+
+    // Create 4 months bucket (current + next 3)
+    const months = Array.from({ length: 4 }).map((_, index) => {
+      const d = new Date(now.getFullYear(), now.getMonth() + index, 1);
+      return {
+        month: d.getMonth(),
+        year: d.getFullYear(),
+        label: d.toLocaleString("default", { month: "short" }),
+        count: 0,
+      };
+    });
+
+    // Count followups
+    apiData.forEach((item: any) => {
+      if (!item.StartDate && !item.FollowupNextDate) return;
+
+      const startDate = item.StartDate ? new Date(item.StartDate) : null;
+      const followupDate = item.FollowupNextDate
+        ? parseDDMMYYYY(item.FollowupNextDate)
+        : null;
+
+      const checkDate = followupDate || startDate;
+      if (!checkDate) return;
+
+      months.forEach((m) => {
+        if (
+          checkDate.getMonth() === m.month &&
+          checkDate.getFullYear() === m.year
+        ) {
+          m.count += 1;
+        }
+      });
+    });
+
+    return months;
+  };
+
+  useEffect(() => {
+    const loadFollowups = async () => {
+      try {
+        const months = await fetchAllFollowups();
+        if (!months || months.length === 0) return;
+
+        // Set chart data
+        const formattedChart = months.map((m) => ({
+          name: m.label,
+          followups: m.count,
+        }));
+
+        setChartData(formattedChart);
+
+        // Set summary (this month + next month only)
+        setFollowupByMonths({
+          thisMonth: months[0]?.count ?? 0,
+          nextMonth: months[1]?.count ?? 0,
+        });
+      } catch (error) {
+        console.error("Error fetching followups:", error);
+      }
+    };
+
+    loadFollowups();
+  }, []);
+
   return (
-    <div className=" shadow-md h-full lg:w-[440px]  overflow-hidden">
-      {/* Chart Section  sm:w-full   lg:w-[440px] max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-2xl*/} 
+    <div className="shadow-md h-full lg:w-[440px] overflow-hidden">
+      {/* Chart Section */}
       <div className="w-full bg-gradient-to-r from-emerald-500 to-emerald-800">
-        <div className="w-full h-[250px] sm:h-[280px] md:h-[392px] lg:h-[330px] xl:h-[380px]">
+        <div className="w-full h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={data}
+              data={chartData}
               className="text-white"
               margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
             >
@@ -27,6 +114,7 @@ const Dashboard = () => {
                 opacity={0.2}
                 vertical={false}
               />
+
               <XAxis
                 dataKey="name"
                 axisLine={false}
@@ -34,54 +122,60 @@ const Dashboard = () => {
                 tickLine={false}
                 tick={{ fill: "#fff", fontSize: 12 }}
               />
+
               <YAxis
                 type="number"
-                domain={[6, 18]}
-                ticks={[6, 8, 10, 12, 14, 16, 18]}
-                tickCount={7}
+                domain={[0, "auto"]}
                 axisLine={false}
                 tickLine={false}
-                allowDataOverflow={true}
-                width={30}
                 stroke="#fff"
                 tick={{ fill: "#fff", fontSize: 12 }}
                 allowDecimals={false}
-                interval={0}
               />
+
               <Tooltip
                 cursor={false}
                 contentStyle={{
-                  backgroundColor: '#1f2937',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#fff',
+                  backgroundColor: "#1f2937",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "#fff",
                 }}
-                labelStyle={{
-                  color: '#fff',
-                }}
-                formatter={(value, name) => [`${value}`, name]}
               />
-              <Bar dataKey="projects" fill="#fff" barSize={16} name="Projects" />
-              <Bar dataKey="earnings" fill="#fff" name="Earnings ($M)" />
+
+              <Bar
+                dataKey="followups"
+                fill="#ffffff"
+                barSize={20}
+                radius={[6, 6, 0, 0]}
+                name="Followups"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Info Footer */}
-      <div className="bg-white p-4 ">
+      <div className="bg-white p-4">
         <h2 className="text-sm text-neutral-600 mb-4 text-center sm:text-left">
           Followups by months
         </h2>
-        <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 sm:gap-0 px-3 py-5">
-          <div className="border-b sm:border-b-0  border-neutral-400 pb-2 sm:pb-0  text-center sm:text-left">
+
+        <div className="flex justify-between items-center px-6 py-4">
+          <div className="text-center">
             <p className="text-xs text-gray-500">This Month</p>
-            <p className="text-lg font-bold">2</p>
+            <p className="text-xl font-bold">
+              {followupByMonths.thisMonth}
+            </p>
           </div>
-          <div className='border-r py-6'></div>
-          <div className="text-center sm:text-left">
-            <p className="text-xs text-gray-500 whitespace-nowrap">Next Month</p>
-            <p className="text-lg font-bold">1</p>
+
+          <div className="border-r h-10"></div>
+
+          <div className="text-center">
+            <p className="text-xs text-gray-500">Next Month</p>
+            <p className="text-xl font-bold">
+              {followupByMonths.nextMonth}
+            </p>
           </div>
         </div>
       </div>

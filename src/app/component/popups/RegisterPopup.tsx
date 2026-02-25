@@ -44,7 +44,7 @@ const RegisterPopup: React.FC<PopupMenuProps> = ({  onClose, isOpen = true }) =>
         >
           <motion.div
           onClick={handleBackdropClick}
-            className="w-full flex justify-center items-center  text-purple-300 text-2xl bg-[rgb(38,3,71)] max-w-[450px]  p-5 rounded-md font-semibold"
+            className="w-full flex justify-center items-center  text-[var(--color-primary-light)] text-2xl bg-[var(--color-secondary-darker)] max-w-[450px]  p-5 rounded-md font-semibold"
             initial={{ y: -50, opacity: 0, scale: 0.9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.9 }}
@@ -53,13 +53,13 @@ const RegisterPopup: React.FC<PopupMenuProps> = ({  onClose, isOpen = true }) =>
             <div className='flex flex-col justify-center items-center'>
          <p className='text-2xl text-center mb-5'> Request Sent</p>
      <div className="overflow-hidden text-center mb-4">
-  <div className="animate-marquee text-purple-400 text-lg font-normal">
+  <div className="animate-marquee text-[var(--color-primary-light)] text-lg font-normal">
     <p>Your request for registration has been sent successfully. Please wait for admin approval.</p>
 
   </div>
 </div>
 
-<button onClick={onClose}  className='text-white px-8 rounded-sm py-2 mr-3 mt-2 font-light bg-[rgb(97,20,165)]  text-sm'>Ok</button>
+<button onClick={onClose}  className='text-white px-8 rounded-sm py-2 mr-3 mt-2 font-light bg-[var(--color-primary)]  text-sm'>Ok</button>
 </div>
 
           </motion.div>

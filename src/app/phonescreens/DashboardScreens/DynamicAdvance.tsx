@@ -43,7 +43,7 @@ const DynamicAdvance = ({ children, addUrl="/customer/add" }: DynamicAdvanceProp
 
       {/* 🔽 Dropdown Container */}
       {open && (
-        <div className="flex flex-col justify-center items-center gap-4 p-4 mb-4 bg-white border rounded-xl shadow-md">
+        <div className="flex flex-col justify-center items-center gap-4 p-4 mb-4 bg-white dark:bg-[var(--color-childbgdark)] border rounded-xl shadow-md">
           {children}
         </div>
       )}

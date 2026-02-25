@@ -102,10 +102,10 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
 
             {/* Form Card */}
             <div className="flex justify-center">
-                <div className="bg-white backdrop-blur-lg p-10 max-sm:px-5 max-sm:py-7 rounded-3xl shadow-2xl h-auto w-full">
+                <div className="bg-white max-sm:dark:bg-[var(--color-childbgdark)] max-sm:dark:text-white backdrop-blur-lg p-10 max-sm:px-5 max-sm:py-7 rounded-3xl shadow-2xl h-auto w-full">
                     <form onSubmit={(e) => e.preventDefault()}>
-                        <div className="mb-8 text-left border-b pb-4 border-gray-200">
-                            <h1 className="text-3xl font-extrabold text-[var(--color-secondary-darker)] leading-tight tracking-tight">
+                        <div className="mb-8 text-left border-b pb-4 border-gray-200 max-sm:dark:border-gray-700">
+                            <h1 className="text-3xl font-extrabold text-[var(--color-secondary-darker)] max-sm:dark:text-[var(--color-primary)] leading-tight tracking-tight">
                                 Edit <span className="text-[var(--color-primary)]">Task</span>
                             </h1>
                         </div>
@@ -114,7 +114,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                             {/* Date and Time */}
                             <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
                                 <div className="flex flex-col flex-1">
-                                    <label className="mb-1 font-semibold text-gray-700">Task Date</label>
+                                    <label className="mb-1 font-semibold text-gray-700 max-sm:dark:text-gray-300">Task Date</label>
                                     <input
                                         type="date"
                                         name="date"
@@ -124,7 +124,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                                     />
                                 </div>
                                 <div className="flex flex-col flex-1">
-                                    <label className="mb-1 font-semibold text-gray-700">Task Time</label>
+                                    <label className="mb-1 font-semibold text-gray-700 max-sm:dark:text-gray-300">Task Time</label>
                                     <input
                                         type="time"
                                         name="Time"
@@ -138,7 +138,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                             {/* Description and User */}
                             <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
                                 <div className="flex flex-col flex-1">
-                                    <label className="mb-1 font-semibold text-gray-700">Description</label>
+                                    <label className="mb-1 font-semibold text-gray-700 max-sm:dark:text-gray-300">Description</label>
                                     <textarea
                                         name="Description"
                                         value={formData.Description}
@@ -147,7 +147,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                                     />
                                 </div>
                                 <div className="flex flex-col flex-1">
-                                    <label className="mb-1 font-semibold text-gray-700">User</label>
+                                    <label className="mb-1 font-semibold text-gray-700 max-sm:dark:text-gray-300">User</label>
                                     <select
                                         name="User"
                                         value={formData.User}

@@ -139,7 +139,7 @@ export default function AdminEditPage() {
     <div className=" min-h-screen flex justify-center">
       <Toaster position="top-right" />
       <div className="w-full max-w-[900px]">
-        <div className="flex justify-end mb-4">
+        <div className="flex max-sm:hidden justify-end mb-4">
           <BackButton
             url="/users"
             text="Back"
@@ -147,10 +147,10 @@ export default function AdminEditPage() {
           />
         </div>
 
-        <div className="bg-white/90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl h-auto">
+        <div className="bg-white/90 max-sm:dark:bg-[var(--color-childbgdark)] backdrop-blur-lg p-10 rounded-3xl shadow-2xl h-auto">
           <form onSubmit={(e) => e.preventDefault()}>
-            <div className="mb-8 text-left border-b pb-4 border-gray-200">
-              <h1 className="text-3xl font-extrabold text-[var(--color-secondary-darker)] leading-tight tracking-tight">
+            <div className="mb-8 text-left border-b pb-4 border-gray-200 max-sm:dark:border-gray-700">
+              <h1 className="text-3xl font-extrabold text-[var(--color-secondary-darker)] max-sm:dark:text-[var(--color-primary)] leading-tight tracking-tight">
                 Edit <span className="text-[var(--color-primary)]">Admin</span>
               </h1>
             </div>
@@ -158,7 +158,7 @@ export default function AdminEditPage() {
             <div className="flex flex-col space-y-10">
               {/* USER LEVEL */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                <h2 className="text-xl font-semibold text-gray-700 max-sm:dark:text-gray-400 mb-4">
                   User Level
                 </h2>
 
@@ -179,7 +179,7 @@ export default function AdminEditPage() {
 
               {/* PERSONAL INFORMATION */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                <h2 className="text-xl font-semibold text-gray-700 max-sm:dark:text-gray-400 mb-4">
                   Personal Information
                 </h2>
 
@@ -228,7 +228,7 @@ export default function AdminEditPage() {
 
               {/* ADDRESS */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                <h2 className="text-xl font-semibold text-gray-700 max-sm:dark:text-gray-400 mb-4">
                   Address Information
                 </h2>
 
@@ -284,14 +284,14 @@ const InputField: React.FC<{
       value={value}
       onChange={onChange}
       placeholder=" "
-      className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none 
+      className={`peer w-full max-sm:dark:text-gray-300 border rounded-sm bg-transparent py-3 px-4 outline-none 
         ${error
           ? "border-red-500 focus:border-red-500"
-          : "border-gray-400 focus:border-blue-500"
+          : "border-gray-400 max-sm:dark:border-gray-700 focus:border-blue-500"
         }`}
     />
     <p
-      className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+      className={`absolute left-2 bg-white max-sm:dark:bg-[var(--color-childbgdark)] px-1 text-gray-400 text-sm transition-all duration-300
       ${value || error
           ? "-top-2 text-xs text-blue-500"
           : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"

@@ -8,7 +8,7 @@ export const InputField: React.FC<{
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
 }> = ({className, label, name, value, onChange, error }) => (
-  <label className={`relative block w-full ${className}`}>
+  <label className={`relative block w-full ${className} max-sm:dark:text-gray-300 `}>
     <input
       type="text"
       name={name}
@@ -19,11 +19,11 @@ export const InputField: React.FC<{
         ${
           error
             ? "border-red-500 focus:border-red-500"
-            : "border-gray-400 focus:border-blue-500"
+            : "border-gray-400 dark:border-gray-700 focus:border-blue-500"
         }`}
     />
     <p
-      className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+      className={`absolute left-2 bg-white max-sm:dark:bg-[var(--color-childbgdark)] px-1 text-gray-500 text-sm transition-all duration-300
       ${
         value || error
           ? "-top-2 text-xs text-blue-500"

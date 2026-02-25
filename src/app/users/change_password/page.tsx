@@ -70,7 +70,7 @@ export default function ChangePasswordPage() {
     <div className=" min-h-screen  max-md:p-0 flex justify-center">
       <Toaster position="top-right" />
       <div className="w-full ">
-        <div className="flex justify-end mb-10">
+        <div className="flex max-sm:hidden justify-end mb-10">
           <BackButton
                       url="/users"
                       text="Back"
@@ -78,8 +78,8 @@ export default function ChangePasswordPage() {
                     />
         </div>
 
-        <div className="bg-white/90 backdrop-blur-lg p-10 mx-auto w-full max-w-[500px] rounded-3xl shadow-2xl h-auto">
-          <h1 className="text-2xl font-extrabold text-[var(--color-secondary-darker)] mb-8 border-b pb-4">
+        <div className="bg-white/90 max-sm:dark:bg-[var(--color-childbgdark)] backdrop-blur-lg p-10 mx-auto w-full max-w-[500px] rounded-3xl shadow-2xl h-auto">
+          <h1 className="text-2xl font-extrabold text-[var(--color-secondary-darker)] max-sm:dark:text-[var(--color-primary)] mb-8 border-b pb-4">
             Change <span className="text-[var(--color-primary)]">Password</span>
           </h1>
 
@@ -111,7 +111,7 @@ export default function ChangePasswordPage() {
             </button>
             <Link
               href="/users"
-              className="text-[var(--color-primary)] px-4 py-2 rounded-md border hover:bg-gray-100"
+              className="text-[var(--color-primary)] px-4 py-2 max-sm:hidden rounded-md border hover:bg-gray-100"
             >
               Cancel
             </Link>

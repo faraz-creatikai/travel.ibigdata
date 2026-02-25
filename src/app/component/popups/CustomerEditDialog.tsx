@@ -1,121 +1,107 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, X } from "lucide-react";
-import SingleSelect from "@/app/component/SingleSelect";
-import DateSelector from "@/app/component/DateSelector";
+import { X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+
 import { getCustomerById, updateCustomer } from "@/store/customer";
 import { customerAllDataInterface } from "@/store/customer.interface";
 import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { handleFieldOptionsObject } from "@/app/utils/handleFieldOptionsObject";
+import { trimCountryCodeHelper } from "@/app/utils/trimCountryCodeHelper";
+
 import { getCampaign } from "@/store/masters/campaign/campaign";
-import { getTypes, getTypesByCampaign } from "@/store/masters/types/types";
-import { getLocation, getLocationByCity } from "@/store/masters/location/location";
+import { getTypesByCampaign } from "@/store/masters/types/types";
+import { getLocationByCity } from "@/store/masters/location/location";
 import { getCity } from "@/store/masters/city/city";
 import { getFacilities } from "@/store/masters/facilities/facilities";
-import { getSubtype, getSubtypeByCampaignAndType } from "@/store/masters/subtype/subtype";
-import BackButton from "@/app/component/buttons/BackButton";
-import SaveButton from "@/app/component/buttons/SaveButton";
-import { handleFieldOptionsObject } from "@/app/utils/handleFieldOptionsObject";
-import ObjectSelect from "@/app/component/ObjectSelect";
-import { InputField } from "@/app/component/InputField";
-import TextareaField from "@/app/component/datafields/TextareaField";
-import { trimCountryCodeHelper } from "@/app/utils/trimCountryCodeHelper";
+import { getSubtypeByCampaignAndType } from "@/store/masters/subtype/subtype";
 import { getsubLocationByCityLoc } from "@/store/masters/sublocation/sublocation";
 import { getReferences } from "@/store/masters/references/references";
 import { getPrice } from "@/store/masters/price/price";
 import { getCustomerFields } from "@/store/masters/customerfields/customerfields";
 import { useCustomerFieldLabel } from "@/context/customer/CustomerFieldLabelContext";
+import SaveButton from "../buttons/SaveButton";
+import { InputField } from "../InputField";
+import SingleSelect from "../SingleSelect";
+import TextareaField from "../datafields/TextareaField";
+import DateSelector from "../DateSelector";
+import ObjectSelect from "../ObjectSelect";
+import PopupMenu from "./PopupMenu";
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  customerId: string | null;
+   onCustomerUpdated: (customer: any) => void;  
+}
 
 interface ErrorInterface {
   [key: string]: string;
 }
 
 type CustomFieldsType = {
-  [key: string]: string; // key is dynamic, value is string
+  [key: string]: string;
 };
 
-export default function CustomerEdit() {
-  const { id } = useParams();
-  const router = useRouter();
+export default function CustomerEditDialog({
+  isOpen,
+  onClose,
+  customerId,
+  onCustomerUpdated,
+}: Props) {
   const { getLabel } = useCustomerFieldLabel();
 
-  const [customerData, setCustomerData] = useState<customerAllDataInterface>({
-    Campaign: { id: "", name: "" },
-    CustomerType: { id: "", name: "" },
-    customerName: "",
-    CustomerSubtype: { id: "", name: "" },
-    ContactNumber: "",
-    City: { id: "", name: "" },
-    Location: { id: "", name: "" },
-    SubLocation: { id: "", name: "" },
-    Area: "",
-    Address: "",
-    Email: "",
-    Facilities: "",
-    ReferenceId: "",
-    CustomerId: "",
-    CustomerDate: "",
-    CustomerYear: "",
-    Price: "",
-    URL: "",
-    Other: "",
-    Description: "",
-    Video: "",
-    GoogleMap: "",
-    Verified: "",
-    CustomerImage: [],
-    SitePlan: {} as File,
-  });
+  const [customerData, setCustomerData] =
+    useState<customerAllDataInterface>({
+      Campaign: { id: "", name: "" },
+      CustomerType: { id: "", name: "" },
+      customerName: "",
+      CustomerSubtype: { id: "", name: "" },
+      ContactNumber: "",
+      City: { id: "", name: "" },
+      Location: { id: "", name: "" },
+      SubLocation: { id: "", name: "" },
+      Area: "",
+      Address: "",
+      Email: "",
+      Facilities: "",
+      ReferenceId: "",
+      CustomerId: "",
+      CustomerDate: "",
+      CustomerYear: "",
+      Price: "",
+      URL: "",
+      Other: "",
+      Description: "",
+      Video: "",
+      GoogleMap: "",
+      Verified: "",
+      CustomerImage: [],
+      SitePlan: {} as File,
+    });
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [sitePlanPreview, setSitePlanPreview] = useState<string>("");
+  const [sitePlanPreview, setSitePlanPreview] = useState("");
   const [errors, setErrors] = useState<ErrorInterface>({});
   const [loading, setLoading] = useState(true);
   const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
   const [customFields, setCustomFields] = useState<CustomFieldsType>({});
-
-  // ✅ Track deleted existing images separately
   const [removedCustomerImages, setRemovedCustomerImages] = useState<string[]>([]);
   const [removedSitePlans, setRemovedSitePlans] = useState<string[]>([]);
 
+  /* ================= FETCH CUSTOMER ================= */
 
-  const trimCountryCode = (num: string) => {
-    if (!num) return "";
-    return num.startsWith("+91") ? num.slice(3) : num;
-  };
-
-  const getCustomerFieldsFunc = async () => {
-    const data = await getCustomerFields();
-    const activeFields = data.filter((e: any) => e.Status === "Active");
-    console.log(" fields are ", activeFields);
-    const fieldsObj: CustomFieldsType = {};
-    activeFields.forEach((field: any) => {
-      fieldsObj[field.Name] = "";
-    });
-
-    // setCustomFields(fieldsObj);
-    return fieldsObj;
-  }
-
-  // Fetch existing customer data
   useEffect(() => {
+    if (!isOpen || !customerId) return;
+
     const fetchCustomer = async () => {
       try {
-        const data = await getCustomerById(id as string);
+        const data = await getCustomerById(customerId);
         if (!data) {
           toast.error("Customer not found");
           return;
         }
-        console.log("customer ", data);
-        // Just set the fetched data
-        /* setCustomerData({
-          ...data,
-          CustomerImage: [], // no files yet, only local uploads go here
-          SitePlan: {} as File, // same, user can manually upload
-        }); */
 
         setCustomerData({
           ...data,
@@ -148,36 +134,32 @@ export default function CustomerEdit() {
           CustomerImage: [],
           SitePlan: {} as File,
         });
-        console.log(" nice brother , ", data.CustomerFields)
 
-        const customerFields = await getCustomerFieldsFunc();
-        setCustomFields({ ...customerFields, ...data.CustomerFields });
+        const customerFieldsBase = await getCustomerFields();
+        const activeFields = customerFieldsBase.filter((e: any) => e.Status === "Active");
 
-        console.log(" customer data after set ", data.SubLocation)
-        // Preview URLs for already existing images
+        const fieldsObj: CustomFieldsType = {};
+        activeFields.forEach((field: any) => {
+          fieldsObj[field.Name] = "";
+        });
+
+        setCustomFields({ ...fieldsObj, ...data.CustomerFields });
+
         setImagePreviews(Array.isArray(data.CustomerImage) ? data.CustomerImage : []);
+        setSitePlanPreview(data.SitePlan?.[0] || "");
 
-        // Show site plan if it exists
-
-        setSitePlanPreview(data.SitePlan[0]);
       } catch (error) {
         toast.error("Error fetching customer");
-        console.error("Fetch Error:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchCustomer();
+    fetchCustomer();
+  }, [customerId, isOpen]);
 
+  /* ================= INPUT ================= */
 
-  }, [id]);
-
-  useEffect(() => {
-    console.log("filed optoins ", fieldOptions.Location, dropdownOptions)
-  }, [fieldOptions])
-
-  // Input change handlers
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
@@ -187,20 +169,17 @@ export default function CustomerEdit() {
     []
   );
 
-  // handle custom input changes dynamically
   const handleCustomInputChange = (key: string, value: string) => {
-    setCustomFields((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setCustomFields((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSelectChange = useCallback((label: string, selected: string) => {
+  const handleSelectChange = useCallback((label: string, selected: any) => {
     setCustomerData((prev) => ({ ...prev, [label]: selected }));
     setErrors((prev) => ({ ...prev, [label]: "" }));
   }, []);
 
-  // File upload
+  /* ================= FILE HANDLING ================= */
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const files = e.target.files;
     if (!files) return;
@@ -220,7 +199,6 @@ export default function CustomerEdit() {
     }
   };
 
-  // ✅ Remove image (and mark for backend deletion if it was an existing URL)
   const handleRemoveImage = (index: number) => {
     setCustomerData((prev) => ({
       ...prev,
@@ -229,56 +207,26 @@ export default function CustomerEdit() {
 
     setImagePreviews((prev) => {
       const removedUrl = prev[index];
-
-      // Move this OUTSIDE of setImagePreviews callback to avoid double runs
-      if (removedUrl.startsWith("http")) {
-        setRemovedCustomerImages((prevDel) => {
-          // Prevent duplicates explicitly
-          if (!prevDel.includes(removedUrl)) {
-            return [...prevDel, removedUrl];
-          }
-          return prevDel;
-        });
+      if (removedUrl?.startsWith("http")) {
+        setRemovedCustomerImages((prevDel) =>
+          prevDel.includes(removedUrl) ? prevDel : [...prevDel, removedUrl]
+        );
       }
-
       return prev.filter((_, i) => i !== index);
     });
   };
 
-  // Remove site plan
   const handleRemoveSitePlan = () => {
-    if (sitePlanPreview.length > 0 && sitePlanPreview?.startsWith("http")) {
+    if (sitePlanPreview?.startsWith("http")) {
       setRemovedSitePlans((prev) => [...prev, sitePlanPreview]);
     }
     setCustomerData((prev) => ({ ...prev, SitePlan: {} as File }));
     setSitePlanPreview("");
   };
 
-  // Validation
-  const validateForm = () => {
-    const newErrors: ErrorInterface = {};
-    if (!customerData?.customerName?.trim()) newErrors.CustomerName = "Customer Name is required";
-    if (
-      customerData?.Email?.trim() &&
-      !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(customerData.Email)
-    )
-      newErrors.Email = "Invalid email format";
-    if (!customerData?.ContactNumber?.trim())
-      newErrors.ContactNumber = "Contact No is required";
-    return newErrors;
-  };
+  /* ================= SUBMIT ================= */
 
-
-
-  // ✅ Submit data correctly as FormData
   const handleSubmit = async () => {
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-
     const formData = new FormData();
 
     // Append normal fields
@@ -322,30 +270,19 @@ export default function CustomerEdit() {
 
     formData.append("CustomerFields", JSON.stringify(customFields));
 
-    // Handle full deletion (when user removes all)
-    /*  if (customerData.CustomerImage.length === 0)
-       formData.append("CustomerImage", JSON.stringify([]));
-     if (!sitePlanPreview)
-       formData.append("SitePlan", JSON.stringify([])); */
+   
 
-    //console.log("FormData entries:");
-    /*  for (let pair of formData.entries()) {
-       //console.log(pair[0], pair[1]);
-     } */
-
-    console.log(" Form data before Submission ", removedCustomerImages);
-    const result = await updateCustomer(id as string, formData);
+    const result = await updateCustomer(customerId as string, formData);
 
     if (result) {
       toast.success("Customer updated successfully!");
-      router.push("/customer");
+      onCustomerUpdated(result.data);
+      onClose();
     } else {
       toast.error("Update failed");
     }
-
   };
-
-  const dropdownOptions = ["Option1", "Option2", "Option3"];
+ const dropdownOptions = ["Option1", "Option2", "Option3"];
   // Object-based fields (for ObjectSelect)
   const objectFields = [
     { key: "Campaign", fetchFn: getCampaign },
@@ -441,29 +378,29 @@ export default function CustomerEdit() {
       setFieldOptions((prev) => ({ ...prev, CustomerSubtype: [] }));
     }
   };
+ 
+  if (!isOpen) return null;
   if (loading) return null;
 
   return (
-    <div className=" min-h-screen flex justify-center">
-      <Toaster position="top-right" />
-      <div className="w-full">
-        <div className="flex justify-end mb-4">
-          <BackButton
-            url="/customer"
-            text="Back"
-            icon={<ArrowLeft size={18} />}
-          />
+    <PopupMenu onClose={onClose} isOpen={isOpen}>
+   <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+  <div className="bg-white  max-sm:dark:bg-[var(--color-childbgdark)]  w-[1000px] max-w-full rounded-2xl shadow-xl max-h-[90vh] flex flex-col">
 
-        </div>
+    {/* HEADER (Fixed) */}
+    <div className="flex justify-between items-center border-b p-6">
+      <h2 className="text-2xl font-bold max-sm:dark:text-[var(--color-primary)]">
+        Edit Customer Information
+      </h2>
+      <button className=" max-sm:dark:text-white hover:bg-[var(--color-primary)] hover:text-white p-2 rounded-md cursor-pointer" onClick={onClose}>
+        <X size={22} />
+      </button>
+    </div>
 
-        <div className="bg-white max-sm:dark:bg-[var(--color-childbgdark)] backdrop-blur-lg p-10 max-sm:px-5 w-full rounded-3xl shadow-2xl h-auto">
-          <form onSubmit={(e) => e.preventDefault()} className="w-full">
-            <div className="mb-8 text-left border-b pb-4 border-gray-200 max-sm:dark:border-gray-700">
-              <h1 className="text-3xl max-sm:text-2xl font-extrabold text-[var(--color-secondary-darker)] max-sm:dark:text-[var(--color-primary)] leading-tight tracking-tight">
-                Edit <span className="text-[var(--color-primary)]">Customer Information</span>
-              </h1>
-            </div>
-
+    {/* SCROLLABLE BODY */}
+    <div className="flex-1 overflow-y-auto px-6 py-4">
+      
+     
             <div className="grid grid-cols-3 gap-6 max-xl:grid-cols-2 max-lg:grid-cols-1">
               {/*  <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} />
               <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} /> */}
@@ -627,24 +564,19 @@ export default function CustomerEdit() {
 
             </div>
 
-            <div className="flex justify-end mt-4">
-
-              <SaveButton text="Update" onClick={handleSubmit} />
-
-            </div>
-          </form>
-        </div>
-      </div>
+      
     </div>
+
+    {/* FOOTER (Fixed) */}
+    <div className="border-t p-6 flex justify-end">
+      <SaveButton text="Update" onClick={handleSubmit} />
+    </div>
+
+  </div>
+</div>
+</PopupMenu>
   );
 }
-
-// InputField, TextareaField, and FileUpload components remain unchanged
-
-
-// Input field component
-
-
 
 
 // File upload with preview and remove

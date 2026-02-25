@@ -46,6 +46,7 @@ import { handleFieldOptionsObject } from "@/app/utils/handleFieldOptionsObject";
 import ObjectSelect from "@/app/component/ObjectSelect";
 import { getsubLocationByCityLoc } from "@/store/masters/sublocation/sublocation";
 import { Sub } from "@radix-ui/react-dropdown-menu";
+import { BsPersonFill } from "react-icons/bs";
 
 export default function CustomerFollowups() {
     const router = useRouter();
@@ -84,7 +85,7 @@ export default function CustomerFollowups() {
         PropertyType: { id: "", name: "" },
         City: { id: "", name: "" },
         Location: { id: "", name: "" },
-        SubLocation: { id: "", name: ""},
+        SubLocation: { id: "", name: "" },
     });
 
     // 🔹 Fetch All Followups
@@ -109,9 +110,19 @@ export default function CustomerFollowups() {
     }, [searchParams, followupData]);
     const getFollowups = async () => {
         const data = await getAllCustomerFollowups();
-        // console.log(" data of luffy , ", data)
+        console.log(" data of luffy , ", data, " length ", data?.length)
         if (data) {
-            setFollowupData(data.map((item: any) => {
+            const filteredData = data.filter((item, index, arr) => {
+                if (!item.customer?._id) return false;
+
+                return (
+                    arr.findIndex(
+                        t => t.customer?._id === item.customer?._id
+                    ) === index
+                );
+            });
+
+            setFollowupData(filteredData.map((item: any) => {
                 const date = new Date(item.updatedAt);
                 const formattedDate =
                     date.getDate().toString().padStart(2, "0") + "-" +
@@ -193,21 +204,32 @@ export default function CustomerFollowups() {
 
         const data = await getFilteredFollowups(queryParams.toString());
         console.log("filtered followups ", data)
-        if (data) setFollowupData(data.map((item: any) => {
-            const date = new Date(item.updatedAt);
-            const formattedDate =
-                date.getDate().toString().padStart(2, "0") + "-" +
-                (date.getMonth() + 1).toString().padStart(2, "0") + "-" +
-                date.getFullYear();
-            return {
-                _id: item._id,
-                customerid: item.customer._id,
-                Name: item.customer.customerName,
-                ContactNumber: item.customer.ContactNumber,
-                User: item.customer.AssignTo?.name ?? "",
-                Date: formattedDate,
-            }
-        }));
+        if (data) {
+            const filteredData = data.filter((item, index, arr) => {
+                if (!item.customer?._id) return false;
+
+                return (
+                    arr.findIndex(
+                        t => t.customer?._id === item.customer?._id
+                    ) === index
+                );
+            });
+            setFollowupData(filteredData.map((item: any) => {
+                const date = new Date(item.updatedAt);
+                const formattedDate =
+                    date.getDate().toString().padStart(2, "0") + "-" +
+                    (date.getMonth() + 1).toString().padStart(2, "0") + "-" +
+                    date.getFullYear();
+                return {
+                    _id: item._id,
+                    customerid: item.customer._id,
+                    Name: item.customer.customerName,
+                    ContactNumber: item.customer.ContactNumber,
+                    User: item.customer.AssignTo?.name ?? "",
+                    Date: formattedDate,
+                }
+            }));
+        }
     };
 
     const clearFilter = async () => {
@@ -229,7 +251,7 @@ export default function CustomerFollowups() {
             PropertyType: { id: "", name: "" },
             City: { id: "", name: "" },
             Location: { id: "", name: "" },
-            SubLocation: { id: "", name: ""},   
+            SubLocation: { id: "", name: "" },
         });
         await getFollowups();
     };
@@ -340,7 +362,7 @@ export default function CustomerFollowups() {
             setFieldOptions(prev => ({ ...prev, Location: [] }));
             setFilters(prev => ({ ...prev, Location: [] }));
         }
-        if( cityId && locationId) {
+        if (cityId && locationId) {
             fetchSubLocation(cityId, locationId);
         } else {
             setFieldOptions(prev => ({ ...prev, SubLocation: [] }));
@@ -371,15 +393,15 @@ export default function CustomerFollowups() {
         }
     };
 
-      const fetchSubLocation = async (cityId: string, locationId: string) => {
+    const fetchSubLocation = async (cityId: string, locationId: string) => {
         try {
-          const res = await getsubLocationByCityLoc(cityId, locationId);
-          setFieldOptions((prev) => ({ ...prev, SubLocation: res || [] }));
+            const res = await getsubLocationByCityLoc(cityId, locationId);
+            setFieldOptions((prev) => ({ ...prev, SubLocation: res || [] }));
         } catch (error) {
-          console.error("Error fetching sublocation:", error);
-          setFieldOptions((prev) => ({ ...prev, SubLocation: [] }));
+            console.error("Error fetching sublocation:", error);
+            setFieldOptions((prev) => ({ ...prev, SubLocation: [] }));
         }
-      };
+    };
 
 
     const campaign = ['Buyer', 'Seller', 'Rent Out', 'Rent In', 'Hostel/PG', 'Agents', 'Services', 'Others', 'Guest House', 'Happy Stay'];
@@ -400,6 +422,14 @@ export default function CustomerFollowups() {
     {
         key: "Date", label: "Date"
     },]
+
+
+    /*follow up filter : 
+                                            .filter(
+                                                (item, index, arr) =>
+                                                    arr.findIndex((row) => row.customerid === item.customerid) === index //keeps only first occurrence
+                                            )
+                                            */
 
     return (
         <ProtectedRoute>
@@ -429,62 +459,139 @@ export default function CustomerFollowups() {
             {
                 isfollowupDialogOpen && Array.isArray(followupDialogData) && followupDialogData.length > 0 && (
                     <PopupMenu onClose={() => { setIsFollowupDialogOpen(false); setFollowupDialogData([]); }}>
-                        <div className="flex flex-col border border-gray-300/30 overflow-y-auto  bg-gray-100 text-[var(--color-secondary-darker)] rounded-xl shadow-lg p-6 max-w-[800px] gap-6 m-2 w-full  max-h-[80vh] overflow-auto">
-                            <h2 className="text-2xl text-[var(--color-secondary-darker)] font-extrabold flex justify-between items-center"><div>Customer <span className=" text-[var(--color-primary)]">Followups</span> </div> <button className=" cursor-pointer" onClick={() => {
-                                setFollowupDialogData(null)
-                                setIsFollowupDialogOpen(false);
-                            }}><IoMdClose /></button></h2>
-                            <div className=" overflow-y-auto max-h-[100vh]">
-                                {
-                                    followupDialogData.map((item, index) => (
-                                        <div key={item._id ?? +index} className=" flex justify-between border border-gray-300 rounded-md p-4">
-                                            <div className=" flex flex-col gap-2">
-                                                <p><span className="font-semibold">Followup Date:</span> {item.StartDate}</p>
-                                                <p><span className="font-semibold">Status Type:</span> {item.StatusType}</p>
-                                                <p><span className="font-semibold">Next Followup Date:</span> {item.FollowupNextDate}</p>
-                                                <p><span className="font-semibold">Description:</span> {item.Description}</p>
-                                            </div>
-                                            <div className=" flex flex-wrap gap-2 justify-center items-center-safe ">
-                                                <Button
-                                                    sx={{
-                                                        backgroundColor: "#E8F5E9",
-                                                        color: "var(--color-primary)",
-                                                        minWidth: "32px",
-                                                        height: "32px",
-                                                        borderRadius: "8px",
-                                                    }}
-                                                    onClick={() => editThisFollowup(item._id ?? "")}
-                                                >
-                                                    <MdEdit />
-                                                </Button>
-
-                                                <Button
-                                                    sx={{
-                                                        backgroundColor: "#FDECEA",
-                                                        color: "#C62828",
-                                                        minWidth: "32px",
-                                                        height: "32px",
-                                                        borderRadius: "8px",
-                                                    }}
-                                                    onClick={() => {
-                                                        setIsFollowupDialogOpen(false);
-                                                        setIsFollowupDeleteDialogOpen(true);
-                                                        setFollowupDeleteDialogData({
-                                                            id: item._id ?? "",
-                                                            Name: getCustomerName(item.customer)
-                                                        });
-                                                    }}
-                                                >
-                                                    <MdDelete />
-                                                </Button>
-                                            </div>
-
-                                        </div>
-                                    ))
-                                }
-                            </div>
-
-                        </div>
+                        <div className="flex flex-col border border-white/20 overflow-hidden bg-white/80 max-sm:dark:bg-[var(--color-childbgdark)] backdrop-blur-xl text-[var(--color-secondary-darker)] rounded-2xl shadow-2xl p-0 max-w-[800px] gap-0 m-2 w-full max-h-[85vh] overflow-hidden ring-1 ring-black/5">
+                                     {/* Header - Glassmorphism effect */}
+                                     <div className="flex flex-col justify-between  p-6 py-5 bg-gradient-to-r from-[var(--color-secondary-darker)] to-[var(--color-secondary)] text-white sticky top-0 z-10 backdrop-blur-md bg-opacity-95">
+                                       <div className=" flex justify-between items-center">
+                                         <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 tracking-tight">
+                                           <div className="flex text-[var(--color-primary-light)] items-center gap-2">
+                                             <span className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                                 <path fillRule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h2a1 1 0 100-2H6V7h5a1 1 0 011-1h5a1 1 0 011 1v5h2V7a3 3 0 00-3-3h-5a2 2 0 00-2 2H6z" clipRule="evenodd" />
+                                               </svg>
+                                             </span>
+                                             <span>Customer</span>
+                                             <span className=" font-black drop-shadow-sm">Followups</span>
+                                           </div>
+                       
+                                         </h2>
+                                         <button
+                                           className="cursor-pointer hover:bg-white/20 p-2 rounded-full transition-all duration-300 ease-out hover:rotate-90 active:scale-95 group"
+                                           onClick={() => {
+                                             setFollowupDialogData(null)
+                                             setIsFollowupDialogOpen(false);
+                                           }}
+                                         >
+                                           <IoMdClose className="w-6 h-6 group-hover:text-[var(--color-primary)] transition-colors" />
+                                         </button>
+                                       </div>
+                                       <div className=" flex items-center gap-2 ml-[45px] mt-2 font-light  text-[var(--color-primary-light)]">
+                                         <span className=" bg-[var(--color-primary-light)] p-1 rounded-full"><BsPersonFill className=" text-[var(--color-primary-dark)]" /></span>
+                                         <span>{followupDialogData[0].Name ?? ""}
+                                         </span>
+                                       </div>
+                                     </div>
+                       
+                                     {/* Content Area with custom scrollbar */}
+                                     <div className="overflow-y-auto max-h-[calc(85vh-80px)] p-2 md:p-6 space-y-4 scrollbar-thin scrollbar-thumb-[var(--color-primary)]/30 scrollbar-track-transparent hover:scrollbar-thumb-[var(--color-primary)]/50">
+                                       {
+                                         followupDialogData.map((item, index) => (
+                                           <div
+                                             key={item._id ?? +index}
+                                             className="group relative flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white max-sm:dark:bg-[var(--color-childbgdark)] max-sm:dark:border-gray-700 border border-gray-100 rounded-xl p-3 shadow-sm hover:shadow-xl hover:border-[var(--color-primary)]/20 transition-all duration-300 ease-out hover:-translate-y-1 overflow-hidden"
+                                           >
+                                             {/* Decorative gradient line */}
+                                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-primary)] to-[var(--color-secondary)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                       
+                                             {/* Content Section */}
+                                             <div className="flex flex-col gap-3 flex-1 w-full md:w-auto pl-0 md:pl-2">
+                                               <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-semibold bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">
+                                                   Follow-up #{index + 1}
+                                                 </span>
+                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-semibold ${item.StatusType?.toLowerCase().includes('complete') || item.StatusType?.toLowerCase().includes('done')
+                                                   ? 'bg-green-100 text-green-700 border border-green-200'
+                                                   : item.StatusType?.toLowerCase().includes('pending') || item.StatusType?.toLowerCase().includes('wait')
+                                                     ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                                                     : 'bg-blue-100 text-blue-700 border border-blue-200'
+                                                   }`}>
+                                                   {item.StatusType}
+                                                 </span>
+                                               </div>
+                       
+                                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                                 <div className="flex items-center gap-2 text-gray-600">
+                                                   <span className="p-1.5 bg-gray-50 rounded-md text-[var(--color-secondary)]">
+                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                     </svg>
+                                                   </span>
+                                                   <div>
+                                                     <p className="text-xs mb-1 text-gray-400 font-medium uppercase tracking-wider">Follow-up Date</p>
+                                                     <p className="font-semibold text-[var(--color-secondary-darker)] max-sm:dark:text-[var(--color-secondary)]">{item.StartDate}</p>
+                                                   </div>
+                                                 </div>
+                       
+                                                 <div className="flex items-center gap-2 text-gray-600">
+                                                   <span className="p-1.5 bg-gray-50 rounded-md text-[var(--color-secondary)]">
+                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                     </svg>
+                                                   </span>
+                                                   <div>
+                                                     <p className="text-xs mb-1 text-gray-400 font-medium uppercase tracking-wider">Next Follow-up</p>
+                                                     <p className="font-semibold text-[var(--color-secondary-darker)] max-sm:dark:text-[var(--color-secondary)]">{item.FollowupNextDate}</p>
+                                                   </div>
+                                                 </div>
+                                               </div>
+                       
+                                               <div className="mt-2 p-3 bg-gray-50/50 max-sm:dark:bg-[var(--color-primary-darker)]/50 rounded-lg border border-gray-100 max-sm:dark:border-none">
+                                                 <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Description</p>
+                                                 <p className="text-sm text-gray-700 max-sm:dark:text-gray-300 leading-relaxed line-clamp-3">{item.Description}</p>
+                                               </div>
+                                             </div>
+                       
+                                             {/* Action Buttons */}
+                                             <div className="flex flex-row gap-3 justify-end items-center w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-gray-100 max-sm:dark:border-gray-600 mt-2 md:mt-0">
+                                               <Button
+                                                 sx={{
+                                                   backgroundColor: "#E8F5E9",
+                                                   color: "var(--color-primary)",
+                                                   minWidth: "40px",
+                                                   height: "40px",
+                                                   borderRadius: "8px",
+                                                 }}
+                                                 onClick={() => editThisFollowup(item._id ?? "")}
+                                               >
+                                                 <MdEdit />
+                                               </Button>
+                       
+                                               <Button
+                                                 sx={{
+                                                   backgroundColor: "#FDECEA",
+                                                   color: "#C62828",
+                                                   minWidth: "40px",
+                                                   height: "40px",
+                                                   borderRadius: "8px",
+                                                 }}
+                                                 onClick={() => {
+                                                   setIsFollowupDialogOpen(false);
+                                                   setIsFollowupDeleteDialogOpen(true);
+                                                   setFollowupDeleteDialogData({
+                                                     id: item._id ?? "",
+                                                     Name: item.Name ?? ""
+                                                   });
+                                                 }}
+                                               >
+                                                 <MdDelete />
+                                               </Button>
+                                             </div>
+                                           </div>
+                                         ))
+                                       }
+                                     </div>
+                                   </div>
                     </PopupMenu>
                 )
             }
@@ -832,78 +939,73 @@ export default function CustomerFollowups() {
                                 </thead>
                                 <tbody>
                                     {currentRows.length > 0 ? (
-                                        currentRows
-                                            .filter(
-                                                (item, index, arr) =>
-                                                    arr.findIndex((row) => row.customerid === item.customerid) === index //keeps only first occurrence
-                                            )
-                                            .map((item, index) => (
-                                                <tr
-                                                    key={item._id}
-                                                    className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
+                                        currentRows.map((item, index) => (
+                                            <tr
+                                                key={item._id}
+                                                className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
+                                            >
+                                                <td
+                                                    className="px-4 py-3  border border-gray-200 text-[var(--color-primary)] cursor-pointer hover:underline"
+                                                    onClick={() => {
+                                                        setIsFollowupDialogOpen(true);
+                                                        handleFollowups(item.customerid);
+                                                    }}
                                                 >
-                                                    <td
-                                                        className="px-4 py-3  border border-gray-200 text-[var(--color-primary)] cursor-pointer hover:underline"
+                                                    Follow UP
+                                                </td>
+                                                <td className="px-4 py-3  border border-gray-200">{indexOfFirstRow + index + 1}</td>
+                                                <td className="px-4 py-3  border border-gray-200">{item.Name}</td>
+                                                <td className="px-4 py-3  border border-gray-200">{item.ContactNumber}</td>
+                                                <td className="px-4 py-3  border border-gray-200">{item.User}</td>
+                                                <td className="px-4 py-3  border border-gray-200">{item.Date}</td>
+                                                <td className="px-4 py-2  flex gap-2 items-center">
+                                                    <Button
+                                                        sx={{
+                                                            backgroundColor: "#E8F5E9",
+                                                            color: "var(--color-primary)",
+                                                            minWidth: "32px",
+                                                            height: "32px",
+                                                            borderRadius: "8px",
+                                                        }}
+                                                        onClick={() => addFollowup(item.customerid)}
+                                                    >
+                                                        <MdAdd />
+                                                    </Button>
+
+                                                    <Button
+                                                        sx={{
+                                                            backgroundColor: "#E8F5E9",
+                                                            color: "var(--color-primary)",
+                                                            minWidth: "32px",
+                                                            height: "32px",
+                                                            borderRadius: "8px",
+                                                        }}
+                                                        onClick={() => editFollowup(item.customerid)}
+                                                    >
+                                                        <MdEdit />
+                                                    </Button>
+
+                                                    <Button
+                                                        sx={{
+                                                            backgroundColor: "#FDECEA",
+                                                            color: "#C62828",
+                                                            minWidth: "32px",
+                                                            height: "32px",
+                                                            borderRadius: "8px",
+                                                        }}
                                                         onClick={() => {
-                                                            setIsFollowupDialogOpen(true);
-                                                            handleFollowups(item.customerid);
+                                                            setIsDeleteDialogOpen(true);
+                                                            setDeleteDialogData({
+                                                                id: item.customerid,
+                                                                ContactNumber: item.ContactNumber
+                                                            });
                                                         }}
                                                     >
-                                                        Follow UP
-                                                    </td>
-                                                    <td className="px-4 py-3  border border-gray-200">{indexOfFirstRow + index + 1}</td>
-                                                    <td className="px-4 py-3  border border-gray-200">{item.Name}</td>
-                                                    <td className="px-4 py-3  border border-gray-200">{item.ContactNumber}</td>
-                                                    <td className="px-4 py-3  border border-gray-200">{item.User}</td>
-                                                    <td className="px-4 py-3  border border-gray-200">{item.Date}</td>
-                                                    <td className="px-4 py-2  flex gap-2 items-center">
-                                                        <Button
-                                                            sx={{
-                                                                backgroundColor: "#E8F5E9",
-                                                                color: "var(--color-primary)",
-                                                                minWidth: "32px",
-                                                                height: "32px",
-                                                                borderRadius: "8px",
-                                                            }}
-                                                            onClick={() => addFollowup(item.customerid)}
-                                                        >
-                                                            <MdAdd />
-                                                        </Button>
-
-                                                        <Button
-                                                            sx={{
-                                                                backgroundColor: "#E8F5E9",
-                                                                color: "var(--color-primary)",
-                                                                minWidth: "32px",
-                                                                height: "32px",
-                                                                borderRadius: "8px",
-                                                            }}
-                                                            onClick={() => editFollowup(item.customerid)}
-                                                        >
-                                                            <MdEdit />
-                                                        </Button>
-
-                                                        <Button
-                                                            sx={{
-                                                                backgroundColor: "#FDECEA",
-                                                                color: "#C62828",
-                                                                minWidth: "32px",
-                                                                height: "32px",
-                                                                borderRadius: "8px",
-                                                            }}
-                                                            onClick={() => {
-                                                                setIsDeleteDialogOpen(true);
-                                                                setDeleteDialogData({
-                                                                    id: item.customerid,
-                                                                    ContactNumber: item.ContactNumber
-                                                                });
-                                                            }}
-                                                        >
-                                                            <MdDelete />
-                                                        </Button>
-                                                    </td>
-                                                </tr>
-                                            ))
+                                                        <MdDelete />
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        ))
                                     ) : (
                                         <tr>
                                             <td colSpan={6} className="text-center py-4 text-gray-500">

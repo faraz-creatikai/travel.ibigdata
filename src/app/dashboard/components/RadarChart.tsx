@@ -55,7 +55,7 @@ export default function RadarChart() {
   const [selectedUser, setSelectedUser] = useState(userCustomers.users[0]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownButtonRef = useRef<HTMLButtonElement>(null);
-  const [customerCount,setCustomerCount]=useState(0);
+  const [customerCount, setCustomerCount] = useState(0);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -283,16 +283,16 @@ export default function RadarChart() {
       });
 
       // Step 2: Convert map to array
-    /*   const result = Object.values(userMap); */
-    const customerLength=await getCustomer();
-    const totalCustomers = customerLength.length;
+      /*   const result = Object.values(userMap); */
+      const customerLength = await getCustomer();
+      const totalCustomers = customerLength.length;
 
-const result = Object.values(userMap).map(user => ({
-  ...user,
-  percentage: totalCustomers > 0 
-    ? Math.round((user.customers / totalCustomers) * 100)
-    : 0
-}));
+      const result = Object.values(userMap).map(user => ({
+        ...user,
+        percentage: totalCustomers > 0
+          ? Math.round((user.customers / totalCustomers) * 100)
+          : 0
+      }));
 
       setUserCustomers({ users: result });
       setSelectedUser(result[0] || null);

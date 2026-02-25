@@ -78,7 +78,7 @@ export default function ObjectSelect<T>({
     >
       {/* Floating Label */}
       <label
-        className={`absolute left-3 transition-all duration-200 px-1 bg-white pointer-events-none
+        className={`absolute left-3 transition-all duration-200 px-1 bg-white max-sm:dark:bg-[var(--color-childbgdark)] max-sm:dark:text-gray-400  pointer-events-none
           ${
             isLabelFloating
               ? "-top-2 text-xs text-[var(--color-primary)]"
@@ -91,14 +91,14 @@ export default function ObjectSelect<T>({
       {/* Select box */}
       <div
         onClick={() => setOpen(!open)}
-        className={`w-full border rounded-md px-3 py-2 cursor-pointer bg-white flex justify-between items-center
+        className={`w-full border rounded-md px-3 py-2 cursor-pointer bg-white max-sm:dark:bg-[var(--color-childbgdark)] flex justify-between items-center
           ${
-            error ? "border-red-500" : "border-gray-400"
+            error ? "border-red-500" : "border-gray-400 max-sm:dark:border-gray-700"
           } transition-colors`}
         style={{ minHeight: "3rem" }}
       >
         <span
-          className={`${selectedLabel ? "text-gray-900" : "text-gray-400"} truncate`}
+          className={`${selectedLabel ? "text-gray-900 max-sm:dark:text-gray-300" : "text-gray-400"} truncate`}
         >
           {selectedLabel || ""}
         </span>
@@ -117,7 +117,7 @@ export default function ObjectSelect<T>({
 
       {/* Dropdown */}
       <ul
-        className={`absolute left-0 top-full w-full bg-white shadow-lg border border-gray-300 rounded-md max-h-56 overflow-auto mt-1
+        className={`absolute left-0 top-full w-full bg-white max-sm:dark:bg-[var(--color-childbgdark)] max-sm:dark:text-white shadow-lg border border-gray-300 max-sm:dark:border-gray-800 rounded-md max-h-56 overflow-auto mt-1
           transition-all duration-200 transform origin-top z-50
           ${
             open
@@ -127,7 +127,7 @@ export default function ObjectSelect<T>({
       >
         {/* 🔍 Optional Search */}
         {(isSearchable && displayedOptions.length > 0) && (
-          <li className="sticky top-0 bg-white p-2 border-b z-10">
+          <li className="sticky top-0 bg-white max-sm:dark:bg-[var(--color-childbgdark)] p-2 border-b z-10">
             <input
               ref={searchInputRef}
               type="text"

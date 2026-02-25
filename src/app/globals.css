@@ -85,31 +85,44 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 
 
-  /* custom colors - PURPLE VARIANT */
---color-primary: #8C42FF;         /* main purple */
---color-primary-dark: #7326E6;    /* darker purple */
---color-primary-darker: #5C0FCC;  /* darkest purple */
---color-primary-light: #E5CCFF;   /* light purple */
---color-primary-lighter: #F2E6FF; /* very light purple */
+  /*custom colors */
+--color-primary: #4318C4;
+--color-primary-dark: #3A14A8;
+--color-primary-darker: #2F108A;
+--color-primary-light: #EDE9FE;
+--color-primary-lighter: #F5F3FF;
 
-/* secondary - analogous purple tone */
---color-secondary: #B366FF;       /* lighter secondary purple */
---color-secondary-dark: #9933E6;  /* darker secondary */
---color-secondary-darker: #5C1A99;/* darkest secondary */
---color-secondary-light: #D9B3FF; /* light secondary */
+--color-secondary: #6D28D9;
+--color-secondary-dark: #5B21B6;
+--color-secondary-darker:  #0B0620;
+--color-secondary-light: #C4B5FD;
 
-/* accents and feedback */
---color-accent: #CC80FF;          /* purple accent */
---color-muted: #E0B2FF;           /* muted/pastel purple */
---color-destructive: #FF6B6B;     /* red-ish destructive stays for contrast */
+--color-accent: #A78BFA;
+--color-muted: #DDD6FE;
+--color-destructive: #F87171;
 
 /* Additional colors */
---color-gray: #6b7280;            /* gray stays neutral */
---color-textlightdark: #ffffff;   /* text white stays */
---color-bglightdark: #000000;     /* background black stays */
+--color-gray: #6b7280;
+--color-textlightdark: #ffffff;
+--color-bglightdark: #000000;
 
 /* table phone screen color */
---table: #A500FF;                 /* bright purple for tables */
+--table: #7C3AED;
+
+/* dark/light */
+
+--color-bgdark: #0F0A2A;
+--color-bglight: white;
+
+--color-childbglight: #EDE9FE;
+--color-childbgdark: #140F3C;
+
+--color-txtdark: black;
+--color-txtlight: white;
+
+--color-bghoverlight: #DDD6FE;
+--color-bghoverdark: #2F108A;
+
 
 
   /* app font */
@@ -164,14 +177,20 @@
   }
 }
 
+
+
 /* Tailwind 4 - Remove autofill highlight properly for all themes */
+/* Fix Chrome autofill in dark mode */
 input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px var(--color-input) inset !important; /* use theme variable */
-  -webkit-text-fill-color: var(--foreground) !important; /* use theme variable */
-  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: #1f2937 !important; /* your normal text color */
+  transition: background-color 9999s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
 }
+
 
 /* app font */
 /* body {

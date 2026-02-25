@@ -72,9 +72,59 @@ export interface customerGetDataInterface {
   ContactNumber: string;
   AssignTo: string;
   Date: string;
+  CustomerType: string;
+  CustomerSubType: string;
+  CustomerName: string;
+  Reason: string;
+ 
+  Facillities: string;
+  CustomerId: string;
+  Adderess: string;
+  CustomerYear: string;
+  Area: string;
+  Other: string;
   SitePlan?: string;
+
+  URL?:string;
+  Video?:string;
+  GoogleMap?:string;
+  Price?:string;
+
+  CustomerFields?: any;
 }
 
+// we are using this for Tablesetting button
+// export interface customerGetDataInterface {
+//   _id: string;
+//   Campaign: string;
+//   Type: string;
+//   SubType: string;
+//   Name: string;
+//   Description?: string;
+//   ReferenceId?: string;
+//   Email: string;
+//   SalaryRange?: string;
+//   Experience?: string;
+//   City: string;
+//   Location: string;
+//   isFavourite?: boolean;
+//   ContactNumber: string;
+//   AssignTo: string;
+//   Date: string;
+//   SitePlan?: string;
+//   // that add by DJ
+//   CustomerType: string;
+//   CustomerSubType: string;
+//   CustomerName: string;
+//   Reason: string;
+//   Skill? : string;
+//   Facillities: string;
+//   CustomerId: string;
+//   Adderess: string;
+//   CustomerYear: string;
+//   Area: string;
+//   Other: string;
+// }
 
 export interface CustomerAdvInterface {
   _id: string[];
@@ -91,8 +141,10 @@ export interface CustomerAdvInterface {
 }
 
 export interface customerAssignInterface {
-  customerIds: string[];
   assignToId: string;
+  customerIds?: string[];
+  campaign?: string;
+  assignMode?: "selected" | "campaign" | "all";
 }
 
 export interface contactAssignInterface {

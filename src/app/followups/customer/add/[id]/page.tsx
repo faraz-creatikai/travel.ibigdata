@@ -123,7 +123,7 @@ export default function CustomerFollowupAdd() {
 
         <div className="bg-white/90 backdrop-blur-lg p-10 max-sm:px-5 rounded-3xl shadow-2xl h-auto">
           <form onSubmit={(e) => e.preventDefault()}>
-            <div className="mb-8 text-left border-b pb-4 border-gray-200">
+            <div className="mb-8 text-left border-b pb-4 border-gray-200 max-sm:dark:border-gray-700">
               <h1 className="text-3xl max-sm:text-2xl font-extrabold text-[var(--color-secondary-darker)] leading-tight tracking-tight">
                 Add <span className="text-[var(--color-primary)]">Customer Followup</span>
               </h1>

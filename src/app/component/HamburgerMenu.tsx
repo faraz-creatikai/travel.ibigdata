@@ -7,7 +7,12 @@ import { BrickWallFire, Podcast, School, Cable, ShieldUser, NotebookTabs, Home }
 import Link from "next/link";
 import { MdClose } from "react-icons/md";
 import { TfiClose } from "react-icons/tfi";
-const data = [
+import { useAuth } from "@/context/AuthContext";
+
+export default function MobileHamburger() {
+
+   const { admin, isLoading, login } = useAuth();
+   const data = [
   {
     title: "Dashboard",
     url: "/dashboard",
@@ -15,7 +20,7 @@ const data = [
   },
   {
     title: "Campaign",
-    url: "/masters/campaign",
+    url: `${admin?.role!=="administrator"?"/masters/campaign/allcampaigns":"/masters/campaign"}`,
     icon: <BrickWallFire size={22} />,
   },
   {
@@ -60,7 +65,7 @@ const data = [
   }
 
 ]
-export default function MobileHamburger() {
+
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -153,7 +158,7 @@ useEffect(()=>{
           {open && <button
             ref={buttonRef}
             onClick={() => setOpen(!open)}
-            className=" mx-4 relative rounded-sm -top-2 p-2 bg-white z-[2001] left-64 text-xl  outline-0  flex items-center justify-center"
+            className=" mx-4 fixed rounded-sm top-4 p-2 bg-white dark:bg-[var(--color-childbgdark)] dark:text-white z-[2001] left-64 text-xl  outline-0  flex items-center justify-center"
           ><TfiClose  size={20}/></button>}
         </AnimatePresence>
 
@@ -193,22 +198,22 @@ useEffect(()=>{
                 opacity: 0,
                 transition: { duration: 0.2 },
               }}
-              className="fixed top-0 left-0 h-screen  w-[260px] bg-white backdrop-blur-md shadow-xl"
+              className="fixed top-0 left-0 h-screen  w-[260px] bg-white dark:bg-[var(--color-childbgdark)] dark:text-white  backdrop-blur-md shadow-xl"
               style={{ zIndex: 2000 }}
             >
               <div className="flex flex-col max-h-screen overflow-y-auto p-5 gap-5">
                 <div className=" self-start mb-2">
                   <div className=" relative">
                     <h2 className="  font-bold text-2xl">i<span className=" text-[var(--color-primary)]">big</span>data</h2>
-                    <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-primary)] font-normal border border-[var(--color-primary)] px-[5px] py-[1px]">Travel</p>
+                    <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-primary)] font-normal border border-[var(--color-primary)] px-[5px] py-[1px]">Domain</p>
                   </div>
-                  <p className=" text-gray-400 text-sm font-light mt-1">Travel Insights, Made Easy</p>
+                  <p className=" text-gray-400 text-sm font-light mt-1">Domain Insights, Made Easy</p>
                 </div>
                 {data.map((item, index) => (
                   <Link
                     key={index}
                     href={item.url}
-                    className="flex items-center gap-3 text-gray-950 text-lg py-2 px-2 rounded hover:bg-white/20 transition"
+                    className="flex items-center gap-3 text-gray-950 dark:text-white text-lg py-2 px-2 rounded hover:bg-white/20 transition"
                     onClick={() => setOpen(false)}
                   >
                     <span>{item.icon}</span>

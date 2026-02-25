@@ -14,9 +14,9 @@ const InputField: React.FC<{
       onChange={onChange}
       placeholder=" "
       className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none 
-        ${error ? "border-red-500 focus:border-red-500" : "border-gray-400 focus:border-blue-500"}`}
+        ${error ? "border-red-500 focus:border-red-500" : "border-gray-400 max-sm:dark:border-gray-700 focus:border-blue-500"}`}
     />
-    <p className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+    <p className={`absolute left-2 bg-white max-sm:dark:bg-[var(--color-childbgdark)] max-sm:dark:bg-[var(--color-childbgdark)] px-1 text-gray-500 text-sm transition-all duration-300
       ${value || error ? "-top-2 text-xs text-blue-500" : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}>
       {label}
     </p>

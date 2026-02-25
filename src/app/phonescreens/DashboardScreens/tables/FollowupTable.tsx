@@ -75,7 +75,7 @@ export default function FollowupTable<T extends Record<string, any>>({
                         arr.findIndex((row) => row.customerid === item.customerid) === index //keeps only first occurrence
                 ).map((lead, index) => {
 
-                    return <div key={index} className="w-full  bg-white shadow-md rounded-xl overflow-hidden border border-gray-200 mb-0">
+                    return <div key={index} className="w-full  bg-white dark:bg-[var(--color-childbgdark)] dark:border-none shadow-md rounded-xl overflow-hidden border border-gray-200 mb-0">
                         <div className="bg-[var(--color-primary)] h-2"></div>
 
                         <div className="flex justify-between items-start p-4">
@@ -87,13 +87,13 @@ export default function FollowupTable<T extends Record<string, any>>({
                                         key={j}
                                         className="mb-2 grid grid-cols-[1fr_auto_2fr] items-center gap-2"
                                     >
-                                        <span className="font-semibold text-black">
+                                        <span className="font-semibold text-black dark:text-[var(--color-primary-light)]">
                                             {item.label}{ }
                                         </span>
 
                                         <span className="text-gray-500">-</span>
 
-                                        <span className="text-gray-700  break-words">
+                                        <span className="text-gray-700 dark:text-[var(--color-primary-lighter)] break-words">
                                             {String(lead[item.key])}
                                         </span>
                                     </div>
@@ -103,7 +103,7 @@ export default function FollowupTable<T extends Record<string, any>>({
 
                             <button
                                 onClick={() => onAdd?.(lead.customerid)}
-                                className="p-2 bg-gray-100 rounded-full shadow text-[var(--color-primary)]"
+                                className="p-2 bg-gray-100 dark:bg-[var(--color-primary)] dark:text-white rounded-full shadow text-[var(--color-primary)]"
                             >
                                 <MdAdd size={20} />
 

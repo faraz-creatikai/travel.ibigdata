@@ -3,15 +3,16 @@
 import { BrickWallFire, Podcast, School, Cable, ShieldUser, NotebookTabs } from "lucide-react";
 import ImageSlider from "./ImageSlider";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 const SmallScreenData = () => {
-
+ const { admin, isLoading, login } = useAuth();
 
   const boxeButtons = [
     {
       pTag: "Campigns",
       icon: <BrickWallFire size={34} />,
       color: " backdrop-blur-[2px] bg-red-600",
-      url: "/masters/campaign"
+      url: `${admin?.role!=="administrator"?"/masters/campaign/allcampaigns":"/masters/campaign"}`
 
     },
     {

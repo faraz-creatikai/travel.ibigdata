@@ -35,6 +35,11 @@ export interface FeedbackData {
   [key: string]: any;
 }
 
+export interface FollowupByMonthsData {
+  thisMonth: string | number;
+  nextMonth: string | number;
+}
+
 export function useDashboardData() {
   const [dashboardSectionOneCardData, setDashboardSectionOneCardData] = useState<DashboardCard[]>([
     {
@@ -76,6 +81,7 @@ export function useDashboardData() {
 
   const [locationStats, setLocationStats] = useState<LocationData[]>([]);
    const [feedbackStats, setFeedbackStats] = useState<FeedbackData[]>([]);
+   const [followupByMonths, setFollowupByMonths] = useState<FollowupByMonthsData>({thisMonth:"",nextMonth:""});
 
   return {
     dashboardSectionOneCardData,
@@ -86,5 +92,7 @@ export function useDashboardData() {
     setLocationStats,
     feedbackStats,
     setFeedbackStats,
+    followupByMonths,
+    setFollowupByMonths
   };
 }

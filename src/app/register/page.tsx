@@ -33,13 +33,13 @@ const Register = () => {
   const togglePassword = () => {
     setShowPassword(!showPassword)
   };
-  const [currentYear,setCurrentYear]=useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
 
 
-useEffect(()=>{
-  const date = new Date();
+  useEffect(() => {
+    const date = new Date();
     setCurrentYear(date.getFullYear());
-},[])
+  }, [])
 
   /*   if (isLoading || loading) {
       return (
@@ -142,214 +142,210 @@ useEffect(()=>{
       }} />
       }
       <div className="min-h-screen w-full flex justify-center bg-center bg-cover">
-  <Toaster position="top-right" />
+        <Toaster position="top-right" />
 
-  {/* LEFT PANEL (DESKTOP ONLY) */}
-  <div className="relative w-full flex flex-col items-center justify-between bg-[var(--color-primary-lighter)] p-10 max-lg:hidden">
-    <div className="self-start">
-      <div className=" relative">
-      <h2 className="font-bold text-2xl">
-        i<span className="text-[var(--color-primary)]">big</span>data
-      </h2>
-       <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-primary)] font-normal border border-[var(--color-primary)] px-[5px] py-[1px]">Travel</p>
-      </div>
-      <p className="text-gray-400 text-sm font-light mt-1">
-        Travel Insights, Made Easy
-      </p>
-    </div>
+        {/* LEFT PANEL (DESKTOP ONLY) */}
+        <div className="relative w-full flex flex-col items-center justify-between bg-[var(--color-primary-lighter)] dark:bg-[var(--color-secondary-darker)] p-10 max-lg:hidden">
+          <div className="self-start">
+            <div className=" relative">
+              <h2 className="font-bold text-2xl">
+                i<span className="text-[var(--color-secondary)]">big</span>data
+              </h2>
+              <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-secondary)] font-normal border border-[var(--color-secondary)] px-[5px] py-[1px]">Domain</p>
+            </div>
+            <p className="text-gray-400 text-sm font-light mt-1">
+              Domain Insights, Made Easy
+            </p>
+          </div>
 
-    <div className="text-center max-w-[300px]">
-      <img src="travel.png" className="w-full h-full" />
-    </div>
+          <div className="text-center max-w-[350px]">
+            <img src="logo-register.png" className="w-full h-full" />
+          </div>
 
-    <div className="self-start text-gray-500">
-      <h2 className="text-[var(--color-primary)] text-2xl font-bold mb-1">
-        Create Account
-      </h2>
-      <p>Register to manage everything efficiently.</p>
-    </div>
-  </div>
+          <div className="self-start text-gray-500">
+            <h2 className="text-[var(--color-secondary)] text-2xl font-bold mb-1">
+              Create Account
+            </h2>
+            <p>Register to manage everything efficiently.</p>
+          </div>
+        </div>
 
-  {/* RIGHT PANEL */}
-  <div className="flex flex-col justify-between items-center w-full max-lg:bg-[url('/loginbg.jpeg')] max-lg:bg-cover max-lg:bg-center max-lg:bg-no-repeat min-h-full bg-white 
-    max-lg:text-white max-lg:bg-linear-to-b 
+        {/* RIGHT PANEL */}
+        <div className="flex flex-col justify-between items-center w-full max-lg:bg-[url('/loginbg.png')] max-lg:bg-cover max-lg:bg-center max-lg:bg-no-repeat min-h-full bg-white 
+    max-lg:text-white dark:bg-linear-to-b dark:from-[var(--color-primary)] dark:to-[var(--color-secondary)] max-lg:text-white max-lg:bg-linear-to-b max-lg:from-[var(--color-primary)]  max-lg:bg-linear-to-b 
     max-lg:from-[var(--color-primary)] max-lg:to-fuchsia-900 px-1">
 
-    {/* MOBILE HEADER */}
-    <div className="self-start w-full px-5 py-5">
-      <div className="lg:hidden">
-        <div className=" relative">
-        <h2 className="font-bold text-2xl">
-          i<span className="text-[var(--color-primary-lighter)]">big</span>data
-        </h2>
-        <p className=" absolute top-0  left-[90px] text-[8px] rounded-xl text-[var(--color-primary-lighter)] font-normal border border-[var(--color-primary-lighter)] px-[5px] py-[1px]">Travel</p>
-        </div>
-        <p className="text-[var(--color-primary-light)] text-sm font-light mt-1">
-          Travel Insights, Made Easy
-        </p>
-      </div>
-    </div>
+          {/* MOBILE HEADER */}
+          <div className="self-start w-full px-5 py-5">
+            <div className="lg:hidden">
+              <div className=" relative">
+                <h2 className="font-bold text-2xl">
+                  i<span className="text-[var(--color-primary-lighter)]">big</span>data
+                </h2>
+                <p className=" absolute top-0  left-[90px] text-[8px] rounded-xl text-[var(--color-primary-lighter)] font-normal border border-[var(--color-primary-lighter)] px-[5px] py-[1px]">Domain</p>
+              </div>
+              <p className="text-[var(--color-primary-light)] text-sm font-light mt-1">
+                Domain Insights, Made Easy
+              </p>
+            </div>
+          </div>
 
-    {/* FORM CARD */}
-    <div className="w-full max-w-[500px] flex flex-col justify-center items-center 
+          {/* FORM CARD */}
+          <div className="w-full max-w-[500px] flex flex-col justify-center items-center 
       p-4 lg:p-8 py-8 rounded-lg bg-white">
 
-      <h3 className="text-2xl font-semibold text-[var(--color-primary)] text-center mb-6">
-        Register Account
-      </h3>
+            <h3 className="text-2xl font-semibold text-[var(--color-primary)] text-center ">
+              Register Account
+            </h3>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
 
-        {/* FULL NAME */}
-        <div className="relative mt-2">
-          <FaUserAlt className="absolute left-3 top-3 text-gray-800" />
-          <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            type="text"
-            id="name"
-            required
-            className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
+              {/* FULL NAME */}
+              <div className="relative mt-2">
+                <FaUserAlt className="absolute left-3 top-3 text-gray-800" />
+                <input
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  type="text"
+                  id="name"
+                  required
+                  className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
               text-gray-800 focus:border-purple-300 focus:outline-none bg-transparent"
-          />
-          <label
-            htmlFor="name"
-            className={`absolute left-10 transition-all duration-200 ${
-              name
-                ? "-top-1.5 text-[var(--color-primary)] text-sm"
-                : "top-3 text-gray-800 text-base"
-            } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
-          >
-            Full Name
-          </label>
-        </div>
+                />
+                <label
+                  htmlFor="name"
+                  className={`absolute left-10 transition-all duration-200 ${name
+                    ? "-top-1.5 text-[var(--color-primary)] text-sm"
+                    : "top-3 text-gray-800 text-base"
+                    } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
+                >
+                  Full Name
+                </label>
+              </div>
 
-        {/* EMAIL */}
-        <div className="relative mt-2">
-          <FaUserAlt className="absolute left-3 top-3 text-gray-800" />
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            type="email"
-            id="email"
-            required
-            className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
+              {/* EMAIL */}
+              <div className="relative mt-2">
+                <FaUserAlt className="absolute left-3 top-3 text-gray-800" />
+                <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  type="email"
+                  id="email"
+                  required
+                  className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
               text-gray-800 focus:border-purple-300 focus:outline-none bg-transparent"
-          />
-          <label
-            htmlFor="email"
-            className={`absolute left-10 transition-all duration-200 ${
-              email
-                ? "-top-1.5 text-[var(--color-primary)] text-sm"
-                : "top-3 text-gray-800 text-base"
-            } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
-          >
-            Email Address
-          </label>
-        </div>
+                />
+                <label
+                  htmlFor="email"
+                  className={`absolute left-10 transition-all duration-200 ${email
+                    ? "-top-1.5 text-[var(--color-primary)] text-sm"
+                    : "top-3 text-gray-800 text-base"
+                    } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
+                >
+                  Email Address
+                </label>
+              </div>
 
-        {/* PASSWORD */}
-        <div className="relative mt-4">
-          <FaLock className="absolute left-3 top-3 text-gray-800" />
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            type={showPassword ? "text" : "password"}
-            id="password"
-            required
-            className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
+              {/* PASSWORD */}
+              <div className="relative mt-4">
+                <FaLock className="absolute left-3 top-3 text-gray-800" />
+                <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  required
+                  className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
               text-gray-800 focus:border-purple-300 focus:outline-none bg-transparent"
-          />
-          <label
-            htmlFor="password"
-            className={`absolute left-10 transition-all duration-200 ${
-              password
-                ? "-top-1.5 text-[var(--color-primary)] text-sm"
-                : "top-3 text-gray-800 text-base"
-            } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
-          >
-            Password
-          </label>
-          <button
-            type="button"
-            onClick={togglePassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
-        </div>
+                />
+                <label
+                  htmlFor="password"
+                  className={`absolute left-10 transition-all duration-200 ${password
+                    ? "-top-1.5 text-[var(--color-primary)] text-sm"
+                    : "top-3 text-gray-800 text-base"
+                    } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
+                >
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={togglePassword}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
 
-        {/* PASSWORD RULES */}
-        <div className="flex flex-col gap-1 text-sm font-extralight">
-          {passwordRules.map((rule, idx) => {
-            const passed = rule.test.test(password);
-            return (
-              passwordError === rule.message && (
-                <p key={idx} className={passed ? "text-green-500" : "text-red-500"}>
-                  {rule.message}
-                </p>
-              )
-            );
-          })}
-        </div>
+              {/* PASSWORD RULES */}
+              <div className="flex flex-col gap-1 text-sm font-extralight">
+                {passwordRules.map((rule, idx) => {
+                  const passed = rule.test.test(password);
+                  return (
+                    passwordError === rule.message && (
+                      <p key={idx} className={passed ? "text-green-500" : "text-red-500"}>
+                        {rule.message}
+                      </p>
+                    )
+                  );
+                })}
+              </div>
 
-        {/* PHONE */}
-        <div className="relative ">
-          <FaPhone className="absolute left-3 top-3 text-gray-800 rotate-[100deg]" />
-          <input
-            onChange={(e) => {
-              const value = e.target.value.trim();
-              setPhone(value);
-              setPhoneError(validatePhone(value));
-            }}
-            value={phone}
-            type="text"
-            id="phone"
-            className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
+              {/* PHONE */}
+              <div className="relative ">
+                <FaPhone className="absolute left-3 top-3 text-gray-800 rotate-[100deg]" />
+                <input
+                  onChange={(e) => {
+                    const value = e.target.value.trim();
+                    setPhone(value);
+                    setPhoneError(validatePhone(value));
+                  }}
+                  value={phone}
+                  type="text"
+                  id="phone"
+                  className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 
               text-gray-800 focus:border-purple-300 focus:outline-none bg-transparent"
-          />
-          <label
-            htmlFor="phone"
-            className={`absolute left-10 transition-all duration-200 ${
-              phone
-                ? "-top-1.5 text-[var(--color-primary)] text-sm"
-                : "top-3 text-gray-800 text-base"
-            } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
-          >
-            Phone Number
-          </label>
-          {phoneError && (
-            <p className="text-red-500 text-sm mt-1">{phoneError}</p>
-          )}
-        </div>
+                />
+                <label
+                  htmlFor="phone"
+                  className={`absolute left-10 transition-all duration-200 ${phone
+                    ? "-top-1.5 text-[var(--color-primary)] text-sm"
+                    : "top-3 text-gray-800 text-base"
+                    } peer-focus:-top-1.5 peer-focus:text-[var(--color-primary)] peer-focus:text-sm`}
+                >
+                  Phone Number
+                </label>
+                {phoneError && (
+                  <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+                )}
+              </div>
 
-        {/* SUBMIT */}
-        <button
-          type={loading ? "button" : "submit"}
-          disabled={loading}
-          className="w-full py-3 mt-2 text-white text-lg font-medium rounded-full 
+              {/* SUBMIT */}
+              <button
+                type={loading ? "button" : "submit"}
+                disabled={loading}
+                className="w-full py-3 mt-2 text-white text-lg font-medium rounded-full 
             bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-darker)]
             hover:from-[var(--color-primary-dark)] hover:to-[var(--color-secondary-darker)]
             transition disabled:opacity-60"
-        >
-          {loading ? "Registering..." : "Register"}
-        </button>
-      </form>
+              >
+                {loading ? "Registering..." : "Register"}
+              </button>
+            </form>
 
-      {/* FOOTER LINK */}
-      <div className="mt-6 flex justify-center gap-1 text-sm text-gray-800">
-        <p>Already have an account?</p>
-        <Link href="/admin" className="text-[var(--color-primary)] hover:underline">
-          Login
-        </Link>
+            {/* FOOTER LINK */}
+            <div className="mt-6 flex justify-center gap-1 text-sm text-gray-800">
+              <p>Already have an account?</p>
+              <Link href="/admin" className="text-[var(--color-primary)] hover:underline">
+                Login
+              </Link>
+            </div>
+          </div>
+
+          <div className="text-[var(--color-primary-light)] text-sm my-5">
+            &copy;{currentYear} ibigdata, all rights reserved
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div className="text-[var(--color-primary-light)] text-sm my-10">
-      &copy;{currentYear} ibigdata, all rights reserved
-    </div>
-  </div>
-</div>
 
     </>
   );

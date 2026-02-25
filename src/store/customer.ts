@@ -155,6 +155,9 @@ export const assignCustomer = async (data: customerAssignInterface) => {
     });
 
     if (!response.ok) {
+      let data = await response.json();
+     console.log(" status code is ",data)
+     return data;
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 

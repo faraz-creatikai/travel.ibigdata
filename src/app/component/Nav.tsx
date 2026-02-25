@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import ProtectedRoute from "./ProtectedRoutes";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { Moon, Sun } from "lucide-react";
+import { useThemeCustom } from "@/context/ThemeContext";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<
@@ -22,6 +24,8 @@ export default function Navbar() {
   const notificationsRef = useRef<HTMLLIElement>(null);
   const quickAddRef = useRef<HTMLLIElement>(null);
   const adminMailRef = useRef<HTMLLIElement>(null);
+  const { dark, toggleTheme } = useThemeCustom();
+
 
   const quickadds = [
     {name: "Add References", link: "/masters/references/add"},
@@ -68,8 +72,14 @@ export default function Navbar() {
 
   return (
     <ProtectedRoute>
-      <div className="flex justify-end items-end bg-white max-sm:bg-[var(--color-primary)] max-sm:text-white text-gray-800">
-        <div className=" max-md:hidden" />
+      <div className="flex justify-end items-center bg-white max-sm:bg-[var(--color-primary)] max-sm:text-white text-gray-800">
+        {/* <div className=" max-md:hidden" /> */}
+         <button
+                                  onClick={toggleTheme}
+                                  className="p-2 rounded-md hover:bg-gray-200  transition"
+                                >
+                                  {dark ? <Sun size={18} /> : <Moon size={18} />}
+                                </button>
         <nav className="px-2" style={{ zIndex: 1000 }}>
           <ul className="flex">
             {/* Notifications */}
