@@ -205,9 +205,9 @@ useEffect(()=>{
                 <div className=" self-start mb-2">
                   <div className=" relative">
                     <h2 className="  font-bold text-2xl">i<span className=" text-[var(--color-primary)]">big</span>data</h2>
-                    <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-primary)] font-normal border border-[var(--color-primary)] px-[5px] py-[1px]">Domain</p>
+                    <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-primary)] font-normal border border-[var(--color-primary)] px-[5px] py-[1px]">Travel</p>
                   </div>
-                  <p className=" text-gray-400 text-sm font-light mt-1">Domain Insights, Made Easy</p>
+                  <p className=" text-gray-400 text-sm font-light mt-1">Travel Insights, Made Easy</p>
                 </div>
                 {data.map((item, index) => (
                   <Link

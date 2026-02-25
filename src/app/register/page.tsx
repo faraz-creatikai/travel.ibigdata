@@ -151,10 +151,10 @@ const Register = () => {
               <h2 className="font-bold text-2xl">
                 i<span className="text-[var(--color-secondary)]">big</span>data
               </h2>
-              <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-secondary)] font-normal border border-[var(--color-secondary)] px-[5px] py-[1px]">Domain</p>
+              <p className=" absolute top-0  right-12 text-[8px] rounded-xl text-[var(--color-secondary)] font-normal border border-[var(--color-secondary)] px-[5px] py-[1px]">Travel</p>
             </div>
             <p className="text-gray-400 text-sm font-light mt-1">
-              Domain Insights, Made Easy
+              Travel Insights, Made Easy
             </p>
           </div>
 
@@ -182,10 +182,10 @@ const Register = () => {
                 <h2 className="font-bold text-2xl">
                   i<span className="text-[var(--color-primary-lighter)]">big</span>data
                 </h2>
-                <p className=" absolute top-0  left-[90px] text-[8px] rounded-xl text-[var(--color-primary-lighter)] font-normal border border-[var(--color-primary-lighter)] px-[5px] py-[1px]">Domain</p>
+                <p className=" absolute top-0  left-[90px] text-[8px] rounded-xl text-[var(--color-primary-lighter)] font-normal border border-[var(--color-primary-lighter)] px-[5px] py-[1px]">Travel</p>
               </div>
               <p className="text-[var(--color-primary-light)] text-sm font-light mt-1">
-                Domain Insights, Made Easy
+                Travel Insights, Made Easy
               </p>
             </div>
           </div>
