@@ -5,14 +5,16 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, subtitles = [] }: PageHeaderProps) {
     return (
-        <div className="flex justify-between items-center mb-6 ">
-            <h1 className="text-2xl p-2 font-semibold text-[var(--color-secondary-darker)] tracking-wide">
-                {title} {
-                    subtitles.map((sub, index) => (<span key={sub+index} className="text-[var(--color-primary)] font-light  text-sm"> / {sub}</span>))
-                }
+        <div className="flex items-center gap-3">
+            <div className="w-1 h-7 rounded-full bg-[var(--color-primary)]" />
+            <h1 className="text-xl font-semibold text-slate-800 tracking-tight">
+                {title}
+                {subtitles.map((sub, index) => (
+                    <span key={sub + index} className="text-[var(--color-primary)]/60 font-normal text-sm ml-2">
+                        / {sub}
+                    </span>
+                ))}
             </h1>
-        </div> 
-
+        </div>
     );
 }
-

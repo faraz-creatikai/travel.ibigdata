@@ -1923,824 +1923,627 @@ export default function Customer() {
 
         {/* ---------- TABLE START ---------- */}
 
-        <div className="p-4 px-0 max-md:p-3 w-full rounded-md bg-white max-[450px]:hidden">
-          <div className="flex justify-between items-center p-2 px-4">
-            <PageHeader title="Dashboard" subtitles={["Customer"]} />
-            <div className=" flex items-center gap-4">
-              {
-                admin?.role === "administrator" && <button className=" flex justify-center items-center gap-1 hover:bg-[var(--color-primary-light)] cursor-pointer text-[var(--color-primary)] text-sm bg-[var(--color-primary-lighter)] px-2 py-1 rounded-sm " onClick={() => {
-                  if (selectedCustomers.length === 0) {
-                    toast.error("Please select at least one customer to export")
-                    return
-                  }
-                  exportToExcel(exportingCustomerData, "customer_list")
-                }}>
-                  <CiExport /> Export
-                </button>
-              }
-              <AddButton
-                url="/customer/add"
-                text="Add"
-                icon={<PlusSquare size={18} />}
-              />
+        <div className="p-6 max-md:p-3 w-full rounded-xl bg-white shadow-sm border border-slate-100 max-[450px]:hidden">
+
+  {/* ── Header ── */}
+  <div className="flex justify-between items-center pb-5 border-b border-slate-100">
+    <PageHeader title="Dashboard" subtitles={["Customer"]} />
+    <div className="flex items-center gap-2">
+      {admin?.role === "administrator" && (
+        <button
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] bg-[var(--color-primary-lighter)] hover:bg-[var(--color-primary)] hover:text-white border border-[var(--color-primary)]/20 hover:border-transparent px-3 py-1.5 rounded-lg transition-all duration-200 cursor-pointer"
+          onClick={() => {
+            if (selectedCustomers.length === 0) {
+              toast.error("Please select at least one customer to export");
+              return;
+            }
+            exportToExcel(exportingCustomerData, "customer_list");
+          }}
+        >
+          <CiExport size={15} /> Export
+        </button>
+      )}
+      <AddButton url="/customer/add" text="Add Customer" icon={<PlusSquare size={15} />} />
+    </div>
+  </div>
+
+  {/* ── Advanced Search Panel ── */}
+  <section className="mt-5">
+    <div className="border border-slate-200 rounded-xl overflow-hidden">
+
+      {/* Toggle Header */}
+      <button
+        type="button"
+        className="w-full flex justify-between items-center px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors duration-150 cursor-pointer"
+        onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)}
+      >
+        <span className="flex items-center gap-2 text-sm font-medium text-slate-700">
+          <CiSearch size={17} />
+          Advanced Search
+        </span>
+        <span className="text-slate-400 transition-transform duration-300" style={{ transform: toggleSearchDropdown ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+          <IoIosArrowDown />
+        </span>
+      </button>
+
+      {/* Collapsible Body */}
+      <div className={`overflow-hidden transition-all duration-400 ease-in-out ${toggleSearchDropdown ? "max-h-[2000px]" : "max-h-0"}`}>
+        <div className="p-5 border-t border-slate-100 space-y-6">
+
+          {/* Filter Grid */}
+          <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 max-lg:grid-cols-2">
+            <ObjectSelect
+              options={Array.isArray(fieldOptions?.Campaign) ? fieldOptions.Campaign : []}
+              label={getLabel("Campaign", "Campaign")}
+              value={dependent.Campaign.id}
+              getLabel={(item) => item?.Name || ""}
+              getId={(item) => item?._id || ""}
+              onChange={(selectedId) => {
+                const selectedObj = fieldOptions.Campaign.find((i) => i._id === selectedId);
+                if (selectedObj) {
+                  const updatedFilters = { ...filters, Campaign: [selectedObj.Name], CustomerType: [], CustomerSubType: [] };
+                  setFilters(updatedFilters);
+                  setDependent(prev => ({ ...prev, Campaign: { id: selectedObj._id, name: selectedObj.Name }, CustomerType: { id: "", name: "" }, CustomerSubType: { id: "", name: "" } }));
+                  handleSelectChange("Campaign", selectedObj.Name, updatedFilters);
+                }
+              }}
+            />
+            <ObjectSelect
+              options={Array.isArray(fieldOptions?.CustomerType) ? fieldOptions.CustomerType : []}
+              label={getLabel("CustomerType", "Customer Type")}
+              value={dependent.CustomerType.name}
+              getLabel={(item) => item?.Name || ""}
+              getId={(item) => item?._id || ""}
+              onChange={(selectedId) => {
+                const selectedObj = fieldOptions.CustomerType.find((i) => i._id === selectedId);
+                if (selectedObj) {
+                  const updatedFilters = { ...filters, CustomerType: [selectedObj.Name], CustomerSubType: [] };
+                  setFilters(updatedFilters);
+                  setDependent(prev => ({ ...prev, CustomerType: { id: selectedObj._id, name: selectedObj.Name }, CustomerSubType: { id: "", name: "" } }));
+                  handleSelectChange("CustomerType", selectedObj.Name, updatedFilters);
+                }
+              }}
+            />
+            <ObjectSelect
+              options={Array.isArray(fieldOptions?.CustomerSubtype) ? fieldOptions.CustomerSubtype : []}
+              label={getLabel("CustomerSubType", "Customer Subtype")}
+              value={dependent.CustomerSubType.name}
+              getLabel={(item) => item?.Name || ""}
+              getId={(item) => item?._id || ""}
+              onChange={(selectedId) => {
+                const selectedObj = fieldOptions.CustomerSubtype.find((i) => i._id === selectedId);
+                if (selectedObj) {
+                  const updatedFilters = { ...filters, CustomerSubType: [selectedObj.Name] };
+                  setFilters(updatedFilters);
+                  setDependent(prev => ({ ...prev, CustomerSubType: { id: selectedObj._id, name: selectedObj.Name } }));
+                  handleSelectChange("CustomerSubType", selectedObj.Name, updatedFilters);
+                }
+              }}
+            />
+            <ObjectSelect
+              options={Array.isArray(fieldOptions?.City) ? fieldOptions.City : []}
+              label={getLabel("City", "City")}
+              value={dependent.City.id}
+              getLabel={(item) => item?.Name || ""}
+              getId={(item) => item?._id || ""}
+              onChange={(selectedId) => {
+                const selectedObj = fieldOptions.City.find((i) => i._id === selectedId);
+                if (selectedObj) {
+                  const updatedFilters = { ...filters, City: [selectedObj.Name], Location: [] };
+                  setFilters(updatedFilters);
+                  setDependent(prev => ({ ...prev, City: { id: selectedObj._id, name: selectedObj.Name }, Location: { id: "", name: "" } }));
+                  handleSelectChange("City", selectedObj.Name, updatedFilters);
+                }
+              }}
+            />
+            <ObjectSelect
+              options={Array.isArray(fieldOptions?.Location) ? fieldOptions.Location : []}
+              label={getLabel("Location", "Location")}
+              value={dependent.Location.id}
+              getLabel={(item) => item?.Name || ""}
+              getId={(item) => item?._id || ""}
+              onChange={(selectedId) => {
+                const selectedObj = fieldOptions.Location.find((i) => i._id === selectedId);
+                if (selectedObj) {
+                  const updatedFilters = { ...filters, Location: [selectedObj.Name] };
+                  setFilters(updatedFilters);
+                  setDependent(prev => ({ ...prev, Location: { id: selectedObj._id, name: selectedObj.Name } }));
+                  handleSelectChange("Location", selectedObj.Name, updatedFilters);
+                }
+              }}
+              isSearchable
+            />
+            <ObjectSelect
+              options={Array.isArray(fieldOptions?.SubLocation) ? fieldOptions.SubLocation : []}
+              label={getLabel("SubLocation", "Sub Location")}
+              value={dependent.SubLocation.id}
+              getLabel={(item) => item?.Name || ""}
+              getId={(item) => item?._id || ""}
+              onChange={(selectedId) => {
+                const selectedObj = fieldOptions.SubLocation.find((i) => i._id === selectedId);
+                if (selectedObj) {
+                  const updatedFilters = { ...filters, SubLocation: [selectedObj.Name] };
+                  setFilters(updatedFilters);
+                  setDependent(prev => ({ ...prev, SubLocation: { id: selectedObj._id, name: selectedObj.Name } }));
+                  handleSelectChange("SubLocation", selectedObj.Name, updatedFilters);
+                }
+              }}
+              isSearchable
+            />
+            <SingleSelect options={Array.isArray(fieldOptions?.ReferenceId) ? fieldOptions.ReferenceId : []} value={filters.ReferenceId[0]} label={getLabel("ReferenceId", "Reference Id")} onChange={(v) => handleSelectChange("ReferenceId", v)} isSearchable />
+            <SingleSelect options={Array.isArray(fieldOptions?.Price) ? fieldOptions.Price : []} value={filters.Price[0]} label={getLabel("Price", "Price")} onChange={(v) => handleSelectChange("Price", v)} isSearchable />
+            <SingleSelect options={Array.isArray(fieldOptions?.User) ? fieldOptions.User : []} value={filters.User[0]} label="User" onChange={(v) => handleSelectChange("User", v)} isSearchable />
+            <SingleSelect options={["10", "25", "50", "100"]} value={filters.Limit[0]} label="Limit" onChange={(v) => handleSelectChange("Limit", v)} />
+            <DateSelector label="From" value={filters.StartDate[0]} onChange={(v) => handleSelectChange("StartDate", v)} />
+            <DateSelector label="To" value={filters.EndDate[0]} onChange={(v) => handleSelectChange("EndDate", v)} />
+
+            {/* Favourite Toggle */}
+            <div className="flex items-end">
+              <input id="favouriteFilter" type="checkbox" className="hidden" checked={filters.isFavourite} onChange={(e) => handleSelectChange("isFavourite", e.target.checked)} />
+              <label
+                htmlFor="favouriteFilter"
+                className={`inline-flex items-center gap-2 h-10 px-4 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-200 w-full justify-center
+                  ${filters.isFavourite
+                    ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-sm"
+                    : "bg-white text-slate-600 border-slate-300 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                  }`}
+              >
+                {filters.isFavourite ? <MdFavorite size={15} /> : <MdFavoriteBorder size={15} />}
+                Favourites
+              </label>
             </div>
-
-
           </div>
 
+          {/* AI Genie Search */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+            <form
+              className="flex max-lg:flex-col gap-4 items-start"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (keywordInput.trim() === "") return;
+                setAiLoading(true);
+                setCurrentStep(STEPS.SEARCH);
+                aiGenieSearch();
+              }}
+            >
+              <div className="flex-1 w-full">
+                {/* Label */}
+                <div className="flex items-center gap-2 mb-1">
+                  {aiLoading
+                    ? <BounceLoader loading={true} color="var(--color-primary)" size={20} aria-label="Loading Spinner" data-testid="loader" />
+                    : <img className="w-5 h-5" src="/aiBot.png" />
+                  }
+                  <span className="text-sm font-semibold text-slate-700">AI Genie</span>
+                  {aiLoading && (
+                    <span className="flex items-center gap-1 text-xs text-slate-400">
+                      {currentStep}
+                      <BeatLoader size={2} color="gray" />
+                    </span>
+                  )}
+                </div>
 
-          {/* TABLE */}
-          <section className="flex flex-col mt-6 rounded-md">
-            <div className="m-5 relative">
+                {/* Input */}
+                <div className="flex items-center border border-slate-300 rounded-lg bg-white overflow-hidden focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-[var(--color-primary)]/10 transition-all duration-200">
+                  <input
+                    type="text"
+                    placeholder="What do you want to search?"
+                    className="outline-none flex-1 px-3 py-2.5 text-sm bg-transparent text-slate-700 placeholder:text-slate-400"
+                    value={keywordInput}
+                    onChange={(e) => setKeywordInput(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="px-3 py-2.5 text-slate-400 hover:text-slate-600 transition-colors"
+                    onClick={() => setToggleAiGenieSearchBy(!toggleAiGenieSearchBy)}
+                  >
+                    {toggleAiGenieSearchBy ? <FaCaretUp size={12} /> : <FaCaretDown size={12} />}
+                  </button>
+                </div>
 
-              <div className="flex justify-between cursor-pointer items-center py-1 px-2 border border-gray-800 rounded-md" onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)}>
-                <h3 className="flex items-center gap-1"><CiSearch />Advance Search</h3>
-                <button
-                  type="button"
-
-                  className="p-2 hover:bg-gray-200 rounded-md cursor-pointer"
-                >
-                  {toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                </button>
-              </div>
-
-              <div className={`overflow-hidden ${toggleSearchDropdown ? "overflow-visible max-h-[2000px]" : "overflow-hidden max-h-0"} transition-all duration-500 ease-in-out px-5`}>
-                <div className="flex flex-col gap-5 my-5">
-                  <div className="grid grid-cols-3 gap-5 max-md:grid-cols-1 max-lg:grid-cols-2">
-                    <ObjectSelect
-                      options={Array.isArray(fieldOptions?.Campaign) ? fieldOptions.Campaign : []}
-                      label={getLabel("Campaign", "Campaign")}
-                      value={dependent.Campaign.id}
-                      getLabel={(item) => item?.Name || ""}
-                      getId={(item) => item?._id || ""}
-                      onChange={(selectedId) => {
-                        const selectedObj = fieldOptions.Campaign.find((i) => i._id === selectedId);
-                        if (selectedObj) {
-                          const updatedFilters = {
-                            ...filters,
-                            Campaign: [selectedObj.Name],
-                            CustomerType: [],   // reset
-                            CustomerSubType: []
-                          };
-                          setFilters(updatedFilters);
-
-                          setDependent(prev => ({
-                            ...prev,
-                            Campaign: { id: selectedObj._id, name: selectedObj.Name },
-                            CustomerType: { id: "", name: "" },   // reset
-                            CustomerSubType: { id: "", name: "" }
-                          }));
-                          handleSelectChange("Campaign", selectedObj.Name, updatedFilters)
-                        }
-                      }}
-                    />
-
-                    <ObjectSelect
-                      options={Array.isArray(fieldOptions?.CustomerType) ? fieldOptions.CustomerType : []}
-                      label={getLabel("CustomerType", "Customer Type")}
-                      value={dependent.CustomerType.name}
-                      getLabel={(item) => item?.Name || ""}
-                      getId={(item) => item?._id || ""}
-                      onChange={(selectedId) => {
-                        const selectedObj = fieldOptions.CustomerType.find((i) => i._id === selectedId);
-                        if (selectedObj) {
-                          const updatedFilters = {
-                            ...filters,
-                            CustomerType: [selectedObj.Name],   // reset
-                            CustomerSubType: []
-                          };
-                          setFilters(updatedFilters);
-
-
-                          setDependent(prev => ({
-                            ...prev,
-                            CustomerType: { id: selectedObj._id, name: selectedObj.Name },   // reset
-                            CustomerSubType: { id: "", name: "" }
-                          }));
-                          handleSelectChange("CustomerType", selectedObj.Name, updatedFilters)
-                        }
-                      }}
-
-                    />
-
-                    <ObjectSelect
-                      options={Array.isArray(fieldOptions?.CustomerSubtype) ? fieldOptions.CustomerSubtype : []}
-                      label={getLabel("CustomerSubType", "Customer Subtype")}
-                      value={dependent.CustomerSubType.name}
-                      getLabel={(item) => item?.Name || ""}
-                      getId={(item) => item?._id || ""}
-                      onChange={(selectedId) => {
-
-                        const selectedObj = fieldOptions.CustomerSubtype.find((i) => i._id === selectedId);
-                        if (selectedObj) {
-                          const updatedFilters = {
-                            ...filters,
-                            CustomerSubType: [selectedObj.Name]
-                          };
-                          setFilters(updatedFilters);
-
-                          setDependent(prev => ({
-                            ...prev,
-                            CustomerSubType: { id: selectedObj._id, name: selectedObj.Name }
-                          }));
-                          handleSelectChange("CustomerSubType", selectedObj.Name, updatedFilters)
-                        }
-                      }}
-                    />
-
-
-                    <ObjectSelect
-                      options={Array.isArray(fieldOptions?.City) ? fieldOptions.City : []}
-                      label={getLabel("City", "City")}
-                      value={dependent.City.id}
-                      getLabel={(item) => item?.Name || ""}
-                      getId={(item) => item?._id || ""}
-                      onChange={(selectedId) => {
-                        const selectedObj = fieldOptions.City.find((i) => i._id === selectedId);
-                        if (selectedObj) {
-                          const updatedFilters = {
-                            ...filters,
-                            City: [selectedObj.Name],
-                            Location: []
-                          };
-                          setFilters(updatedFilters);
-
-                          setDependent(prev => ({
-                            ...prev,
-                            City: { id: selectedObj._id, name: selectedObj.Name },
-                            Location: { id: "", name: "" },
-                          }));
-                          handleSelectChange("City", selectedObj.Name, updatedFilters)
-                        }
-                      }}
-                    />
-                    <ObjectSelect
-                      options={Array.isArray(fieldOptions?.Location) ? fieldOptions.Location : []}
-                      label={getLabel("Location", "Location")}
-                      value={dependent.Location.id}
-                      getLabel={(item) => item?.Name || ""}
-                      getId={(item) => item?._id || ""}
-                      onChange={(selectedId) => {
-                        const selectedObj = fieldOptions.Location.find((i) => i._id === selectedId);
-                        if (selectedObj) {
-                          const updatedFilters = {
-                            ...filters,
-                            Location: [selectedObj.Name]
-                          };
-                          setFilters(updatedFilters);
-
-                          setDependent(prev => ({
-                            ...prev,
-                            Location: { id: selectedObj._id, name: selectedObj.Name },
-                          }));
-                          handleSelectChange("Location", selectedObj.Name, updatedFilters)
-                        }
-                      }}
-                      isSearchable
-                    />
-                    <ObjectSelect
-                      options={Array.isArray(fieldOptions?.SubLocation) ? fieldOptions.SubLocation : []}
-                      label={getLabel("SubLocation", "Sub Location")}
-                      value={dependent.SubLocation.id}
-                      getLabel={(item) => item?.Name || ""}
-                      getId={(item) => item?._id || ""}
-                      onChange={(selectedId) => {
-                        const selectedObj = fieldOptions.SubLocation.find((i) => i._id === selectedId);
-                        if (selectedObj) {
-                          const updatedFilters = {
-                            ...filters,
-                            SubLocation: [selectedObj.Name]
-                          };
-                          setFilters(updatedFilters);
-                          setDependent(prev => ({
-                            ...prev,
-                            SubLocation: { id: selectedObj._id, name: selectedObj.Name },
-                          }));
-                          handleSelectChange("SubLocation", selectedObj.Name, updatedFilters)
-                        }
-                      }}
-                      isSearchable
-                    />
-                    <SingleSelect options={Array.isArray(fieldOptions?.ReferenceId) ? fieldOptions.ReferenceId : []} value={filters.ReferenceId[0]} label={getLabel("ReferenceId", "Reference Id")} onChange={(v) => handleSelectChange("ReferenceId", v)} isSearchable />
-                    <SingleSelect options={Array.isArray(fieldOptions?.Price) ? fieldOptions.Price : []} value={filters.Price[0]} label={getLabel("Price", "Price")} onChange={(v) => handleSelectChange("Price", v)} isSearchable />
-                    {/* <SingleSelect options={Array.isArray(fieldOptions?.isFavourite) ? fieldOptions.isFavourite : []} value={filters.isFavourite[0]} label="favroutie" onChange={(v) => handleSelectChange("isFavourite", v)}  /> */}
-
-                    <SingleSelect options={Array.isArray(fieldOptions?.User) ? fieldOptions.User : []} value={filters.User[0]} label="User" onChange={(v) => handleSelectChange("User", v)} isSearchable />
-
-                    <SingleSelect options={["10", "25", "50", "100"]} value={filters.Limit[0]} label="Limit" onChange={(v) => {
-
-                      handleSelectChange("Limit", v)
-                    }} />
-                    <DateSelector label="From" value={filters.StartDate[0]} onChange={(v) => handleSelectChange("StartDate", v)} />
-                    <DateSelector label="To" value={filters.EndDate[0]} onChange={(v) => handleSelectChange("EndDate", v)} />
-                    <div>
-
-                      <input
-                        id="favouriteFilter"
-                        type="checkbox"
-                        className="hidden"
-                        checked={filters.isFavourite}
-                        onChange={(e) =>
-                          handleSelectChange("isFavourite", e.target.checked)
-                        }
-                      />
-
-                      <label
-                        htmlFor="favouriteFilter"
-                        className={`
-        inline-flex items-center justify-center
-        h-10 px-4 rounded-md border
-        text-sm font-medium cursor-pointer
-        transition-colors duration-200 gap-2
-                 ${filters.isFavourite
-                            ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
-                            : "bg-white text-gray-700 border-gray-300"
-                          }
-  `}
+                {/* Search Fields Selector */}
+                <div className={`overflow-hidden transition-all duration-300 ${toggleAiGenieSearchBy ? "max-h-[200px] mt-3" : "max-h-0"}`}>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {SEARCH_FIELDS.filter(f => !filters.SearchIn.includes(f)).map((field) => (
+                      <button
+                        key={field}
+                        type="button"
+                        className="px-2.5 py-1 border border-slate-300 rounded-md text-xs text-slate-600 hover:bg-[var(--color-primary-lighter)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all duration-150"
+                        onClick={() => setFilters(prev => ({ ...prev, SearchIn: [...prev.SearchIn, field] }))}
                       >
-                        {filters.isFavourite ? <MdFavorite /> : <MdFavoriteBorder />}
-                        Favourite
-                      </label>
-                    </div>
+                        {field.toLowerCase()}
+                      </button>
+                    ))}
                   </div>
-
-
-                </div>
-
-                {/* Keyword Search */}
-                <form className="flex  max-lg:flex-col justify-between items-center gap-2"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (keywordInput.trim() === "")
-                      return
-                    setAiLoading(true);
-                    setCurrentStep(STEPS.SEARCH)
-                    aiGenieSearch();
-                  }}
-                >
-
-                  <div className=" w-[80%] ">
-                    <div>
-                      <label className="flex gap-1 mb-2 items-center text-sm font-bold text-[var(--color-secondary-darker)] ml-1">{aiLoading ? <span>
-                        <BounceLoader
-                          loading={true}
-                          color="var(--color-primary)"
-                          size={25}
-                          aria-label="Loading Spinner"
-                          data-testid="loader"
-                        /></span> : <span><img className=" w-[25px] " src="/aiBot.png" /></span>
-                      }
-                        <div className="">AI Genie</div>
-
-
-                      </label>
-                      <p className={`text-gray-400 font-light text-xs ml-2 mb-2  flex items-center gap-[1px] `}>
-                        <span
-                          className={`transition-opacity duration-300 `}
-                        >
-                          {currentStep}
-                        </span>
-
-                        {aiLoading && <span className="translate-y-[2px]">
-                          <BeatLoader size={2} color="gray" />
-                        </span>}
-
-                      </p>
-                      <div className="">
-                        <div className=" flex justify-between items-center border border-gray-300 rounded-md w-full">
-                          <input
-                            type="text"
-                            placeholder="What you want to search?"
-                            className="outline-none w-full px-3 py-2 "
-                            value={keywordInput}
-                            onChange={(e) => setKeywordInput(e.target.value)}
-                          />
-                          <span className=" cursor-pointer mr-3" onClick={() => setToggleAiGenieSearchBy(!toggleAiGenieSearchBy)}>{toggleAiGenieSearchBy ? <FaCaretUp /> : <FaCaretDown />}</span>
-                        </div>
-
-                        <div className={` mt-5 overflow-hidden transition-all duration-300 ${toggleAiGenieSearchBy ? " h-[150px]" : " h-0"}`}>
-                          {/* Unselected Fields */}
-                          <div className="flex flex-wrap gap-2 px-3 mb-5">
-                            {SEARCH_FIELDS.filter(f => !filters.SearchIn.includes(f)).map((field) => (
-                              <button
-                                key={field}
-                                type="button"
-                                className="px-2 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-100 transition"
-                                onClick={() =>
-                                  setFilters(prev => ({
-                                    ...prev,
-                                    SearchIn: [...prev.SearchIn, field],
-                                  }))
-                                }
-                              >
-                                {field.toLowerCase()}
-                              </button>
-                            ))}
+                  {filters.SearchIn.length > 0 && (
+                    <>
+                      <p className="text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">Selected</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {filters.SearchIn.map((field) => (
+                          <div key={field} className="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs bg-[var(--color-primary-lighter)] text-[var(--color-primary)] border border-[var(--color-primary)]/20">
+                            {field.toLowerCase()}
+                            <button
+                              type="button"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                              onClick={() => setFilters(prev => ({ ...prev, SearchIn: prev.SearchIn.filter(f => f !== field) }))}
+                            >
+                              <IoMdClose size={11} />
+                            </button>
                           </div>
-
-                          {/* Selected Fields */}
-                          <div className="">
-                            {filters.SearchIn.length > 0 && <h5 className=" text-gray-500 text-sm my-2 mx-2">Selected</h5>}
-                            <div className="flex flex-wrap gap-2 px-3">
-
-                              {filters.SearchIn.map((field) => (
-                                <div
-                                  key={field}
-                                  className="group relative flex items-center px-2 py-1 border border-blue-400 rounded-md text-sm bg-blue-100"
-                                >
-                                  {field.toLowerCase()}
-                                  <button
-                                    className="ml-2 opacity-0 cursor-pointer group-hover:opacity-100 transition-opacity text-sm text-[var(--color-primary)]"
-                                    onClick={() =>
-                                      setFilters(prev => ({
-                                        ...prev,
-                                        SearchIn: prev.SearchIn.filter(f => f !== field),
-                                      }))
-                                    }
-                                  >
-                                    <IoMdClose />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-
-                    </div>
-
-
-
-
-                  </div>
-
-                  <div className={` flex justify-center items-center w-[30%] transition duration-300  ${toggleAiGenieSearchBy ? " lg:-mt-32" : " lg:mt-5"} `}>
-                    {!aiLoading ? <button type="submit" className="border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 cursor-pointer px-3 py-2  rounded-md">
-                      Explore
-                    </button> : <button type="button" className="flex gap-1 justify-center items-center border border-[var(--color-primary)]  bg-[var(--color-primary)] text-white transition-all duration-300 cursor-pointer px-3 py-2  rounded-md">
-                      Exploring <HashLoader
-                        loading={true}
-                        color="white"
-                        size={12}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                      />
-                    </button>}
-
-                    <button type="reset" onClick={clearFilter} className="text-red-500 cursor-pointer hover:underline text-sm px-5 py-2  rounded-md ml-3">
-                      Clear Search
-                    </button>
-                  </div>
-                </form>
-
-              </div>
-            </div>
-            <div className="  relative" ref={scrollRef}>
-
-              <div className=" flex justify-between items-center sticky top-0 left-0 overflow-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full">
-                <div className="flex gap-10 items-center px-3 py-4 min-w-max text-gray-700">
-
-                  <label htmlFor="selectall" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer">
-                    <div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
-                    <span className="relative">Select All</span>
-                  </label>
-                  <button type="button" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer" onClick={() => {
-                    if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
-                    else {
-                      setIsAssignOpen(true);
-                      fetchUsers()
-                    } 0
-                  }}><div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
-                    <span className="relative">Asign To</span></button>
-                  <button type="button" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer" onClick={() => {
-                    if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
-                    else {
-                      setIsMailAllOpen(true);
-                      fetchEmailTemplates()
-                    }
-                  }}><div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
-                    <span className="relative">Email All</span></button>
-                  <button type="button" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer" onClick={() => {
-                    if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
-                    else {
-                      setIsWhatsappAllOpen(true);
-                      fetchWhatsappTemplates()
-                    }
-                  }}><div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
-                    <span className="relative">SMS All</span></button>
-                  {/*                 <button type="button" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer">
-                  <div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
-                  <span className="relative ">Mass Update</span>
-                </button> */}
-
-                  {
-                    admin?.role !== "user" && <button type="button" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer" onClick={() => {
-                      if (customerData.length > 0) {
-                        if (selectedCustomers.length < 1) {
-                          const firstPageIds = currentRows.map((c) => c._id);
-                          setSelectedCustomers(firstPageIds);
-                        }
-
-                        setIsDeleteAllDialogOpen(true);
-                        setDeleteAllDialogData({});
-                      }
-                    }}><div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
-                      <span className="relative ">Delete All</span>
-                    </button>
-                  }
-
-
-                </div>
-                {
-                  isFilteredTrigger && <p className={`text-gray-400 font-light text-xs mx-3  mt-2  flex items-center gap-[1px] `}>
-                    Customers Found {totalCustomers}
-                  </p>
-                }
-                {selectedCustomers.length > 0 && <p className=" text-gray-400 font-extralight text-sm mx-3">selected {selectedCustomers.length}</p>}
-              </div>
-              <Tablesetting columns={columns} setColumns={setColumns} />
-              <div className=" max-h-[600px]  w-full overflow-y-auto">
-                <table className="table-auto relative w-full border-separate border-spacing-0 text-sm border border-gray-200">
-                  <thead className="bg-[var(--color-primary)] h-16 text-white sticky top-0 left-0 z-[5]">
-                    <tr>
-
-                      {/* ✅ SELECT ALL CHECKBOX COLUMN */}
-                      <th className="px-2 py-3 border border-[var(--color-secondary-dark)] bg-[var(--color-primary)] sticky left-0 z-20 text-left">
-
-                        <input
-                          id="selectall"
-                          type="checkbox"
-                          className="hidden"
-                          checked={
-                            currentRows.length > 0 &&
-                            currentRows.every((r) => selectedCustomers.includes(r._id))
-                          }
-                          onChange={handleSelectAll}
-                        />
-                      </th>
-
-                      {columns
-                        .filter(col => col.visible)
-                        .map((header, index) => (
-                          <th
-                            key={header.key}
-                            className={`px-2 py-3 border border-[var(--color-secondary-dark)] text-left  
-                ${header.key === "sno" ? "sticky left-7.5 z-20 bg-[var(--color-primary)]" : ""}`}
-                          >
-                            {header.label}
-                          </th>
                         ))}
-
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {customerTableLoader ?
-                      <tr>
-                        <td colSpan={12} className="text-center py-4 text-gray-500">
-                          Loading customers...
-                        </td>
-                      </tr> : currentRows.length > 0 ? (
-                        currentRows.map((item, index) => (
-                          <tr key={item._id} className="border-t hover:bg-[#f7f6f3] transition-all duration-200">
-
-                            {/* ✅ ROW CHECKBOX */}
-                            <td className="px-2 py-3 sticky left-0 bg-white  border border-gray-200">
-                              <input
-                                type="checkbox"
-                                checked={selectedCustomers.includes(item._id)}
-                                onChange={() => handleSelectRow(item._id)}
-                              />
-                            </td>
-
-                            {columns.filter(col => col.visible).map((col) => {
-                              let cellValue;
-                              if (col.key.startsWith("cf_")) {
-                                const originalKey = col.key.replace("cf_", "");
-                                cellValue = item.CustomerFields?.[originalKey] ?? "-";
-                              } else {
-                                switch (col.key) {
-                                  case "sno":
-                                    cellValue = (currentTablePage - 1) * rowsPerTablePage + (index + 1);
-                                    break;
-                                  case "campaign":
-                                    cellValue = item.Campaign;
-                                    break;
-                                  case "type":
-                                    cellValue = item.Type;
-                                    break;
-                                  case "subtype":
-                                    cellValue = item.SubType;
-                                    break;
-                                  case "City":
-
-                                    cellValue = item.City;
-                                    break;
-                                  case "Area":
-                                    cellValue = item.Area;
-                                    break;
-                                  case "Email":
-                                    cellValue = item.Email;
-                                    break;
-
-                                  case "Facillities":
-                                    cellValue = item.Facillities;
-                                    break;
-
-                                  case "CustomerId":
-                                    cellValue = item.CustomerId;
-                                    break;
-                                  case "Adderess":
-                                    cellValue = (<>
-                                      <span
-                                        className="text-blue-600 cursor-pointer underline"
-                                        onClick={() => {
-                                          setSelectedAddress(item.Adderess);
-                                          setIsMapOpen(true);
-                                        }}
-                                      >
-                                        {item.Adderess}
-                                      </span>
-
-                                    </>);
-                                    break;
-                                  case "CustomerYear":
-                                    cellValue = item.CustomerYear;
-                                    break;
-                                  case "Other":
-                                    cellValue = item.Other;
-                                    break;
-                                  case "name":
-                                    cellValue = item.Name;
-                                    break;
-                                  case "description":
-                                    cellValue = item.Description;
-                                    break;
-                                  case "location":
-                                    cellValue = item.Location;
-                                    break;
-                                  case "sublocation":
-                                    cellValue = item.SubLocation;
-                                    break;
-                                  case "contact":
-                                    cellValue = (
-                                      <>
-                                        {item.ContactNumber && (
-                                          <>
-                                            <div className=" text-center">{item.ContactNumber}</div>
-                                            <span className="flex">
-                                              <Button
-                                                component="a"
-                                                href={`tel:${item.ContactNumber}`}
-                                                sx={{
-                                                  backgroundColor: "#E8F5E9",
-                                                  color: "var(--color-primary)",
-                                                  minWidth: "14px",
-                                                  height: "24px",
-                                                  borderRadius: "8px",
-                                                  margin: "4px"
-                                                }}
-                                              >
-                                                <FaPhone size={12} />
-                                              </Button>
-                                              <Button
-                                                sx={{
-                                                  backgroundColor: "#E8F5E9",
-                                                  color: "var(--color-primary)",
-                                                  minWidth: "14px",
-                                                  height: "24px",
-                                                  borderRadius: "8px",
-                                                  margin: "4px"
-                                                }}
-                                                onClick={() => {
-                                                  setSelectedCustomers([item._id]);
-                                                  setSelectUser(item._id);
-                                                  setIsMailAllOpen(true);
-                                                  fetchEmailTemplates();
-                                                }}
-                                              >
-                                                <MdEmail size={14} />
-                                              </Button>
-                                              <Button
-                                                onClick={() => {
-                                                  setSelectedCustomers([item._id]);
-                                                  setSelectUser(item._id);
-                                                  setIsWhatsappAllOpen(true);
-                                                  fetchWhatsappTemplates();
-                                                }}
-                                                sx={{
-                                                  backgroundColor: "#E8F5E9",
-                                                  color: "var(--color-primary)",
-                                                  minWidth: "14px",
-                                                  height: "24px",
-                                                  borderRadius: "8px",
-                                                  margin: "4px"
-                                                }}
-                                              >
-                                                <FaWhatsapp size={14} />
-                                              </Button>
-                                            </span>
-                                            {duplicateContacts[item.ContactNumber] && (
-                                              <span>
-                                                <Button
-                                                  onClick={() => {
-                                                    setIsTableDialogOpen(true);
-                                                    handleTableDialogData(item.ContactNumber);
-                                                  }}
-                                                  sx={{
-                                                    backgroundColor: "#E8F5E9",
-                                                    color: "var(--color-primary)",
-                                                    minWidth: "100px",
-                                                    height: "24px",
-                                                    borderRadius: "8px",
-                                                    margin: "4px"
-                                                  }}
-                                                >
-                                                  <FaEye size={12} />
-                                                </Button>
-                                              </span>
-                                            )}
-                                          </>
-                                        )}
-                                      </>
-                                    );
-                                    break;
-                                  case "assign":
-                                    cellValue = item.AssignTo;
-                                    break;
-                                  case "reference":
-                                    cellValue = item.ReferenceId;
-                                    break;
-                                  case "date":
-                                    cellValue = item.Date;
-                                    break;
-                                  case "url":
-                                    cellValue = item.URL;
-                                    break;
-                                  case "video":
-                                    cellValue = item.Video;
-                                    break;
-                                  case "googlemap":
-                                    cellValue = item.GoogleMap;
-                                    break;
-                                  case "price":
-                                    cellValue = item.Price;
-                                    break;
-
-                                  case "actions":
-                                    cellValue = (
-                                      <div className="grid grid-cols-2 gap-3 items-center h-full">
-                                        <Button
-                                          sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "32px", height: "32px", borderRadius: "8px" }}
-                                          /*  onClick={() => router.push(`/followups/customer/add/${item._id}`)} */
-                                          onClick={() => {
-                                            setSelectedCustomerFollowupId(item._id);
-                                            setIsFollowupOpen(true);
-                                          }}
-                                        >
-                                          <MdAdd />
-                                        </Button>
-                                        <Button
-                                          sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "32px", height: "32px", borderRadius: "8px" }}
-                                          onClick={() => /* router.push(`/customer/edit/${item._id}`) */ handleEditClick(item._id)}
-                                        >
-                                          <MdEdit />
-                                        </Button>
-                                        <Button
-                                          sx={{ backgroundColor: "#FDECEA", color: "#C62828", minWidth: "32px", height: "32px", borderRadius: "8px" }}
-                                          onClick={() => {
-                                            setIsDeleteDialogOpen(true);
-                                            setDialogType("delete");
-                                            setDialogData({
-                                              id: item._id,
-                                              customerName: item.Name,
-                                              ContactNumber: item.ContactNumber,
-                                            });
-                                          }}
-                                        >
-                                          <MdDelete />
-                                        </Button>
-                                        <Button
-                                          sx={{ backgroundColor: "#FFF0F5", color: item.isFavourite ? "#E91E63" : "#C62828", minWidth: "32px", height: "32px", borderRadius: "8px" }}
-                                          onClick={() =>
-                                            handleFavouriteToggle(item._id, item.Name, item.ContactNumber, item.isFavourite ?? false)
-                                          }
-                                        >
-                                          {item.isFavourite ? <MdFavorite /> : <MdFavoriteBorder />}
-                                        </Button>
-                                        <Button
-                                          className=" bg-gray-500"
-                                          sx={{ backgroundColor: item.isChecked ? "#E8F5E9" : "#FFF0F5", color: item.isChecked ? "var(--color-primary)" : "#E91E63", minWidth: "32px", height: "32px", borderRadius: "8px" }}
-                                          onClick={() =>
-                                            handleChecked({ id: item._id, isChecked: item.isChecked })
-                                          }
-                                        >
-                                          {item.isChecked ? <IoCheckmarkDoneOutline size={20} /> : <IoCheckmark size={20} />}
-                                        </Button>
-                                        <Button
-                                          sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "32px", height: "32px", borderRadius: "8px" }}
-                                          onClick={() => {
-                                            setIsFollowupDialogOpen(true);
-                                            handleFollowups(item._id, item.Name);
-                                          }}
-                                        >
-                                          <UserPlus />
-                                        </Button>
-                                      </div>
-                                    );
-                                    break;
-                                  default:
-                                    cellValue = null;
-                                }
-                              }
-
-                              return (
-                                <td key={col.key} className={`px-2 py-3 border border-gray-200 break-all whitespace-normal 
-                                    ${col.key !== "sno" ? "min-w-[100px]" : ""}
-            ${col.key === "description" && item.Description ? "min-w-[160px]" : ""} 
-            ${col.key === "sno" ? "sticky left-7.5  bg-white max-w-[60px]" : ""}
-             ${col.key === "type" ? "max-w-[80px]" : ""}
-             ${col.key === "subtype" ? "max-w-[90px]" : ""} 
-             ${col.key === "contact" ? "max-w-[140px]" : ""} 
-             ${col.key === "reference" ? "max-w-[70px]" : ""}
-              ${col.key === "date" ? "min-w-[100px]" : ""} 
-             ${col.key === "actions" ? "min-w-[90px] align-middle" : ""}
-             `}>
-                                  {cellValue}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={10} className="text-center py-4 w-full text-gray-500">
-                            No data available.
-                          </td>
-                        </tr>
-                      )}
-                  </tbody>
-                </table>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            {/* Pagination */}
-            <div className="flex justify-between items-center mt-3 py-3 px-5">
-              <p className="text-sm">
-                Page {currentTablePage} of {totalCustomerPage}
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setCurrentTablePage(1)}
-                  disabled={currentTablePage === 1}
-                  className="p-2 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                  title="First page"
-                >
-                  <ChevronsLeft size={16} />
-                </button>
-                <button
-                  onClick={() =>
-                    setCurrentTablePage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentTablePage === 1}
-                  className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                >
-                  Prev
-                </button>
-                <button
-                  onClick={async () => {
-                    // normal pagination
-                    if (currentTablePage < totalTablePages) {
-                      setCurrentTablePage(prev => prev + 1);
-                      return;
-                    }
 
-                    // last page → fetch more → then move
-                    if (hasMoreCustomers) {
-                      await fetchMore();
-                      setCurrentTablePage(prev => prev + 1);
-                    }
-                  }}
-                  disabled={!hasMoreCustomers && currentTablePage === totalTablePages}
-                  className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                >
-                  Next
-                </button>
+              {/* Action Buttons */}
+              <div className={`flex items-center gap-2 shrink-0 ${toggleAiGenieSearchBy ? "lg:mt-6" : "lg:mt-6"}`}>
+                {!aiLoading
+                  ? (
+                    <button
+                      type="submit"
+                      className="px-4 py-2.5 text-sm font-medium rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-200 cursor-pointer"
+                    >
+                      Explore
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-[var(--color-primary)] text-white cursor-not-allowed"
+                    >
+                      Exploring
+                      <HashLoader loading={true} color="white" size={12} aria-label="Loading Spinner" data-testid="loader" />
+                    </button>
+                  )
+                }
                 <button
-                  onClick={handleLastPage}
-                  disabled={currentTablePage === totalTablePages && !hasMoreCustomers}
-                  className="p-2 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                  title="Last page"
+                  type="reset"
+                  onClick={clearFilter}
+                  className="px-4 py-2.5 text-sm font-medium text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-150 cursor-pointer"
                 >
-                  <ChevronsRight size={16} />
+                  Clear
                 </button>
-
-
               </div>
-            </div>
-          </section>
+            </form>
+          </div>
 
         </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Table Section ── */}
+  <section className="mt-5">
+
+    {/* Toolbar */}
+    <div className="flex flex-wrap justify-between items-center gap-3 px-1 py-2 mb-2" ref={scrollRef}>
+      <div className="flex flex-wrap gap-2 items-center">
+        {[
+          { label: "Select All", action: () => {}, isLabel: true, htmlFor: "selectall" },
+        ].map(() => (
+          <label
+            key="selectall"
+            htmlFor="selectall"
+            className="relative overflow-hidden text-xs font-medium py-1.5 px-3 rounded-md bg-[var(--color-primary-lighter)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary)] hover:text-white hover:border-transparent transition-all duration-200 cursor-pointer"
+          >
+            Select All
+          </label>
+        ))}
+        <input
+          id="selectall"
+          type="checkbox"
+          className="hidden"
+          checked={currentRows.length > 0 && currentRows.every((r) => selectedCustomers.includes(r._id))}
+          onChange={handleSelectAll}
+        />
+
+        {[
+          {
+            label: "Assign To", onClick: () => {
+              if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer");
+              else { setIsAssignOpen(true); fetchUsers(); }
+            }
+          },
+          {
+            label: "Email All", onClick: () => {
+              if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer");
+              else { setIsMailAllOpen(true); fetchEmailTemplates(); }
+            }
+          },
+          {
+            label: "SMS All", onClick: () => {
+              if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer");
+              else { setIsWhatsappAllOpen(true); fetchWhatsappTemplates(); }
+            }
+          },
+          ...(admin?.role !== "user" ? [{
+            label: "Delete All", onClick: () => {
+              if (customerData.length > 0) {
+                if (selectedCustomers.length < 1) {
+                  const firstPageIds = currentRows.map((c) => c._id);
+                  setSelectedCustomers(firstPageIds);
+                }
+                setIsDeleteAllDialogOpen(true);
+                setDeleteAllDialogData({});
+              }
+            }
+          }] : [])
+        ].map(({ label, onClick }) => (
+          <button
+            key={label}
+            type="button"
+            onClick={onClick}
+            className="text-xs font-medium py-1.5 px-3 rounded-md bg-[var(--color-primary-lighter)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary)] hover:text-white hover:border-transparent transition-all duration-200 cursor-pointer"
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex items-center relative gap-3">
+       
+        {isFilteredTrigger && (
+          <span className="text-xs text-slate-400 bg-slate-100 px-3 py-1.5 rounded-full">
+            {totalCustomers} customers found
+          </span>
+        )}
+        {selectedCustomers.length > 0 && (
+          <span className="text-xs font-medium text-[var(--color-primary)] bg-[var(--color-primary-lighter)] px-3 py-1.5 rounded-full border border-[var(--color-primary)]/20">
+            {selectedCustomers.length} selected
+          </span>
+        )}
+         <Tablesetting columns={columns} setColumns={setColumns} />
+      </div>
+    </div>
+
+    {/* Table */}
+    <div className="rounded-xl border border-slate-200 overflow-hidden">
+      <div className="max-h-[600px] w-full overflow-auto [scrollbar-width:thin] [scrollbar-color:var(--color-primary-lighter)_transparent]">
+        <table className="table-auto relative w-full border-separate border-spacing-0 text-sm">
+          <thead className="sticky top-0 left-0 z-[5]">
+            <tr className="bg-[var(--color-primary)] text-white">
+              <th className="px-3 py-3.5 border-r border-white/10 bg-[var(--color-primary)] sticky left-0 z-20 w-8">
+                <input
+                  id="selectall"
+                  type="checkbox"
+                  className="hidden"
+                  checked={currentRows.length > 0 && currentRows.every((r) => selectedCustomers.includes(r._id))}
+                  onChange={handleSelectAll}
+                />
+              </th>
+              {columns.filter(col => col.visible).map((header) => (
+                <th
+                  key={header.key}
+                  className={`px-3 py-3.5 border-r border-white/10 text-left text-xs  bg-[var(--color-primary)] font-semibold tracking-wide uppercase whitespace-nowrap
+                    ${header.key === "sno" ? "sticky left-8 z-20 bg-[var(--color-primary)]" : ""}`}
+                >
+                  {header.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody className="bg-white divide-y divide-slate-100">
+            {customerTableLoader ? (
+              <tr>
+                <td colSpan={12} className="text-center py-12 text-slate-400 text-sm">
+                  <div className="flex flex-col items-center gap-2">
+                    <BounceLoader loading={true} color="var(--color-primary)" size={30} />
+                    <span>Loading customers...</span>
+                  </div>
+                </td>
+              </tr>
+            ) : currentRows.length > 0 ? (
+              currentRows.map((item, index) => (
+                <tr
+                  key={item._id}
+                  className="hover:bg-slate-50/80 transition-colors duration-100 group"
+                >
+                  <td className="px-3 py-3 sticky left-0 bg-white group-hover:bg-slate-50/80 border-r border-slate-100 w-8">
+                    <input
+                      type="checkbox"
+                      checked={selectedCustomers.includes(item._id)}
+                      onChange={() => handleSelectRow(item._id)}
+                      className="accent-[var(--color-primary)] cursor-pointer"
+                    />
+                  </td>
+
+                  {columns.filter(col => col.visible).map((col) => {
+                    let cellValue;
+                    if (col.key.startsWith("cf_")) {
+                      const originalKey = col.key.replace("cf_", "");
+                      cellValue = item.CustomerFields?.[originalKey] ?? "-";
+                    } else {
+                      switch (col.key) {
+                        case "sno":
+                          cellValue = (currentTablePage - 1) * rowsPerTablePage + (index + 1);
+                          break;
+                        case "campaign": cellValue = item.Campaign; break;
+                        case "type": cellValue = item.Type; break;
+                        case "subtype": cellValue = item.SubType; break;
+                        case "City": cellValue = item.City; break;
+                        case "Area": cellValue = item.Area; break;
+                        case "Email": cellValue = item.Email; break;
+                        case "Facillities": cellValue = item.Facillities; break;
+                        case "CustomerId": cellValue = item.CustomerId; break;
+                        case "Adderess":
+                          cellValue = (
+                            <span
+                              className="text-[var(--color-primary)] cursor-pointer hover:underline underline-offset-2 text-xs"
+                              onClick={() => { setSelectedAddress(item.Adderess); setIsMapOpen(true); }}
+                            >
+                              {item.Adderess}
+                            </span>
+                          );
+                          break;
+                        case "CustomerYear": cellValue = item.CustomerYear; break;
+                        case "Other": cellValue = item.Other; break;
+                        case "name": cellValue = item.Name; break;
+                        case "description": cellValue = item.Description; break;
+                        case "location": cellValue = item.Location; break;
+                        case "sublocation": cellValue = item.SubLocation; break;
+                        case "contact":
+                          cellValue = (
+                            <div className="space-y-1">
+                              {item.ContactNumber && (
+                                <>
+                                  <div className="text-xs font-medium text-slate-700">{item.ContactNumber}</div>
+                                  <div className="flex gap-1">
+                                    <Button component="a" href={`tel:${item.ContactNumber}`}
+                                      sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "24px", borderRadius: "6px" }}>
+                                      <FaPhone size={10} />
+                                    </Button>
+                                    <Button
+                                      sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "24px", borderRadius: "6px" }}
+                                      onClick={() => { setSelectedCustomers([item._id]); setSelectUser(item._id); setIsMailAllOpen(true); fetchEmailTemplates(); }}>
+                                      <MdEmail size={12} />
+                                    </Button>
+                                    <Button
+                                      onClick={() => { setSelectedCustomers([item._id]); setSelectUser(item._id); setIsWhatsappAllOpen(true); fetchWhatsappTemplates(); }}
+                                      sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "24px", borderRadius: "6px" }}>
+                                      <FaWhatsapp size={12} />
+                                    </Button>
+                                    {duplicateContacts[item.ContactNumber] && (
+                                      <Button
+                                        onClick={() => { setIsTableDialogOpen(true); handleTableDialogData(item.ContactNumber); }}
+                                        sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "24px", borderRadius: "6px" }}>
+                                        <FaEye size={10} />
+                                      </Button>
+                                    )}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          );
+                          break;
+                        case "assign": cellValue = item.AssignTo; break;
+                        case "reference": cellValue = item.ReferenceId; break;
+                        case "date": cellValue = item.Date; break;
+                        case "url": cellValue = item.URL; break;
+                        case "video": cellValue = item.Video; break;
+                        case "googlemap": cellValue = item.GoogleMap; break;
+                        case "price": cellValue = item.Price; break;
+                        case "actions":
+                          cellValue = (
+                            <div className="grid grid-cols-3 gap-5 items-center">
+                              <Button
+                                sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "28px", borderRadius: "6px" }}
+                                onClick={() => { setSelectedCustomerFollowupId(item._id); setIsFollowupOpen(true); }}>
+                                <MdAdd size={15} />
+                              </Button>
+                              <Button
+                                sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "28px", borderRadius: "6px" }}
+                                onClick={() => handleEditClick(item._id)}>
+                                <MdEdit size={15} />
+                              </Button>
+                              <Button
+                                sx={{ backgroundColor: "#FDECEA", color: "#C62828", minWidth: "28px", height: "28px", borderRadius: "6px" }}
+                                onClick={() => { setIsDeleteDialogOpen(true); setDialogType("delete"); setDialogData({ id: item._id, customerName: item.Name, ContactNumber: item.ContactNumber }); }}>
+                                <MdDelete size={15} />
+                              </Button>
+                              <Button
+                                sx={{ backgroundColor: "#FFF0F5", color: item.isFavourite ? "#E91E63" : "#C62828", minWidth: "28px", height: "28px", borderRadius: "6px" }}
+                                onClick={() => handleFavouriteToggle(item._id, item.Name, item.ContactNumber, item.isFavourite ?? false)}>
+                                {item.isFavourite ? <MdFavorite size={14} /> : <MdFavoriteBorder size={14} />}
+                              </Button>
+                              <Button
+                                sx={{ backgroundColor: item.isChecked ? "#E8F5E9" : "#FFF0F5", color: item.isChecked ? "var(--color-primary)" : "#E91E63", minWidth: "28px", height: "28px", borderRadius: "6px" }}
+                                onClick={() => handleChecked({ id: item._id, isChecked: item.isChecked })}>
+                                {item.isChecked ? <IoCheckmarkDoneOutline size={14} /> : <IoCheckmark size={14} />}
+                              </Button>
+                              <Button
+                                sx={{ backgroundColor: "#E8F5E9", color: "var(--color-primary)", minWidth: "28px", height: "28px", borderRadius: "6px" }}
+                                onClick={() => { setIsFollowupDialogOpen(true); handleFollowups(item._id, item.Name); }}>
+                                <UserPlus size={14} />
+                              </Button>
+                            </div>
+                          );
+                          break;
+                        default: cellValue = null;
+                      }
+                    }
+
+                    return (
+                      <td
+                        key={col.key}
+                        className={`px-3 py-3 border-b border-slate-100 break-words whitespace-normal text-xs text-slate-700
+                          ${col.key !== "sno" ? "min-w-[100px]" : ""}
+                          ${col.key === "description" && item.Description ? "min-w-[200px]" : ""}
+                          ${col.key === "sno" ? "sticky left-8 bg-white group-hover:bg-slate-50/80 max-w-[60px] font-medium text-slate-500" : ""}
+                          ${col.key === "type" ? "max-w-[80px]" : ""}
+                          ${col.key === "subtype" ? "max-w-[90px]" : ""}
+                          ${col.key === "Email" && item.Email ? "max-w-[200px]" : " max-w-[80px]"}
+                          ${col.key === "contact" ? "max-w-[140px]" : ""}
+                          ${col.key === "reference" ? "max-w-[70px]" : ""}
+                          ${col.key === "date" ? "min-w-[100px]" : ""}
+                          ${col.key === "actions" ? "min-w-[100px] align-middle" : ""}
+                        `}
+                      >
+                        {cellValue}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={10} className="text-center py-16 text-slate-400 text-sm">
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-2xl">🔍</span>
+                    <span>No customers found</span>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* ── Pagination ── */}
+    <div className="flex justify-between items-center mt-4 px-1">
+      <p className="text-xs text-slate-500">
+        Page <span className="font-semibold text-slate-700">{currentTablePage}</span> of <span className="font-semibold text-slate-700">{totalCustomerPage}</span>
+      </p>
+      <div className="flex gap-1">
+        <button
+          onClick={() => setCurrentTablePage(1)}
+          disabled={currentTablePage === 1}
+          className="p-2 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150"
+          title="First page"
+        >
+          <ChevronsLeft size={14} />
+        </button>
+        <button
+          onClick={() => setCurrentTablePage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentTablePage === 1}
+          className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150"
+        >
+          Prev
+        </button>
+        <button
+          onClick={async () => {
+            if (currentTablePage < totalTablePages) { setCurrentTablePage(prev => prev + 1); return; }
+            if (hasMoreCustomers) { await fetchMore(); setCurrentTablePage(prev => prev + 1); }
+          }}
+          disabled={!hasMoreCustomers && currentTablePage === totalTablePages}
+          className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150"
+        >
+          Next
+        </button>
+        <button
+          onClick={handleLastPage}
+          disabled={currentTablePage === totalTablePages && !hasMoreCustomers}
+          className="p-2 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150"
+          title="Last page"
+        >
+          <ChevronsRight size={14} />
+        </button>
+      </div>
+    </div>
+
+  </section>
+</div>
       </div>
     </ProtectedRoute>
   );

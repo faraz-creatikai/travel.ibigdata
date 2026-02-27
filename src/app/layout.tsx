@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <html lang="en" className={`min-h-screen w-full overflow-x-hidden ${poppins.className}`}>
+    <html lang="en" className={`min-h-screen w-full custom-scrollbar overflow-x-hidden ${poppins.className}`}>
       <link rel="manifest" href="/manifest.json" />
       <meta name="theme-color" content="#ffffff" />
       <link rel="icon" href="/icons/favicon-16x16.png" />
@@ -62,7 +62,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <CustomerFieldLabelProvider>
                   <ThemeProvider theme={theme}>
                     {isAdminPage ? (
-                      <main className="min-h-screen ">{children}</main>
+                      <main className="min-h-screen [scrollbar-width:thin] [scrollbar-color:var(--color-primary-lighter)_transparent]">{children}</main>
                     ) : (
                       <ProtectedRoute>
                         <SidebarProvider>
@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                             <AppSidebar />
 
                             {/* Main Area */}
-                            <SidebarInset className="flex flex-col flex-1 min-h-screen overflow-hidden">
+                            <SidebarInset className="flex flex-col flex-1 min-h-screen overflow-hidden ">
 
                               {/* Navbar */}
                               <header className="flex items-center gap-2 shrink-0 bg-white max-sm:fixed max-sm:top-0 max-sm:left-0 max-sm:w-full max-sm:bg-[var(--color-primary)] text-gray-800 px-4 pl-0 shadow-sm z-10">
