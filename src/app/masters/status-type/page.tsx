@@ -17,6 +17,7 @@ import PageHeader from "@/app/component/labels/PageHeader";
 import MasterProtectedRoute from "@/app/component/MasterProtectedRoutes";
 import AddButton from "@/app/component/buttons/AddButton";
 import LeadStatus from "@/app/phonescreens/DashboardScreens/LeadStatus";
+import MobilePageTitle from "@/app/component/labels/MobilePageTitle";
 
 export default function StatusTypePage() {
   const [statusTypes, setStatusTypes] = useState<statustypeGetDataInterface[]>([]);
@@ -105,7 +106,8 @@ export default function StatusTypePage() {
     <MasterProtectedRoute>
       <Toaster position="top-right" />
       <div className=" sm:hidden py-2">
-        <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0 py-2">Status Types</h1>
+       {/*  <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0 py-2">Status Types</h1> */}
+       <MobilePageTitle title="Status Type" />
         <LeadStatus leadStatuses={statusTypes.map((item) => ({ name: item.Name }))} />
       </div>
       <div className="min-h-[calc(100vh-56px)] max-sm:hidden overflow-auto max-md:py-10">

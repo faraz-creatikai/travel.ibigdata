@@ -39,6 +39,7 @@ import { handleFieldOptionsObject } from "@/app/utils/handleFieldOptionsObject";
 import ObjectSelect from "@/app/component/ObjectSelect";
 import ContactFollowupTable from "@/app/phonescreens/DashboardScreens/tables/ContactFollowupTable";
 import DynamicAdvance from "@/app/phonescreens/DashboardScreens/DynamicAdvance";
+import MobilePageTitle from "@/app/component/labels/MobilePageTitle";
 
 export default function ContactFollowups() {
     const router = useRouter();
@@ -401,7 +402,8 @@ export default function ContactFollowups() {
             )}
 
             <div className=" sm:hidden min-h-[calc(100vh-56px)] overflow-auto max-sm:py-2">
-                <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0 py-0">Contact Followups</h1>
+               {/*  <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0 py-0">Contact Followups</h1> */}
+                <MobilePageTitle title="Contact Followups" />
                 <div>
                     <DynamicAdvance addUrl="/contact/add">
                         <ObjectSelect

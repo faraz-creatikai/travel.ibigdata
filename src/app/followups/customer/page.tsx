@@ -47,6 +47,7 @@ import ObjectSelect from "@/app/component/ObjectSelect";
 import { getsubLocationByCityLoc } from "@/store/masters/sublocation/sublocation";
 import { Sub } from "@radix-ui/react-dropdown-menu";
 import { BsPersonFill } from "react-icons/bs";
+import MobilePageTitle from "@/app/component/labels/MobilePageTitle";
 
 export default function CustomerFollowups() {
     const router = useRouter();
@@ -597,7 +598,8 @@ export default function CustomerFollowups() {
             }
 
             <div className=" sm:hidden min-h-[calc(100vh-56px)] overflow-auto max-sm:py-2">
-                <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0  ">Followups</h1>
+                {/* <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0  ">Followups</h1> */}
+                <MobilePageTitle title="Followups" />
                 <div>
                     <DynamicAdvance>
                         <ObjectSelect

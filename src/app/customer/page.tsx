@@ -62,6 +62,7 @@ import { FollowupDeleteDialogDataInterface } from "@/store/contactFollowups.inte
 import { BsPersonFill } from "react-icons/bs";
 import GoogleMapDialog from "../component/popups/GoogleMapDialogue";
 import CustomerEditDialog from "../component/popups/CustomerEditDialog";
+import MobilePageTitle from "../component/labels/MobilePageTitle";
 
 
 interface DeleteAllDialogDataInterface { }
@@ -1647,10 +1648,11 @@ export default function Customer() {
       {/* Mobile Customer Page */}
       <div className=" sm:hidden min-h-[calc(100vh-56px)] overflow-auto max-sm:py-2">
 
-        <div className=" flex justify-between items-center px-0">
+        {/* <div className=" flex justify-between items-center px-0">
           <h1 className=" text-[var(--color-primary)] font-extrabold text-2xl ">Leads</h1>
 
-        </div>
+        </div> */}
+        <MobilePageTitle title="Leads" />
         <div className=" w-full">
           <DynamicAdvance>
             <ObjectSelect

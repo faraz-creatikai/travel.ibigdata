@@ -50,6 +50,7 @@ import { handleFieldOptionsObject } from "../utils/handleFieldOptionsObject";
 import ObjectSelect from "../component/ObjectSelect";
 import { exportToExcel } from "../utils/exportToExcel";
 import { useAuth } from "@/context/AuthContext";
+import MobilePageTitle from "../component/labels/MobilePageTitle";
 
 interface DeleteAllDialogDataInterface { }
 
@@ -610,10 +611,11 @@ export default function Contacts() {
       )}
       <div className=" sm:hidden min-h-[calc(100vh-56px)] overflow-auto max-sm:py-2">
 
-        <div className=" flex justify-between items-center px-0 pb-0  ">
+        {/* <div className=" flex justify-between items-center px-0 pb-0  ">
           <h1 className=" text-[var(--color-primary)] font-extrabold text-2xl ">Contacts</h1>
 
-        </div>
+        </div> */}
+        <MobilePageTitle title="Contacts" />
         <div className=" w-full">
           <DynamicAdvance addUrl="/contact/add">
             <SingleSelect options={Array.isArray(fieldOptions.StatusAssign) ? fieldOptions.StatusAssign : []} value={filters.StatusAssign[0]} label="Status Assign" onChange={(v) => handleSelectChange("StatusAssign", v)} />
