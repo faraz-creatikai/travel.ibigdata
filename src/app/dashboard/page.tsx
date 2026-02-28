@@ -15,7 +15,7 @@ import VisitorsChart from "./components/VisitorsChart";
 export default function Dashboard() {
   return (
     <ProtectedRoute>
-      <div className=" max-md:hidden">
+      <div className=" max-md:hidden ">
         <div className="">
           <DashboardSectionOne />
         </div>

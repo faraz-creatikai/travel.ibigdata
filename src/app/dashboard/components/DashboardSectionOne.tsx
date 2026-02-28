@@ -10,51 +10,35 @@ import { getAllCustomerFollowups } from "@/store/customerFollowups";
 import { getIncomeMarketing } from "@/store/financial/incomemarketing/incomemarketing";
 import { getContact } from "@/store/contact";
 
-// ✅ Interface for card data
-
-
 export default function DashboardSectionOne() {
-  // ✅ Dashboard data
   const { dashboardSectionOneCardData, setDashboardSectionOneCardData } = useDashboardData();
   const [dataLoading, setDataLoading] = useState(false);
 
-
-  // ✅ Counter logic
   const [counts, setCounts] = useState<number[]>(
     dashboardSectionOneCardData.map(() => 0)
   );
   const countersRef = useRef<HTMLDivElement | null>(null);
   const [countersInView, setCountersInView] = useState<boolean>(false);
 
-  /*  useEffect(() => {
-   setCounts(dashboardSectionOneCardData.map(() => 0));
- }, [dashboardSectionOneCardData]); */
-
-  // Observe section visibility
   useEffect(() => {
-    //fetch dashboard data 
     const observer = new IntersectionObserver(
       ([entry]) => setCountersInView(entry.isIntersecting),
       { threshold: 0.5 }
     );
-
     if (countersRef.current) observer.observe(countersRef.current);
     return () => {
       if (countersRef.current) observer.unobserve(countersRef.current);
     };
   }, []);
 
-
-
-
   useEffect(() => {
     DashboardSectionOneDataFetch();
-  }, [])
+  }, []);
 
   const DashboardSectionOneDataFetch = async () => {
     const LeadsResponse = await getCustomer();
     const FollowupResponseRaw = await getAllCustomerFollowups();
-    const ContactResponse= await getContact();
+    const ContactResponse = await getContact();
 
     const FollowupResponse = FollowupResponseRaw?.map((item: any) => ({
       customerid: item.customer._id,
@@ -72,55 +56,35 @@ export default function DashboardSectionOne() {
       const totalCustomer = LeadsResponse.length;
       const totalContacts = ContactResponse.length;
       const convertedLeads = FollowupResponse.filter(
-        (item, index, arr) =>
-          arr.findIndex((row) => row.customerid === item.customerid) === index //keeps only first occurrence
+        (item: any, index: number, arr: any[]) =>
+          arr.findIndex((row: any) => row.customerid === item.customerid) === index
       ).length;
       const activeFollowups = FollowupResponse.filter(
-        (item, index, arr) => (item.StatusType === "Active")
+        (item: any) => item.StatusType === "Active"
       ).length;
-      const totalRevenue = IncomeResponse.reduce((sum: number, item: any) => sum + (Number(item.Income) || 0), 0);
+      const totalRevenue = IncomeResponse.reduce(
+        (sum: number, item: any) => sum + (Number(item.Income) || 0), 0
+      );
 
-      setDashboardSectionOneCardData((prev) => {
-        // Create a copy of the previous array
+      setDashboardSectionOneCardData((prev: any) => {
         const newData = [...prev];
-
-        // Update only the first element (index 0)
-        newData[0] = {
-          ...newData[0], // keep other properties
-          value: totalCustomer || 0, // update value
-        };
-        newData[1] = {
-          ...newData[1], // keep other properties
-          value: convertedLeads || 0, // update value // or any other dynamic property
-        };
-
-        newData[2] = {
-          ...newData[2], // keep other properties
-          value: totalContacts || 0, // update value
-        };
-        newData[3] = {
-          ...newData[3], // keep other properties
-          value: totalRevenue || 0, // update value
-          prefix: "₹", // or any other dynamic property
-        };
+        newData[0] = { ...newData[0], value: totalCustomer || 0 };
+        newData[1] = { ...newData[1], value: convertedLeads || 0 };
+        newData[2] = { ...newData[2], value: totalContacts || 0 };
+        newData[3] = { ...newData[3], value: totalRevenue || 0, prefix: "₹" };
         setDataLoading(true);
-
         return newData;
-      })
+      });
     }
-  }
+  };
 
-
-  // Start count animation
   useEffect(() => {
     if (!countersInView) return;
-
     const intervals: number[] = [];
 
-    dashboardSectionOneCardData.forEach((item, index) => {
+    dashboardSectionOneCardData.forEach((item: any, index: number) => {
       const increment = item.value < 10 ? 1 : Math.ceil(item.value / 50);
-      const intervalTime = item.value < 10 ? 200 : 30; // slower for very small numbers
-
+      const intervalTime = item.value < 10 ? 200 : 30;
 
       if (dataLoading) {
         const intervalId = window.setInterval(() => {
@@ -132,48 +96,87 @@ export default function DashboardSectionOne() {
             return newCounts;
           });
         }, intervalTime);
-
-
         intervals.push(intervalId);
       }
-
     });
 
     return () => intervals.forEach((id) => clearInterval(id));
   }, [countersInView, dashboardSectionOneCardData]);
 
-  // Data Apis
-
-
-
   return (
-    <div ref={countersRef} className="p-4 ">
-      <section className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-3 my-5 w-full">
-        {dashboardSectionOneCardData.map((item, index) => (
+    <div ref={countersRef}>
+      <section className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
+        {dashboardSectionOneCardData.map((item: any, index: number) => (
           <div
             key={index}
-            className="bg-white shadow-2xl rounded-md overflow-hidden"
+            className="
+              group relative
+              bg-white dark:bg-[#0d1117]
+              rounded-2xl overflow-hidden
+              border border-slate-100 dark:border-white/[0.06]
+              hover:shadow-lg hover:shadow-slate-200/70 dark:hover:shadow-black/30
+              hover:border-slate-200 dark:hover:border-white/[0.1]
+              transition-all duration-200 cursor-default
+            "
           >
-            <div className="flex justify-between items-center mb-2 px-4 py-[10px]">
-              <div>
-                <h2
-                  className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${item.footerlineColor}`}
-                >
-                  {item.prefix || ""}
-                  {counts[index]}
-                </h2>
-                <p className="text-xs font-medium pt-[2px]">{item.name}</p>
+            {/* ── Gradient top border ── */}
+            <div className={`h-[3px] w-full bg-gradient-to-r ${item.footerlineColor}`} />
+
+            <div className="px-5 py-2">
+              {/* ── Top row: icon + live badge ── */}
+              <div className="flex items-center justify-between mb-3">
+
+                {/* Icon badge */}
+                <div className={`
+                  w-10 h-10 rounded-xl flex items-center justify-center
+                  text-white text-[17px] shrink-0
+                  bg-gradient-to-br ${item.footerlineColor}
+                  shadow-sm
+                  group-hover:scale-105 transition-transform duration-200
+                `}>
+                  {item.icon}
+                </div>
+
+                {/* Live pulse */}
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-50 bg-gradient-to-br ${item.footerlineColor}`} />
+                    <span className={`relative inline-flex rounded-full h-2 w-2 bg-gradient-to-br ${item.footerlineColor}`} />
+                  </span>
+                  <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-wider">
+                    Live
+                  </span>
+                </div>
               </div>
-              <span className="text-[22px]">{item.icon}</span>
+
+              {/* ── Metric ── */}
+              <div className="mb-1">
+                <p className="text-[24px] font-black text-slate-800 dark:text-white leading-none tracking-tight">
+                  {item.prefix || ""}
+                  {counts[index].toLocaleString()}
+                </p>
+              </div>
+
+              {/* ── Label ── */}
+              <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-[0.12em]">
+                {item.name}
+              </p>
             </div>
 
-            <div
-              className={`p-3 text-white text-sm flex justify-between items-center bg-gradient-to-r ${item.footerlineColor}`}
-            >
-              <span>%</span>
-              <span className="text-[17px]">
-                <FaArrowTrendUp />
-              </span>
+            {/* ── Footer ── */}
+            <div className="px-5 py-2.5 border-t border-slate-100 dark:border-white/[0.05] flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-600">
+                <LuChartNoAxesColumnIncreasing size={12} />
+                <span className="text-[11px] font-medium">Total</span>
+              </div>
+              <div className={`
+                flex items-center gap-1
+                text-[11px] font-bold
+                text-transparent bg-clip-text bg-gradient-to-r ${item.footerlineColor}
+              `}>
+                <FaArrowTrendUp className={`text-[10px] text-transparent bg-clip-text bg-gradient-to-r ${item.footerlineColor}`} style={{ WebkitTextFillColor: 'currentColor' }} />
+                <span>{dataLoading ? counts[index].toLocaleString() : "—"}</span>
+              </div>
             </div>
           </div>
         ))}
