@@ -110,6 +110,7 @@ export default function StatusTypePage() {
        <MobilePageTitle title="Status Type" />
         <LeadStatus leadStatuses={statusTypes.map((item) => ({ name: item.Name }))} />
       </div>
+      
       <div className="min-h-[calc(100vh-56px)] max-sm:hidden overflow-auto max-md:py-10">
 
 
