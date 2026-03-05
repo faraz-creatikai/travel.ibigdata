@@ -78,20 +78,20 @@ export default function Navbar() {
     <ProtectedRoute>
       <div className="
         flex justify-end items-center h-full gap-2 px-4 py-2
-        bg-transparent  dark:text-slate-100 
+        bg-transparent  max-sm:dark:text-slate-100 
       ">
 
         {/* ── Divider before controls (desktop) ── */}
-        <div className="hidden md:block h-6 w-px bg-slate-200 dark:bg-white/10 mr-1" />
+        <div className="hidden md:block h-6 w-px bg-slate-200 max-sm:dark:bg-white/10 mr-1" />
 
         {/* ── Theme toggle ── */}
         <button
           onClick={toggleTheme}
           className="
             w-10 h-10 flex items-center justify-center rounded-xl
-            text-slate-500 dark:text-slate-200 max-sm:text-white/80
-            hover:bg-slate-100 dark:hover:bg-white/[0.06]
-            hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)]
+            text-slate-500 max-sm:dark:text-slate-200 max-sm:text-white/80
+            hover:bg-slate-100 max-sm:dark:hover:bg-white/[0.06]
+            hover:text-[var(--color-primary)] max-sm:dark:hover:text-[var(--color-primary)]
             transition-all duration-150
           "
           title={dark ? "Switch to light" : "Switch to dark"}
@@ -110,9 +110,9 @@ export default function Navbar() {
               <button
                 className="
                   relative w-10 h-10 flex items-center justify-center rounded-xl
-                  text-slate-500 dark:text-slate-200
-                  hover:bg-slate-100 dark:hover:bg-white/[0.06]
-                  hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)]
+                  text-slate-500 max-sm:dark:text-slate-200
+                  hover:bg-slate-100 max-sm:dark:hover:bg-white/[0.06]
+                  hover:text-[var(--color-primary)] max-sm:dark:hover:text-[var(--color-primary)]
                   transition-all duration-150 cursor-pointer
                 "
                 onClick={() => setOpenMenu(openMenu === "notifications" ? null : "notifications")}
@@ -123,21 +123,21 @@ export default function Navbar() {
                 <span className="
                   absolute top-1.5 right-1.5 w-2 h-2 rounded-full
                   bg-[var(--color-primary)]
-                  border-2 border-white dark:border-[#0d1117]
+                  border-2 border-white max-sm:dark:border-[#0d1117]
                 " />
               </button>
 
               <div className={`${dropdownBase} ${openMenu === "notifications" ? dropdownVisible : dropdownHidden}`}>
                 <div className="
                   w-[300px] rounded-2xl overflow-hidden
-                  bg-white dark:bg-[#0d1117]
-                  border border-slate-200 dark:border-white/[0.07]
-                  shadow-2xl shadow-slate-300/40 dark:shadow-black/50
+                  bg-white max-sm:dark:bg-[#0d1117]
+                  border border-slate-200 max-sm:dark:border-white/[0.07]
+                  shadow-2xl shadow-slate-300/40 max-sm:dark:shadow-black/50
                 ">
-                  <div className="flex justify-between items-center px-5 py-4 border-b border-slate-100 dark:border-white/[0.06]">
+                  <div className="flex justify-between items-center px-5 py-4 border-b border-slate-100 max-sm:dark:border-white/[0.06]">
                     <div className="flex items-center gap-2.5">
                       <span className="w-2 h-2 rounded-full bg-[var(--color-primary)]" />
-                      <h3 className="text-[12px] font-bold uppercase tracking-[0.15em] text-slate-700 dark:text-slate-200">
+                      <h3 className="text-[12px] font-bold uppercase tracking-[0.15em] text-slate-700 max-sm:dark:text-slate-200">
                         Notifications
                       </h3>
                     </div>
@@ -146,10 +146,10 @@ export default function Navbar() {
                     </button>
                   </div>
                   <div className="min-h-[140px] flex flex-col items-center justify-center gap-2 py-6">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/[0.05] flex items-center justify-center">
-                      <Bell size={18} className="text-slate-300 dark:text-slate-200" />
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 max-sm:dark:bg-white/[0.05] flex items-center justify-center">
+                      <Bell size={18} className="text-slate-300 max-sm:dark:text-slate-200" />
                     </div>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-200 font-medium">
+                    <p className="text-[12px] text-slate-400 max-sm:dark:text-slate-200 font-medium">
                       No new notifications
                     </p>
                   </div>
@@ -185,9 +185,9 @@ export default function Navbar() {
               <div className={`${dropdownBase} ${openMenu === "quickAdd" ? dropdownVisible : dropdownHidden}`}>
                 <div className="
                   w-[230px] rounded-2xl overflow-hidden
-                  bg-white dark:bg-[#0d1117]
-                  border border-slate-200 dark:border-white/[0.07]
-                  shadow-2xl shadow-slate-300/40 dark:shadow-black/50
+                  bg-white max-sm:dark:bg-[#0d1117]
+                  border border-slate-200 max-sm:dark:border-white/[0.07]
+                  shadow-2xl shadow-slate-300/40 max-sm:dark:shadow-black/50
                 ">
                   {/* Top gradient bar */}
                   <div
@@ -197,7 +197,7 @@ export default function Navbar() {
 
                   {/* Header label */}
                   <div className="px-4 pt-3 pb-2">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-200">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 max-sm:dark:text-slate-200">
                       Quick Actions
                     </p>
                   </div>
@@ -210,16 +210,16 @@ export default function Navbar() {
                         onClick={() => setOpenMenu(null)}
                         className="
                           flex items-center gap-3 px-4 py-2.5
-                          text-[13px] text-slate-600 dark:text-slate-200
-                          hover:bg-slate-50 dark:hover:bg-white/[0.05]
-                          hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary)]
+                          text-[13px] text-slate-600 max-sm:dark:text-slate-200
+                          hover:bg-slate-50 max-sm:dark:hover:bg-white/[0.05]
+                          hover:text-[var(--color-primary)] max-sm:dark:hover:text-[var(--color-primary)]
                           transition-colors duration-100 group
                         "
                       >
                         <span className="
                           w-6 h-6 rounded-lg flex items-center justify-center shrink-0
-                          bg-slate-100 dark:bg-white/[0.06]
-                          text-slate-400 dark:text-slate-200
+                          bg-slate-100 max-sm:dark:bg-white/[0.06]
+                          text-slate-400 max-sm:dark:text-slate-200
                           group-hover:bg-[var(--color-primary-lighter)] group-hover:text-[var(--color-primary)]
                           transition-all duration-150
                         ">
@@ -234,16 +234,16 @@ export default function Navbar() {
             </li>
 
             {/* ── Divider ── */}
-            <div className="hidden md:block h-6 w-px bg-slate-200 dark:bg-white/10 mx-0.5" />
+            <div className="hidden md:block h-6 w-px bg-slate-200 max-sm:dark:bg-white/10 mx-0.5" />
 
             {/* ── Admin profile ── */}
             <li ref={adminMailRef} className="relative cursor-pointer">
               <button
                 className="
                   flex items-center gap-2.5 h-10 pl-2 pr-3 rounded-xl
-                  hover:bg-slate-100 dark:hover:bg-white/[0.06]
+                  hover:bg-slate-100 max-sm:dark:hover:bg-white/[0.06]
                   max-sm:hover:bg-white/10
-                  border border-transparent hover:border-slate-200 dark:hover:border-white/[0.08]
+                  border border-transparent hover:border-slate-200 max-sm:dark:hover:border-white/[0.08]
                   transition-all duration-150 cursor-pointer
                 "
                 onClick={() => setOpenMenu(openMenu === "adminMail" ? null : "adminMail")}
@@ -259,15 +259,15 @@ export default function Navbar() {
 
                 {/* Name + role stack */}
                 <div className="hidden md:flex flex-col leading-none">
-                  <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[90px]">
+                  <span className="text-[13px] font-semibold text-slate-700 max-sm:dark:text-slate-200 truncate max-w-[90px]">
                     {admin?.name ?? "Admin"}
                   </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-200 capitalize font-medium mt-0.5">
+                  <span className="text-[10px] text-slate-400 max-sm:dark:text-slate-200 capitalize font-medium mt-0.5">
                     {admin?.role ?? "user"}
                   </span>
                 </div>
 
-                <span className="text-slate-400 dark:text-slate-200 max-sm:text-white/70 ml-0.5">
+                <span className="text-slate-400 max-sm:dark:text-slate-200 max-sm:text-white/70 ml-0.5">
                   {openMenu === "adminMail"
                     ? <ChevronUp size={13} />
                     : <ChevronDown size={13} />
@@ -278,12 +278,12 @@ export default function Navbar() {
               <div className={`${dropdownBase} ${openMenu === "adminMail" ? dropdownVisible : dropdownHidden}`}>
                 <div className="
                   w-[210px] rounded-2xl overflow-hidden
-                  bg-white dark:bg-[#0d1117]
-                  border border-slate-200 dark:border-white/[0.07]
-                  shadow-2xl shadow-slate-300/40 dark:shadow-black/50
+                  bg-white max-sm:dark:bg-[#0d1117]
+                  border border-slate-200 max-sm:dark:border-white/[0.07]
+                  shadow-2xl shadow-slate-300/40 max-sm:dark:shadow-black/50
                 ">
                   {/* Profile card header */}
-                  <div className="px-4 py-4 border-b border-slate-100 dark:border-white/[0.06]">
+                  <div className="px-4 py-4 border-b border-slate-100 max-sm:dark:border-white/[0.06]">
                     <div className="flex items-center gap-3">
                       <div
                         className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-[13px] font-bold shrink-0 shadow"
@@ -292,10 +292,10 @@ export default function Navbar() {
                         {initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[13px] font-bold text-slate-800 dark:text-slate-100 truncate leading-tight">
+                        <p className="text-[13px] font-bold text-slate-800 max-sm:dark:text-slate-100 truncate leading-tight">
                           {admin?.name ?? "Admin"}
                         </p>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-200 mt-0.5 capitalize">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 max-sm:dark:text-slate-200 mt-0.5 capitalize">
                           {admin?.role ?? "user"}
                         </p>
                       </div>
@@ -303,7 +303,7 @@ export default function Navbar() {
                     {/* Online status */}
                     <div className="flex items-center gap-1.5 mt-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      <span className="text-[10px] text-slate-400 dark:text-slate-200 font-medium">
+                      <span className="text-[10px] text-slate-400 max-sm:dark:text-slate-200 font-medium">
                         Online
                       </span>
                     </div>
@@ -328,26 +328,26 @@ export default function Navbar() {
                         onClick={action}
                         className="
                           w-full flex items-center gap-3 px-4 py-2.5
-                          text-[13px] text-slate-600 dark:text-slate-200
-                          hover:bg-slate-50 dark:hover:bg-white/[0.05]
-                          hover:text-slate-900 dark:hover:text-white
+                          text-[13px] text-slate-600 max-sm:dark:text-slate-200
+                          hover:bg-slate-50 max-sm:dark:hover:bg-white/[0.05]
+                          hover:text-slate-900 max-sm:dark:hover:text-white
                           transition-colors duration-100 text-left
                         "
                       >
-                        <span className="shrink-0 text-slate-400 dark:text-slate-200">{icon}</span>
+                        <span className="shrink-0 text-slate-400 max-sm:dark:text-slate-200">{icon}</span>
                         {label}
                       </button>
                     ))}
 
                     {/* Divider before logout */}
-                    <div className="mx-4 my-1.5 h-px bg-slate-100 dark:bg-white/[0.06]" />
+                    <div className="mx-4 my-1.5 h-px bg-slate-100 max-sm:dark:bg-white/[0.06]" />
 
                     <button
                       onClick={() => { setOpenMenu(null); logoutDashboard(); }}
                       className="
                         w-full flex items-center gap-3 px-4 py-2.5
                         text-[13px] text-red-500
-                        hover:bg-red-50 dark:hover:bg-red-500/10
+                        hover:bg-red-50 max-sm:dark:hover:bg-red-500/10
                         transition-colors duration-100 text-left
                       "
                     >
@@ -363,9 +363,9 @@ export default function Navbar() {
             <li
               className="
                 w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer
-                text-slate-400 dark:text-slate-200 max-sm:text-white/70
-                hover:bg-red-50 dark:hover:bg-red-500/10
-                hover:text-red-500 dark:hover:text-red-400
+                text-slate-400 max-sm:dark:text-slate-200 max-sm:text-white/70
+                hover:bg-red-50 max-sm:dark:hover:bg-red-500/10
+                hover:text-red-500 max-sm:dark:hover:text-red-400
                 transition-all duration-150
               "
               onClick={logoutDashboard}

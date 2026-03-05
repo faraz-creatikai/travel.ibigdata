@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                             <SidebarInset className="flex flex-col flex-1 min-h-screen overflow-hidden ">
 
                               {/* Navbar */}
-                              <header className="flex items-center gap-2 shrink-0 bg-white dark:bg-linear-to-r dark:from-[var(--color-bgdark)] dark:to-[var(--color-secondary-darker)] dark:text-slate-100 max-sm:fixed max-sm:top-0 max-sm:left-0 max-sm:w-full max-sm:bg-[var(--color-primary)] text-gray-800 px-4 pl-0 shadow-sm z-10">
+                              <header className="flex items-center gap-2 shrink-0 bg-white max-sm:dark:bg-linear-to-r max-sm:dark:from-[var(--color-bgdark)] max-sm:dark:to-[var(--color-secondary-darker)] max-sm:dark:text-slate-100 max-sm:fixed max-sm:top-0 max-sm:left-0 max-sm:w-full max-sm:bg-[var(--color-primary)] text-gray-800 px-4 pl-0 shadow-sm z-10">
                                 <div className="flex items-center gap-2 ml-2 max-sm:hidden ">
                                   <SidebarTrigger className="ml-1 cursor-pointer" />
                                   <Separator
@@ -95,7 +95,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                               </header>
 
                               {/* Page Content */}
-                              <main className={`flex-1 overflow-y-auto   bg-stone-200 dark:bg-linear-to-br dark:from-[#0f1117] dark:via-50% dark:to-[var(--color-secondary-darker)] max-md:dark:bg-[var(--color-bgdark)]`}>
+                              <main className={`flex-1 overflow-y-auto   bg-stone-200 max-sm:dark:bg-linear-to-br max-sm:dark:from-[#0f1117] max-sm:dark:via-50% max-sm:dark:to-[var(--color-secondary-darker)] max-md:dark:bg-[var(--color-bgdark)]`}>
 
                                 {/* Mobile Sidebar Trigger */}
                                 <div className="flex items-center gap-2 max-w-[100px] max-md:hidden md:hidden mt-4 ml-4">
