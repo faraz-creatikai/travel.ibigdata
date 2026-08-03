@@ -23,7 +23,7 @@ export const handleFieldOptionsObject = async (
             if (res.admins) {
               // Admins type
               data = (res.admins || [])
-                .filter((item: any) => item?.role === "user")
+                .filter((item: any) => item?.role === "user" || item?.role === "city_admin")
                 .filter((item: any) => item?.status === "active")
                 .map(config.mapFn || ((item: any) => item)) // ✅ keep object
                 .filter(Boolean);

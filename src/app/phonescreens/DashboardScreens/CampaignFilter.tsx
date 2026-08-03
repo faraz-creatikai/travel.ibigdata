@@ -13,65 +13,53 @@ interface LeadStatusProps {
 
 export default function CampaignFilter({ leadStatuses }: LeadStatusProps) {
   const router = useRouter();
-
+  // Your color palette
   const objectcolor = [
-    "var(--color-primary)",
+    "var(--color-primary)"
+   /*  "#7C3AED", // purple
+    "#3B82F6", // blue
+    "#F97316", // orange
+    "#22C55E", // green
+    "#8B5CF6", // light purple
+    "#9CA3AF", // gray
+    "#FB923C", */ // light orange 
   ];
 
-  const handleClick = (name: string) => {
+    const handleClick = (name: string) => {
     router.push(`/customer?Campaign=${encodeURIComponent(name)}`);
   };
 
   return (
-    <div className="min-h-screen py-2">
-      <div className="grid grid-cols-2 gap-2.5">
+    <div className="min-h-screen">
+      <div className=" px-0 py-4 grid grid-cols-2 gap-3">
         {leadStatuses.map((status, index) => {
           const colorIndex = index % objectcolor.length;
 
           return (
-            <button
+            <Button
               key={index}
+              variant="contained"
+              fullWidth
               onClick={() => handleClick(status.name)}
-              className="group relative flex flex-col items-start justify-between p-4 rounded-2xl overflow-hidden bg-white dark:bg-[var(--color-childbgdark)] border border-gray-100 dark:border-white/[0.07] shadow-sm active:scale-[0.97] transition-all duration-150 min-h-[88px] text-left"
+              sx={{
+                backgroundColor: objectcolor[colorIndex],
+                minWidth: "35px",
+                height: "80px",
+                borderRadius: "0px",
+                justifyContent: "center",
+                paddingLeft: "12px",
+                paddingRight: "12px",
+                textTransform: "none",
+                fontSize: "16px",
+                fontWeight: 700,
+              }}
+              className="text-white text-center  px-1 break-all whitespace-normal max-w-[200px] text-shadow-md   "
+
+
             >
-              {/* Brand-colored top bar */}
-              <span
-                className="absolute top-0 inset-x-0 h-[3px] rounded-b-full"
-                style={{ backgroundColor: objectcolor[colorIndex] }}
-              />
-
-              {/* Faint radial glow */}
-              <span
-                className="pointer-events-none absolute -top-4 -right-4 w-20 h-20 rounded-full blur-2xl opacity-10 group-active:opacity-20 transition-opacity"
-                style={{ backgroundColor: objectcolor[colorIndex] }}
-              />
-
-              {/* Index number */}
-              <span
-                className="text-[10px] font-black tabular-nums mb-2 opacity-40"
-                style={{ color: objectcolor[colorIndex] }}
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
-
-              {/* Campaign name */}
-              <p className="text-sm font-bold text-gray-800 dark:text-white leading-snug tracking-tight break-words line-clamp-2 w-full">
-                {status.name}
-              </p>
-
-              {/* Bottom row: arrow icon */}
-              <div className="flex items-center justify-end w-full mt-2">
-                <span
-                  className="w-6 h-6 rounded-lg flex items-center justify-center opacity-60 group-active:opacity-100 transition-opacity"
-                  style={{ backgroundColor: `color-mix(in srgb, ${objectcolor[colorIndex]} 12%, transparent)` }}
-                >
-                  <IoIosArrowForward
-                    size={13}
-                    style={{ color: objectcolor[colorIndex] }}
-                  />
-                </span>
-              </div>
-            </button>
+              {status.name}
+             {/*  <IoIosArrowForward /> */}
+            </Button>
           );
         })}
       </div>

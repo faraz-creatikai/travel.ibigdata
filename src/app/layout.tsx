@@ -1,125 +1,77 @@
-"use client";
-
 import "./globals.css";
-import { ReactNode, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import Navbar from "./component/Nav";
-import { AppSidebar } from "../components/app-sidebar";
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Separator } from "../components/ui/separator";
-import ProtectedRoute from "./component/ProtectedRoutes";
-import { AuthProvider } from "@/context/AuthContext";
-import { Poppins, Manrope, Schibsted_Grotesk } from 'next/font/google'
-import { CustomerImportProvider } from "@/context/CustomerImportContext";
-import { ContactImportProvider } from "@/context/ContactImportContext";
-import MobileHamburger from "./component/HamburgerMenu";
-import Link from "next/link";
-import { Router } from "next/router";
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "@/theme/muiTheme";
-import { CustomerFieldLabelProvider } from "@/context/customer/CustomerFieldLabelContext";
-import { ThemeProviderCustom, useThemeCustom } from "@/context/ThemeContext";
-import { Moon, Sun } from "lucide-react";
+import { ReactNode } from "react";
+import { Schibsted_Grotesk } from "next/font/google";
+import ClientProviders from "./component/providers/ClientProviders";
+import AppLayoutClient from "./component/providers/AppLayoutClient";
 
+import { Metadata, Viewport } from "next";
+import { getBrandSettings } from "@/store/brand/brand";
+import { DEFAULT_BRAND } from "@/config/defaultBrand";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+// 1. REPLACE THE STATIC VIEWPORT WITH THIS DYNAMIC FUNCTION:
+export async function generateViewport(): Promise<Viewport> {
+  const res = await getBrandSettings();
+  const settings = res?.data;
+
+  return {
+    themeColor: settings?.themeColor || DEFAULT_BRAND.themeColor || "#ffffff",
+  };
+}
+
+function getCloudinaryPngUrl(url: string, size: number): string {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+  return url.replace(/(\/upload\/)(v\d+\/)?/, `$1w_${size},h_${size},c_fill,f_png/$2`);
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const res = await getBrandSettings();
+  const settings = res?.data;
+
+  const rawFavicon = settings?.faviconUrl || DEFAULT_BRAND.faviconUrl;
+  const appleUrl = settings?.icon192Url || getCloudinaryPngUrl(rawFavicon, 192);
+
+  return {
+    title: {
+      template: `%s | ${settings?.shortName || DEFAULT_BRAND.shortName}`,
+      default: settings?.appName || DEFAULT_BRAND.appName,
+    },
+    icons: {
+      icon: [
+        {
+          url: rawFavicon,
+          sizes: "any",
+        },
+      ],
+      apple: [
+        {
+          url: appleUrl,
+          sizes: "180x180",
+          type: "image/png",
+        },
+      ],
+    },
+    manifest: "/manifest.webmanifest",
+  };
+}
 
 const poppins = Schibsted_Grotesk({
-  weight: '400',
-  subsets: ['latin'],
-})
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const isAdminPage = pathname === "/admin" || pathname === "/register";
-
-
-/*   const [toggleTheme, setToggleTheme] = useState(false); */
-
-  useEffect(() => {
-    if (Router && "prefetch" in Router) {
-      Router.prefetch = async () => { }; // override prefetch globally
-    }
-  }, []);
-
   return (
-    <html lang="en" className={`min-h-screen w-full custom-scrollbar overflow-x-hidden ${poppins.className}`}>
-      <link rel="manifest" href="/manifest.json" />
-      <meta name="theme-color" content="#ffffff" />
-      <link rel="icon" href="/icons/favicon-16x16.png" />
-      <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-      <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
-      <title>Prime Consultancy Leads</title>
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <html
+      lang="en"
+      className={`min-h-screen w-full custom-scrollbar overflow-x-hidden ${poppins.className}`}
+    >
       <body className="min-h-screen w-full bg-violet-100 overflow-x-hidden">
-        <AuthProvider>
-          <ThemeProviderCustom>
-            <CustomerImportProvider>
-              <ContactImportProvider>
-                <CustomerFieldLabelProvider>
-                  <ThemeProvider theme={theme}>
-                    {isAdminPage ? (
-                      <main className="min-h-screen [scrollbar-width:thin] [scrollbar-color:var(--color-primary-lighter)_transparent]">{children}</main>
-                    ) : (
-                      <ProtectedRoute>
-                        <SidebarProvider>
-                          <div className="flex min-h-screen w-full dark:text-black overflow-hidden">
-                            {/* Sidebar */}
-                            <AppSidebar />
-
-                            {/* Main Area */}
-                            <SidebarInset className="flex flex-col flex-1 min-h-screen overflow-hidden ">
-
-                              {/* Navbar */}
-                              <header className="flex items-center gap-2 shrink-0 bg-white max-sm:dark:bg-linear-to-r max-sm:dark:from-[var(--color-bgdark)] max-sm:dark:to-[var(--color-secondary-darker)] max-sm:dark:text-slate-100 max-sm:fixed max-sm:top-0 max-sm:left-0 max-sm:w-full max-sm:bg-[var(--color-primary)] text-gray-800 px-4 pl-0 shadow-sm z-10">
-                                <div className="flex items-center gap-2 ml-2 max-sm:hidden ">
-                                  <SidebarTrigger className="ml-1 cursor-pointer" />
-                                  <Separator
-                                    orientation="vertical"
-                                    className="mr-2 data-[orientation=vertical]:h-4"
-                                  />
-                                </div>
-
-                                <MobileHamburger />
-
-                                <Link href={"/dashboard"} className=" text-white cursor-pointer font-extrabold text-shadow-2xs text-shadow-black text-xl py-1 sm:hidden">
-                                  Dashboard
-                                </Link>
-                               
-                                <div className="ml-auto w-full">
-                                  <Navbar />
-                                </div>
-                              </header>
-
-                              {/* Page Content */}
-                              <main className={`flex-1 overflow-y-auto   bg-stone-200 max-sm:dark:bg-linear-to-br max-sm:dark:from-[#0f1117] max-sm:dark:via-50% max-sm:dark:to-[var(--color-secondary-darker)] max-md:dark:bg-[var(--color-bgdark)]`}>
-
-                                {/* Mobile Sidebar Trigger */}
-                                <div className="flex items-center gap-2 max-w-[100px] max-md:hidden md:hidden mt-4 ml-4">
-                                  <SidebarTrigger className="ml-1" />
-                                  <Separator
-                                    orientation="vertical"
-                                    className="mr-2 data-[orientation=vertical]:h-4"
-                                  />
-                                </div>
-
-                                {/* Actual Page */}
-                                <div className="p-4 max-md:px-2 max-md:py-2 max-sm:mt-[52px]">{children}</div>
-                              </main>
-                            </SidebarInset>
-                          </div>
-                        </SidebarProvider>
-                      </ProtectedRoute>
-                    )}
-                  </ThemeProvider>
-                </CustomerFieldLabelProvider>
-              </ContactImportProvider>
-            </CustomerImportProvider>
-          </ThemeProviderCustom>
-        </AuthProvider>
+        <ClientProviders>
+          <AppLayoutClient>{children}</AppLayoutClient>
+        </ClientProviders>
       </body>
     </html>
   );

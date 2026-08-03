@@ -16,7 +16,6 @@ import PageHeader from "@/app/component/labels/PageHeader";
 import MasterProtectedRoute from "@/app/component/MasterProtectedRoutes";
 import LeadStatus from "@/app/phonescreens/DashboardScreens/LeadStatus";
 import CampaignFilter from "@/app/phonescreens/DashboardScreens/CampaignFilter";
-import MobilePageTitle from "@/app/component/labels/MobilePageTitle";
 
 /* import { getCampaigns, deleteCampaign } from "@/store/campaigns"; */ // you'll create these API helpers
 
@@ -103,8 +102,7 @@ export default function CampaignPage() {
         <MasterProtectedRoute>
             <Toaster position="top-right" />
             <div className=" sm:hidden py-2">
-                {/* <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0 py-0">Campaign</h1> */}
-                <MobilePageTitle title="Campaign" />
+                <h1 className=" text-[var(--color-primary)] font-bold text-2xl px-0 py-0">Campaign</h1>
                 <CampaignFilter leadStatuses={campaigns.map((item) => ({ name: item.Name }))} />
             </div>
             <div className="min-h-[calc(100vh-56px)] overflow-auto max-md:py-10 max-sm:hidden">

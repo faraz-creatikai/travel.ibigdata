@@ -15,17 +15,25 @@ const PopupMenu: React.FC<PopupMenuProps> = ({ children, onClose, isOpen = true 
     }
   };
 
-    useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflowY = 'hidden';
-    } else {
-      document.body.style.overflowY = 'auto';
-    }
 
-    return () => {
-      document.body.style.overflowY = 'auto'; // cleanup
-    };
-  }, [isOpen]);
+
+  useEffect(() => {
+  const html = document.documentElement;
+  const body = document.body;
+
+  if (isOpen) {
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+  } else {
+    html.style.overflow = '';
+    body.style.overflow = '';
+  }
+
+  return () => {
+    html.style.overflow = '';
+    body.style.overflow = '';
+  };
+}, [isOpen]);
 
   return (
     <AnimatePresence>

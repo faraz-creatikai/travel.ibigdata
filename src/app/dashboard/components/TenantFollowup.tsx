@@ -27,33 +27,7 @@ interface FollowupStatusMetric {
     color: string;
 }
 
-// ── Metric card ───────────────────────────────────────────────────────────────
-const MetricCard = ({
-    children,
-    index,
-    accentColor,
-}: {
-    children: React.ReactNode;
-    index: number;
-    accentColor: string;
-}) => (
-    <div
-        className="group relative flex flex-col items-center gap-5 pt-6 pb-5 px-4 rounded-3xl bg-gray-50 dark:bg-[#13151f] border border-gray-100 dark:border-white/[0.06] hover:scale-[1.02] hover:shadow-xl dark:hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-all duration-500 overflow-hidden cursor-default"
-        style={{ animationDelay: `${index * 100}ms` }}
-    >
-        {/* Top accent bar */}
-        <span
-            className="absolute top-0 left-6 right-6 h-[2px] rounded-b-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"
-            style={{ background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)` }}
-        />
-        {/* Faint radial glow behind circle */}
-        <span
-            className="pointer-events-none absolute top-6 left-1/2 -translate-x-1/2 w-28 h-28 rounded-full blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"
-            style={{ backgroundColor: accentColor }}
-        />
-        {children}
-    </div>
-);
+
 
 const TenantFollowups = () => {
     const [followuUpsData, setFollowupsData] = React.useState<FollowupData | null>(null);
@@ -65,11 +39,13 @@ const TenantFollowups = () => {
         return percentage < 10 ? "#ef4444" : defaultColor;
     };
 
+
+
     useEffect(() => {
         fetchCustomerFollowupData();
     }, []);
-
     const fetchCustomerFollowupData = async () => {
+        // fetch customer with followups
         const FollowupResponseRaw = await getAllContactFollowups();
         console.log(" followups data is here ", FollowupResponseRaw)
         const FollowupResponse = FollowupResponseRaw?.map((item: any) => ({
@@ -83,30 +59,39 @@ const TenantFollowups = () => {
         }));
         const FollowupsContacts = FollowupResponse?.filter(
             (item, index, arr) =>
-                arr.findIndex((row) => row.ContactId === item.ContactId) === index
+                arr.findIndex((row) => row.ContactId === item.ContactId) === index //keeps only first occurrence
         ).length;
 
+        //total followups count
         const totalFollowups = FollowupResponse?.length;
 
+        //  Interested followups count
         const interestedFollowups = FollowupResponseRaw?.filter(
             (item: any) => item.StatusType === "interested" || item.StatusType === "Interested"
         ).length;
 
+        // UnInterested Followups count
         const unInterestedFollowups = FollowupResponseRaw?.filter(
             (item: any) => item.StatusType === "not interested" || item.StatusType === "Not Interested"
         ).length;
-
+        // Want Demo Followups count
         const wantDemoFollowups = FollowupResponseRaw?.filter(
             (item: any) => item.StatusType === "want demo" || item.StatusType === "Want Demo"
         ).length;
 
+        //fetch total customers
         const contacts = await getContact();
         const totalContacts = contacts.length;
 
+
+        //percentage calculation of followups/totalcustomer
         const percentage = totalContacts ? (FollowupsContacts! / totalContacts) * 100 : 0;
-        const interestedPercentage = totalFollowups! > 0 ? (interestedFollowups! / totalFollowups!) * 100 : 0;
-        const unInterestedPercentage = totalFollowups! > 0 ? (unInterestedFollowups! / totalFollowups!) * 100 : 0;
-        const wantDemoPercentage = totalFollowups! > 0 ? (wantDemoFollowups! / totalFollowups!) * 100 : 0;
+        const interestedPercentage =
+            totalFollowups! > 0 ? (interestedFollowups! / totalFollowups!) * 100 : 0;
+        const unInterestedPercentage =
+            totalFollowups! > 0 ? (unInterestedFollowups! / totalFollowups!) * 100 : 0;
+        const wantDemoPercentage =
+            totalFollowups! > 0 ? (wantDemoFollowups! / totalFollowups!) * 100 : 0;
 
         setFollowupsData({
             percentage: Math.round(percentage),
@@ -115,7 +100,7 @@ const TenantFollowups = () => {
             status: " To Followup",
             statusSecondary: " Contact",
             color: getColorByPercentage(Math.round(percentage), "#0EA5E9")
-        });
+        })
         setInterestedData({
             percentage: Math.round(interestedPercentage),
             value: interestedFollowups ?? 0,
@@ -140,34 +125,76 @@ const TenantFollowups = () => {
             statusSecondary: " Followups",
             color: getColorByPercentage(Math.round(wantDemoPercentage), "#0EA5E9")
         });
-    };
+    }
+    const ownerFollowUpData = [
+        {
+            percentage: 48,
+            color: "#10b981",
+            visits: 10,
+            followUp: 21,
+            status: "To Visit"
+        },
+        {
+            percentage: 0,
+            color: "#10b981",
+            visits: 0,
+            followUp: 21,
+            status: "Visited"
+        },
+        {
+            percentage: 24,
+            color: "#10b981",
+            visits: 5,
+            followUp: 21,
+            status: "Interested"
+        },
+        {
+            percentage: 0,
+            color: "#10b981",
+            visits: 0,
+            followUp: 21,
+            status: "Not Interested"
+        },
+        {
+            percentage: 0,
+            color: "#10b981",
+            visits: 5,
+            followUp: 21,
+            status: "Want Demo"
+        },
+        {
+            percentage: 29,
+            color: "#ef4444",
+            visits: 6,
+            followUp: 21,
+            status: "Need Followup"
+        }
 
+    ]
     return (
-        <section className="mt-6 rounded-3xl bg-white dark:bg-[#0c0e16] dark:text-slate-300 border border-gray-100 dark:border-white/[0.05] shadow-sm dark:shadow-[0_0_80px_rgba(0,0,0,0.7)] overflow-hidden">
+        <div>
+            <section className=" mt-6 bg-white text-gray-700 p-5">
+                <h2 className=" font-bold text-xl mb-10">CONTACT FOLLOWUP</h2>
 
-            {/* ── Header ─────────────────────────────────────────────────────── */}
-            <div className="flex items-center justify-between px-6 pt-6 pb-5 border-b border-gray-100 dark:border-white/[0.05]">
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-sky-500/10 dark:bg-sky-400/10 flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 text-sky-500 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 leading-none mb-0.5">Overview</p>
-                        <h2 className="text-base font-bold text-gray-900 dark:text-white leading-none tracking-tight">Contact Followup</h2>
-                    </div>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-400">Live</span>
-                </div>
-            </div>
+                <div className=" grid lg:grid-cols-4 md:grid-cols-2 max-md:grid-cols-1 gap-12 px-5">
 
-            {/* ── Cards ──────────────────────────────────────────────────────── */}
-            <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-3 p-5">
-                {followuUpsData && (
-                    <MetricCard index={0} accentColor={followuUpsData.color}>
+                    {/* {
+                        ownerFollowUpData.map((item, index) => {
+                            return <div key={index} className=" flex flex-col gap-1">
+
+
+                                <div>
+                                    <ProgressCircle percentage={item.percentage} size={80} strokeWidth={3} color={item.color} />
+
+                                </div>
+                                <div className=" text-center">
+                                    <p>{item.visits} {item.status} / {item.followUp} FollowUp</p>
+                                    <Link href={"#"} className=" flex gap-1 items-center justify-center">{item.status} <BsArrowRightCircle className=" mt-[2px] text-sm font-light" /></Link>
+                                </div>
+                            </div>
+                        })
+                    } */}
+                    {followuUpsData && (
                         <ProgressCircleItem
                             percentage={followuUpsData.percentage}
                             value={followuUpsData.followups}
@@ -176,10 +203,9 @@ const TenantFollowups = () => {
                             statusSecondary={followuUpsData.statusSecondary}
                             color={followuUpsData.color}
                         />
-                    </MetricCard>
-                )}
-                {interestedData && (
-                    <MetricCard index={1} accentColor={interestedData.color}>
+                    )}
+
+                    {interestedData && (
                         <ProgressCircleItem
                             percentage={interestedData.percentage}
                             value={interestedData.value}
@@ -188,10 +214,9 @@ const TenantFollowups = () => {
                             statusSecondary={interestedData.statusSecondary}
                             color={interestedData.color}
                         />
-                    </MetricCard>
-                )}
-                {unInterestedData && (
-                    <MetricCard index={2} accentColor={unInterestedData.color}>
+                    )}
+
+                    {unInterestedData && (
                         <ProgressCircleItem
                             percentage={unInterestedData.percentage}
                             value={unInterestedData.value}
@@ -200,10 +225,8 @@ const TenantFollowups = () => {
                             statusSecondary={unInterestedData.statusSecondary}
                             color={unInterestedData.color}
                         />
-                    </MetricCard>
-                )}
-                {wantDemoData && (
-                    <MetricCard index={3} accentColor={wantDemoData.color}>
+                    )}
+                    {wantDemoData && (
                         <ProgressCircleItem
                             percentage={wantDemoData.percentage}
                             value={wantDemoData.value}
@@ -212,11 +235,14 @@ const TenantFollowups = () => {
                             statusSecondary={wantDemoData.statusSecondary}
                             color={wantDemoData.color}
                         />
-                    </MetricCard>
-                )}
-            </div>
-        </section>
-    );
-};
+                    )}
 
-export default TenantFollowups;
+
+
+                </div>
+            </section>
+        </div>
+    )
+}
+
+export default TenantFollowups

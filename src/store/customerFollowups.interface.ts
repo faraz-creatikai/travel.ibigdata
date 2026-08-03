@@ -44,3 +44,8 @@ export interface FollowupDeleteDialogDataInterface {
     id: string;
     Name:string;
   }
+
+  export interface customerAiFollowupPayloadInterface {
+    customerIds: string[];
+    userPrompt: string
+  }

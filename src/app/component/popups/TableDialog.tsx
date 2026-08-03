@@ -14,6 +14,7 @@ interface TableDialogProps {
     data: customerGetDataInterface[] | null;
     totalData?: number;
     isOpen?: boolean;
+    isLoading?: boolean;
     renderActions?: (item: customerGetDataInterface) => React.ReactNode;
 }
 
@@ -24,10 +25,11 @@ const TableDialog = ({
     data,
     totalData,
     onClose,
+    isLoading = false ,
     renderActions
 }: TableDialogProps) => {
     if (!isOpen || !data) return null;
-    const customerTableLoader = false;
+    const customerTableLoader = isLoading;
 
     return (
         <PopupMenu onClose={onClose} isOpen={isOpen}>
@@ -156,7 +158,7 @@ const TableDialog = ({
                                                 {/* Assign To */}
                                                 <div className="space-y-1">
                                                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wide">Assigned</p>
-                                                    <p className="text-sm font-medium text-gray-800 dark:text-white line-clamp-1">{item.AssignTo || 'N/A'}</p>
+                                                    <p className="text-sm font-medium text-gray-800 dark:text-white line-clamp-1">{ item.AssignTo.map((e: any) => e.name + ", ") || 'N/A'}</p>
                                                 </div>
 
                                                 {/* Date */}
@@ -257,7 +259,7 @@ const TableDialog = ({
                                                     </td>
                                                     <td className="px-4 py-4 font-semibold text-gray-800 dark:text-gray-400">{item.Name || 'N/A'}</td>
                                                     <td className="px-4 py-4 max-w-[180px]">
-                                                        <span className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{item.Description || 'N/A'}</span>
+                                                        <span className="text-sm text-gray-600 dark:text-gray-400 ">{item.Description || 'N/A'}</span>
                                                     </td>
                                                     <td className="px-4 py-4 text-gray-700 dark:text-gray-400">{item.Location || 'N/A'}</td>
                                                     <td className="px-4 py-4 text-gray-700 dark:text-gray-400">{item.SubLocation || 'N/A'}</td>
@@ -270,7 +272,7 @@ const TableDialog = ({
                                                             <span className="text-gray-400">N/A</span>
                                                         )}
                                                     </td>
-                                                    <td className="px-4 py-4 text-gray-700 dark:text-gray-400">{item.AssignTo || 'N/A'}</td>
+                                                    <td className="px-4 py-4 text-gray-700 dark:text-gray-400">{item.AssignTo.map((e: any) => e.name + ", ") || 'N/A'}</td>
                                                     <td className="px-4 py-4 text-gray-600 dark:text-gray-400 whitespace-nowrap">{item.Date || 'N/A'}</td>
                                                     {renderActions && (
                                                         <td className="px-4 py-4 sticky right-0 bg-white dark:bg-[var(--color-childbgdark)] group-hover:bg-gradient-to-r group-hover:from-[var(--color-primary)]/5 group-hover:via-white group-hover:to-white dark:group-hover:via-[var(--color-secondary-darker)] dark:group-hover:to-[var(--color-secondary-darker)] shadow-[-1px_0_6px_rgba(0,0,0,0.03)]">

@@ -13,6 +13,7 @@ export interface customerAllDataInterface {
   Facilities: string;
   ReferenceId: string;
   CustomerId: string;
+  ClientId?: string;
   CustomerDate: string;
   CustomerYear: string;
   Other: string;
@@ -20,6 +21,7 @@ export interface customerAllDataInterface {
   Video: string;
   GoogleMap: string;
   Price?: string;
+  LeadType?: string;
   URL?: string;
   isFavourite?: boolean;
   Verified: string;
@@ -69,28 +71,33 @@ export interface customerGetDataInterface {
   ReferenceId?: string;
   isFavourite?: boolean;
   isChecked?: boolean;
+  LeadTemperature?: string;
   ContactNumber: string;
-  AssignTo: string;
+  AssignTo: string[];
   Date: string;
   CustomerType: string;
   CustomerSubType: string;
   CustomerName: string;
   Reason: string;
- 
+
   Facillities: string;
   CustomerId: string;
+  ClientId?: string;
   Adderess: string;
   CustomerYear: string;
   Area: string;
   Other: string;
   SitePlan?: string;
 
-  URL?:string;
-  Video?:string;
-  GoogleMap?:string;
-  Price?:string;
+  URL?: string;
+  Video?: string;
+  GoogleMap?: string;
+  Price?: string;
+  LeadType?: string;
+  Shortlisted?:number;
 
   CustomerFields?: any;
+  createdAt?: string;
 }
 
 // we are using this for Tablesetting button
@@ -140,11 +147,13 @@ export interface CustomerAdvInterface {
   Limit: string[];
 }
 
+
 export interface customerAssignInterface {
-  assignToId: string;
+  assignToId: string | string[];
   customerIds?: string[];
-  campaign?: string;
+  campaign?: string | string[];
   assignMode?: "selected" | "campaign" | "all";
+  action?: "assign" | "remove";
 }
 
 export interface contactAssignInterface {
@@ -154,6 +163,10 @@ export interface contactAssignInterface {
 
 export interface customerDeletePayloadInterface {
   customerIds: string[];
+}
+
+export interface customerCheckDuplicateInterface {
+  contactNumbers: string[];
 }
 
 export interface DeleteDialogDataInterface {

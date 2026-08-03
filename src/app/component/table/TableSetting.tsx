@@ -33,46 +33,47 @@ function Tablesetting({ columns, setColumns }: TableSettingProps) {
       prev.map((col) =>
         col.key === key
           ? {
-              ...col,
-              isPinned: !col.isPinned,
-              visible: col.isPinned ? false : true,
-            }
+            ...col,
+            isPinned: !col.isPinned,
+            visible: col.isPinned ? false : true,
+          }
           : col
       )
     );
   };
 
   return (
-    <div className=" mr-2"   ref={menuRef}>
+    <div ref={menuRef}>
       {/* Settings Button */}
-      <div className=" relative z-40">
+      <div className="absolute top-[82px] right-2 md:right-2 xl:right-5 z-40">
         <button
           onClick={() => setTogglesetting((prev) => !prev)}
-          className="text-[var(--color-secondary)] transition-all duration-300 hover:rotate-180  cursor-pointer flex justify-center items-center rounded-md"
+          className="bg-[var(--color-secondary)] w-12 h-12 text-white cursor-pointer flex justify-center items-center rounded-md"
         >
-          <IoMdSettings size={18} />
+          <IoMdSettings size={24} />
         </button>
-         {/* Dropdown Menu */}
+      </div>
+
+      {/* Dropdown Menu */}
       <div
-      
+
         style={{
           borderWidth: "0.2px",
           borderColor: "gray",
           borderStyle: "solid",
         }}
-        className={`absolute top-8 -left-60 min-w-[250px] max-h-54 bg-white shadow-2xl shadow-gray-300
+        className={`absolute top-28 max-h-54 bg-white shadow-2xl shadow-gray-300
           text-gray-900 px-1 py-2 right-18 flex-col rounded-md z-[1000]
-          transform transition-all duration-300 ease-out overflow-y-scroll [scrollbar-width:thin] [scrollbar-color:var(--color-primary)_transparent]
-          ${
-            togglesetting
-              ? "scale-100 opacity-100 visible"
-              : "scale-95 opacity-0 pointer-events-none invisible"
+          transform transition-all duration-300 ease-out overflow-y-scroll custom-scrollbar
+          ${togglesetting
+            ? "scale-100 opacity-100 visible"
+            : "scale-95 opacity-0 pointer-events-none invisible"
           }`}
       >
         {columns.map((col) => (
           <button
             key={col.key}
-            className="w-full flex  justify-between gap-9 px-3 py-2.5 hover:bg-[var(--color-secondary)]/90 rounded-md text-sm hover:text-white transition-colors"
+            className="w-full flex items-center justify-between gap-9 px-3 py-2.5 hover:bg-[var(--color-secondary)]/90 rounded-md text-sm hover:text-white transition-colors"
             onClick={() => togglePin(col.key)}
           >
             <span>{col.label}</span>
@@ -84,9 +85,6 @@ function Tablesetting({ columns, setColumns }: TableSettingProps) {
           </button>
         ))}
       </div>
-      </div>
-
-     
     </div>
   );
 }

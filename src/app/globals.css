@@ -85,7 +85,8 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 
 
- /* custom colors - PURPLE LIGHT VARIANT */
+
+ /* custom colors - PURPLE VARIANT */
 --color-primary: #8C42FF;         /* main purple */
 --color-primary-dark: #7326E6;    /* darker purple */
 --color-primary-darker: #5C0FCC;  /* darkest purple */
@@ -109,23 +110,21 @@
 --color-bglightdark: #000000;     /* background black stays */
 
 /* table phone screen color */
---table: #A500FF;      
+--table: #A500FF;                 /* bright purple for tables */
 
-/* dark/light */
+    /* dark/light */
 
---color-bgdark: #0F0A2A;
---color-bglight: white;
+  --color-bgdark:#04171c;
+  --color-bglight:white;
 
---color-childbglight: #EDE9FE;
---color-childbgdark: #140F3C;
+  --color-childbglight:#EDE9FE;
+  --color-childbgdark:#052b36;
 
---color-txtdark: black;
---color-txtlight: white;
+  --color-txtdark:black;
+  --color-txtlight:white;
 
---color-bghoverlight: #DDD6FE;
---color-bghoverdark: #2F108A;
-
-
+  --color-bghoverlight:gray;
+  --color-bghoverdark:red;
 
   /* app font */
   --app-font:;
@@ -179,6 +178,32 @@
   }
 }
 
+/* Disable track interaction */
+.range-input {
+  pointer-events: none;
+}
+
+/* Enable only thumb interaction */
+.range-input::-webkit-slider-thumb {
+  pointer-events: auto;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  background: #2563eb;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  z-index: 100;
+}
+
+.range-input::-moz-range-thumb {
+  pointer-events: auto;
+  height: 16px;
+  width: 16px;
+  background: #2563eb;
+  border-radius: 50%;
+  cursor: pointer;
+}
 
 /* ── Custom Scrollbar Utility Class ── */
 .custom-scrollbar {
@@ -220,8 +245,6 @@ select:-webkit-autofill {
   transition: background-color 9999s ease-in-out 0s;
   box-shadow: 0 0 0px 1000px transparent inset !important;
 }
-
-
 
 
 /* app font */

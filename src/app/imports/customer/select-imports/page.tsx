@@ -40,10 +40,14 @@ export default function SelectImports() {
     const router = useRouter();
     const { excelHeaders, file } = useCustomerImport();
     const [customerFieldMasters, setCustomerFieldMasters] = useState<string[]>([]);
+    // tracks whether the custom-field master list has finished loading (even if it comes back empty),
+    // so the auto-mapping effect below knows it's safe to run instead of racing the fetch.
+    const [customerFieldsReady, setCustomerFieldsReady] = useState(false);
     const [categorizedHeaders, setCategorizedHeaders] = useState<CategorizedHeader[]>([]);
 
-    const normalize = (str: string) =>
-        str
+    const normalize = (value: unknown) =>
+        String(value ?? "")
+            .trim()
             .toLowerCase()
             .replace(/[^a-z0-9]/g, "");
 
@@ -57,9 +61,15 @@ export default function SelectImports() {
 
     useEffect(() => {
         const loadCustomerFields = async () => {
-            const res = await getCustomerFields(); 
-             const activeFields = res.filter((e: any) => e.Status === "Active");
-            setCustomerFieldMasters(activeFields.map((f: any) => f.Name));
+            try {
+                const res = await getCustomerFields();
+                const activeFields = res.filter((e: any) => e.Status === "Active");
+                setCustomerFieldMasters(activeFields.map((f: any) => f.Name));
+            } catch (error) {
+                toast.error("Error fetching custom fields");
+            } finally {
+                setCustomerFieldsReady(true);
+            }
         };
         loadCustomerFields();
     }, []);
@@ -129,36 +139,62 @@ export default function SelectImports() {
         "Verified",
     ];
 
-    const customerFields =[  ...customerFieldMasters,...systemFields];
+    const customerFields = [...customerFieldMasters, ...systemFields];
 
 
     useEffect(() => {
-        if (!excelHeaders.length) return;
+        // wait for both the excel headers AND the custom-field master list before categorizing,
+        // otherwise custom fields would always fall back to unmapped because the masters
+        // hadn't loaded yet on the first run.
+        if (!excelHeaders.length || !customerFieldsReady) return;
 
-        const categorized: CategorizedHeader[] = excelHeaders.map((header) => {
+        const validHeaders = excelHeaders.filter(
+            (header) =>
+                header !== null &&
+                header !== undefined &&
+                String(header).trim() !== ""
+        );
+
+        const categorized: CategorizedHeader[] = validHeaders.map((header) => {
+            const headerStr = String(header).trim();
+
             const systemMatch = systemFields.find(
-                (field) => normalize(field) === normalize(header)
+                (field) => normalize(field) === normalize(headerStr)
             );
 
             if (systemMatch) {
                 return {
-                    header,
+                    header: headerStr,
                     type: "system",
-                    mappedTo: systemMatch, // auto-mapped
+                    mappedTo: systemMatch,
+                };
+            }
+
+            // same idea as the system-field match above, just checked against the
+            // dynamic custom-field master list instead of the fixed systemFields array.
+            const customMatch = customerFieldMasters.find(
+                (field) => normalize(field) === normalize(headerStr)
+            );
+
+            if (customMatch) {
+                return {
+                    header: headerStr,
+                    type: "custom",
+                    mappedTo: customMatch,
                 };
             }
 
             return {
-                header,
+                header: headerStr,
                 type: "custom",
-                mappedTo: "", // user will select
+                mappedTo: "",
             };
         });
 
         setCategorizedHeaders(categorized);
 
-        // Also initialize fieldMapping
         const initialMapping: Record<string, string> = {};
+
         categorized.forEach((item) => {
             if (item.mappedTo) {
                 initialMapping[item.header] = item.mappedTo;
@@ -166,7 +202,7 @@ export default function SelectImports() {
         });
 
         setFieldMapping(initialMapping);
-    }, [excelHeaders]);
+    }, [excelHeaders, customerFieldsReady, customerFieldMasters]);
 
 
 
@@ -219,7 +255,7 @@ export default function SelectImports() {
                                 ))}
                         </div>
                         <h2 className="text-xl font-semibold text-gray-700 mt-10">
-                           Map Custom Fields
+                            Map Custom Fields
                         </h2>
 
                         <div className="grid grid-cols-2 gap-4 mt-4">

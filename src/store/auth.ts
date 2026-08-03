@@ -75,6 +75,24 @@ export const checkAuthAdmin = async (): Promise<AuthApiResponse> => {
   }
 };
 
+export const loginDev = async (loginData: LoginCredentials): Promise<AuthApiResponse> => {
+  try {
+    const res = await fetch(API_ROUTES.ADMIN.DEVLOGIN, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(loginData),
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data: AuthApiResponse = await res.json();
+    return data;
+  } catch (error) {
+    console.error("SERVER ERROR (Login): ", error);
+    return { success: false, message: "Login failed" };
+  }
+};
+
 // 👤 ADMIN MANAGEMENT
 export const createAdmin = async (adminData: CreateAdminData): Promise<AuthApiResponse> => {
   try {
@@ -118,6 +136,7 @@ export const getAllAdmins = async (): Promise<AuthApiResponse> => {
 
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data: AuthApiResponse = await res.json();
+    console.log("Admins fetched: ", data);
     return data;
   } catch (error) {
     console.error("SERVER ERROR (Get All Admins): ", error);
@@ -151,8 +170,10 @@ export const updateAdminDetails = async (id: string, updatedData: Partial<Admin>
       phone: updatedData.MobileNumber,
       city: updatedData.City,
       role: updatedData.Role,
+      company: updatedData.Company,
       AddressLine1: updatedData.AddressLine1,
       AddressLine2: updatedData.AddressLine2,
+      status: updatedData.Status
     };
     const res = await fetch(API_ROUTES.ADMIN.UPDATE_DETAILS(id), {
       method: "PUT",
@@ -206,5 +227,166 @@ export const deleteAdmin = async (id: string): Promise<AuthApiResponse> => {
   } catch (error) {
     console.error("SERVER ERROR (Delete Admin): ", error);
     return { success: false, message: "Failed to delete admin" };
+  }
+};
+
+
+
+//admin api model configuration api calls
+
+export const SaveAdminAiKey = async (data: any) => {
+    try {
+        let response = await fetch(API_ROUTES.ADMIN.AI.SAVE_API_KEY,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        response = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
+
+export const getAllAiApiKeys = async (): Promise<AuthApiResponse> => {
+  try {
+    const res = await fetch(API_ROUTES.ADMIN.AI.GET_ALL, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data= await res.json();
+    console.log("Admins fetched: ", data);
+    return data;
+  } catch (error) {
+    console.error("SERVER ERROR (Get All Admins): ", error);
+    return { success: false, message: "Failed to fetch admins" };
+  }
+};
+
+export const getMyActiveAgents = async () => {
+  try {
+    const res = await fetch(API_ROUTES.ADMIN.MY_ACTIVE_AGENTS, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data= await res.json();
+    console.log("Admins fetched: ", data);
+    return data;
+  } catch (error) {
+    console.error("SERVER ERROR (Get All Admins): ", error);
+    return { success: false, message: "Failed to fetch admins" };
+  }
+};
+
+export const UpdateAdminAiKey = async (id:string,data: any) => {
+    try {
+        let response = await fetch(API_ROUTES.ADMIN.AI.UPDATE_API_KEY(id),
+            {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        response = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
+export const DeleteAdminAiKey = async (id:string,data: any) => {
+    try {
+        let response = await fetch(API_ROUTES.ADMIN.AI.DELETE_API_KEY(id),
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        response = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
+
+
+export const GenerateCrmApiKey = async (data: any) => {
+    try {
+        let response = await fetch(API_ROUTES.ADMIN.GENERATE_CRM_API_KEY,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        response = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
+
+
+export const DeleteCrmApiKey = async (id:string) => {
+    try {
+        let response = await fetch(API_ROUTES.ADMIN.DELETE_CRM_API_KEY(id),
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        response = await response.json();
+        return response;
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
+export const getCrmApiKeys = async () => {
+  try {
+    const res = await fetch(API_ROUTES.ADMIN.GET_CRM_API_KEYS, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data= await res.json();
+    console.log("Admins fetched: ", data);
+    return data;
+  } catch (error) {
+    console.error("SERVER ERROR (Get All Admins): ", error);
+    return { success: false, message: "Failed to fetch admins" };
   }
 };

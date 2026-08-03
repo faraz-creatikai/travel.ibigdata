@@ -3,6 +3,7 @@ import {
   customerFollowupAllDataInterface,
   customerFollowupGetDataInterface,
   CustomerFollowupAdvInterface,
+  customerAiFollowupPayloadInterface,
 } from "./customerFollowups.interface";
 
 // Get all customer followups
@@ -39,7 +40,9 @@ export const getFollowupByCustomerId = async (id: string): Promise<customerFollo
 
 export const getFollowupByFollowupId = async (id: string): Promise<customerFollowupAllDataInterface | null> => {
   try {
-    const response = await fetch(API_ROUTES.FOLLOWUPS.CUSTOMER.GET_FOLLOWUP_By_ID(id));
+    const response = await fetch(API_ROUTES.FOLLOWUPS.CUSTOMER.GET_FOLLOWUP_By_ID(id),{
+      credentials: "include"
+    });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     console.log("naruto ",data.data)
@@ -81,6 +84,7 @@ export const addCustomerFollowup = async (
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include"
     });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -102,6 +106,7 @@ export const updateCustomerFollowup = async (
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include"
     });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,6 +124,7 @@ export const deleteCustomerFollowup = async (id: string): Promise<{ success: boo
     const response = await fetch(API_ROUTES.FOLLOWUPS.CUSTOMER.CUSTOMER_FOLLOWUP_DELETE(id), {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
+      credentials: "include"
     });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -136,6 +142,7 @@ export const deleteFollowup = async (id: string): Promise<{ success: boolean; me
     const response = await fetch(API_ROUTES.FOLLOWUPS.CUSTOMER.FOLLOWUP_DELETE(id), {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
+      credentials: "include"
     });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -144,6 +151,27 @@ export const deleteFollowup = async (id: string): Promise<{ success: boolean; me
     return data;
   } catch (error) {
     console.log("SERVER ERROR (deleteFollowup):", error);
+    return null;
+  }
+};
+
+export const addAiFollowup = async (
+ data: customerAiFollowupPayloadInterface
+): Promise<any | null> => {
+  try {
+    //console.log("customer followup data ",data)
+    let response = await fetch(API_ROUTES.FOLLOWUPS.CUSTOMER.ADDAIFOLLOWUP, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      credentials: "include"
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const result= await response.json();
+    return result;
+  } catch (error) {
+    console.log("SERVER ERROR (addCustomerFollowup):", error);
     return null;
   }
 };

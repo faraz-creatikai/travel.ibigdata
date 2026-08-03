@@ -28,12 +28,13 @@ import TextareaField from "../datafields/TextareaField";
 import DateSelector from "../DateSelector";
 import ObjectSelect from "../ObjectSelect";
 import PopupMenu from "./PopupMenu";
+import { getLeadType } from "@/store/masters/leadtype/leadtype";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   customerId: string | null;
-   onCustomerUpdated: (customer: any) => void;  
+  onCustomerUpdated: (customer: any) => void;
 }
 
 interface ErrorInterface {
@@ -68,9 +69,11 @@ export default function CustomerEditDialog({
       Facilities: "",
       ReferenceId: "",
       CustomerId: "",
+      ClientId: "",
       CustomerDate: "",
       CustomerYear: "",
       Price: "",
+      LeadType: "",
       URL: "",
       Other: "",
       Description: "",
@@ -129,7 +132,7 @@ export default function CustomerEditDialog({
             id: data.SubLocation?._id || "",
             name: data.SubLocation?.Name || ""
           },
-          Facilities: data.Facillities || "",
+          AssignTo: data.AssignTo ?? [],
           Address: data.Adderess || "",
           CustomerDate: data?.CustomerDate,
           CustomerImage: [],
@@ -245,9 +248,11 @@ export default function CustomerEditDialog({
     if (customerData.Facilities) formData.append("Facillities", customerData.Facilities);
     if (customerData.ReferenceId) formData.append("ReferenceId", customerData.ReferenceId);
     if (customerData.CustomerId) formData.append("CustomerId", customerData.CustomerId);
+    if (customerData.ClientId) formData.append("ClientId", customerData.ClientId);
     if (customerData.CustomerDate) formData.append("CustomerDate", customerData.CustomerDate);
     if (customerData.CustomerYear) formData.append("CustomerYear", customerData.CustomerYear);
     if (customerData.Price) formData.append("Price", customerData.Price);
+    if (customerData.LeadType) formData.append("LeadType", customerData.LeadType);
     if (customerData.URL) formData.append("URL", customerData.URL);
     if (customerData.Other) formData.append("Other", customerData.Other);
     if (customerData.Description) formData.append("Description", customerData.Description);
@@ -271,7 +276,7 @@ export default function CustomerEditDialog({
 
     formData.append("CustomerFields", JSON.stringify(customFields));
 
-   
+
 
     const result = await updateCustomer(customerId as string, formData);
 
@@ -283,7 +288,7 @@ export default function CustomerEditDialog({
       toast.error("Update failed");
     }
   };
- const dropdownOptions = ["Option1", "Option2", "Option3"];
+  const dropdownOptions = ["Option1", "Option2", "Option3"];
   // Object-based fields (for ObjectSelect)
   const objectFields = [
     { key: "Campaign", fetchFn: getCampaign },
@@ -301,7 +306,8 @@ export default function CustomerEditDialog({
     { key: "Gender", staticData: ["male", "female", "other"] },
     { key: "Facilities", fetchFn: getFacilities },
     { key: "ReferenceId", fetchFn: getReferences },
-    { key: "Price", fetchFn: getPrice }
+    { key: "Price", fetchFn: getPrice },
+    { key: "LeadType", fetchFn: getLeadType }
   ];
 
 
@@ -379,29 +385,29 @@ export default function CustomerEditDialog({
       setFieldOptions((prev) => ({ ...prev, CustomerSubtype: [] }));
     }
   };
- 
+
   if (!isOpen) return null;
   if (loading) return null;
 
   return (
     <PopupMenu onClose={onClose} isOpen={isOpen}>
-   <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-  <div className="bg-white  max-sm:dark:bg-[var(--color-childbgdark)]  w-[1000px] max-w-full rounded-2xl shadow-xl max-h-[90vh] flex flex-col">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+        <div className="bg-white  max-sm:dark:bg-[var(--color-childbgdark)]  w-[1000px] max-w-full rounded-2xl shadow-xl max-h-[90vh] flex flex-col">
 
-    {/* HEADER (Fixed) */}
-    <div className="flex justify-between items-center border-b p-6">
-      <h2 className="text-2xl font-bold max-sm:dark:text-[var(--color-primary)]">
-        Edit Customer Information
-      </h2>
-      <button className=" max-sm:dark:text-white hover:bg-[var(--color-primary)] hover:text-white p-2 rounded-md cursor-pointer" onClick={onClose}>
-        <X size={22} />
-      </button>
-    </div>
+          {/* HEADER (Fixed) */}
+          <div className="flex justify-between items-center border-b p-6">
+            <h2 className="text-2xl font-bold max-sm:dark:text-[var(--color-primary)]">
+              Edit Customer Information
+            </h2>
+            <button className=" max-sm:dark:text-white hover:bg-[var(--color-primary)] hover:text-white p-2 rounded-md cursor-pointer" onClick={onClose}>
+              <X size={22} />
+            </button>
+          </div>
 
-    {/* SCROLLABLE BODY */}
-    <div className="flex-1 overflow-y-auto px-6 py-4">
-      
-     
+          {/* SCROLLABLE BODY */}
+          <div className="flex-1 overflow-y-auto px-6 py-4">
+
+
             <div className="grid grid-cols-3 gap-6 max-xl:grid-cols-2 max-lg:grid-cols-1">
               {/*  <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} />
               <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} /> */}
@@ -526,11 +532,14 @@ export default function CustomerEditDialog({
               <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.ReferenceId) ? fieldOptions.ReferenceId : []} label={getLabel("ReferenceId", "Reference Id")} value={customerData.ReferenceId} onChange={(v) => handleSelectChange("ReferenceId", v)} />
               {/* <InputField className=" max-sm:hidden" label="Reference ID" name="ReferenceId" value={customerData.ReferenceId} onChange={handleInputChange} /> */}
               <InputField className=" max-sm:hidden" label={getLabel("CustomerId", "Customer ID")} name="CustomerId" value={customerData.CustomerId} onChange={handleInputChange} />
+              <InputField className=" max-sm:hidden" label={getLabel("ClientId", "Client ID")} name="ClientId" value={customerData.ClientId ?? ""} onChange={handleInputChange} />
               <div className=" max-sm:hidden">
                 <DateSelector label={getLabel("CustomerDate", "Customer Date")} value={customerData.CustomerDate} onChange={(val) => handleSelectChange("CustomerDate", val)} />
               </div>
               <InputField className=" max-sm:hidden" label={getLabel("CustomerYear", "Customer Year")} name="CustomerYear" value={customerData.CustomerYear} onChange={handleInputChange} />
-              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Price) ? fieldOptions.Price : []} label={getLabel("Price", "Price")} value={customerData.Price} onChange={(v) => handleSelectChange("Price", v)} />
+              {/*  <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Price) ? fieldOptions.Price : []} label={getLabel("Price", "Price")} value={customerData.Price} onChange={(v) => handleSelectChange("Price", v)} /> */}
+              <InputField className=" max-sm:hidden" label={getLabel("Price", "Price")} name="Price" value={customerData.Price ?? ""} onChange={handleInputChange} />
+              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.LeadType) ? fieldOptions.LeadType : []} label={getLabel("LeadType", "LeadType")} value={customerData.LeadType} onChange={(v: any) => handleSelectChange("LeadType", v)} />
               <InputField className=" max-sm:hidden" label={getLabel("URL", "URL")} name="URL" value={customerData.URL ?? ""} onChange={handleInputChange} />
               <InputField className=" max-sm:hidden" label={getLabel("Other", "Others")} name="Other" value={customerData.Other} onChange={handleInputChange} />
               <TextareaField label={getLabel("Description", "Description")} name="Description" value={customerData.Description} onChange={handleInputChange} />
@@ -565,17 +574,17 @@ export default function CustomerEditDialog({
 
             </div>
 
-      
-    </div>
 
-    {/* FOOTER (Fixed) */}
-    <div className="border-t p-6 flex justify-end">
-      <SaveButton text="Update" onClick={handleSubmit} />
-    </div>
+          </div>
 
-  </div>
-</div>
-</PopupMenu>
+          {/* FOOTER (Fixed) */}
+          <div className="border-t p-6 flex justify-end">
+            <SaveButton text="Update" onClick={handleSubmit} />
+          </div>
+
+        </div>
+      </div>
+    </PopupMenu>
   );
 }
 

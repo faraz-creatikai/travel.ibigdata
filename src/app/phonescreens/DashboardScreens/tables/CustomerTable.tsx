@@ -17,7 +17,7 @@ import PopupMenu from "@/app/component/popups/PopupMenu";
 import { GoArrowLeft } from "react-icons/go";
 import CustomerImageSlider from "@/app/component/slides/CustomerImageSlider";
 import { UserPlus } from "lucide-react";
-
+import { customerGetDataInterface } from "@/store/customer.interface";
 export interface LabelConfig {
     key: string;
     label: string;
@@ -40,6 +40,7 @@ interface LeadsSectionProps<T extends Record<string, any>> {
     fetchMore?: () => Promise<void>;
     duplicateContacts?: Record<string, boolean>;
     onViewDuplicate?: (contactNumber: string) => void;
+    renderActions?: (item: T) => React.ReactNode;
 }
 
 export default function CustomerTable<T extends Record<string, any>>({
@@ -58,6 +59,7 @@ export default function CustomerTable<T extends Record<string, any>>({
     duplicateContacts,
     onViewDuplicate,
     onGoogleMapViewAddress,
+    renderActions,
 }: LeadsSectionProps<T>) {
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -68,7 +70,6 @@ export default function CustomerTable<T extends Record<string, any>>({
     const totalPages = Math.ceil(leads.length / itemsperpage);
     const startIndex = (currentPage - 1) * itemsperpage;
     const paginatedLeads = leads.slice(startIndex, startIndex + itemsperpage);
-
     const router = useRouter();
 
     const nextPage = async () => {
@@ -101,285 +102,322 @@ export default function CustomerTable<T extends Record<string, any>>({
         router.push('/followups/customer');
     }
 
-    // ── Loading state ──────────────────────────────────────────────────────────
     if (loader) {
         return (
-            <div className="px-3 pb-6">
-                {[...Array(3)].map((_, i) => (
-                    <div key={i} className="mb-3 rounded-2xl overflow-hidden bg-white dark:bg-[var(--color-childbgdark)] border border-gray-100 dark:border-white/[0.06] animate-pulse">
-                        <div className="h-1.5 w-full bg-gray-100 dark:bg-white/10" />
-                        <div className="p-4 flex gap-4">
-                            <div className="flex-1 space-y-2.5">
-                                <div className="h-3 bg-gray-100 dark:bg-white/10 rounded-full w-3/4" />
-                                <div className="h-3 bg-gray-100 dark:bg-white/10 rounded-full w-1/2" />
-                                <div className="h-3 bg-gray-100 dark:bg-white/10 rounded-full w-2/3" />
-                            </div>
-                            <div className="w-[100px] h-[70px] rounded-xl bg-gray-100 dark:bg-white/10" />
-                        </div>
-                        <div className="h-12 bg-gray-50 dark:bg-white/5 mx-3 mb-3 rounded-xl" />
-                    </div>
-                ))}
+            <div className="px-2 pb-4">
+                <div className="w-full flex flex-col justify-center items-center gap-3 py-16 text-gray-400">
+                    <div className="w-8 h-8 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm font-medium">Loading Customers...</span>
+                </div>
             </div>
         );
     }
 
     return (
         <>
-            {/* ── Detail popup ──────────────────────────────────────────────────── */}
             {viewAll && (
                 <PopupMenu onClose={() => { setViewAll(false) }}>
                     <div className="bg-white dark:bg-[var(--color-childbgdark)] relative w-full h-full flex flex-col">
                         <button
-                            className="absolute top-3 left-3 cursor-pointer z-[2000] bg-white/80 dark:bg-white/10 backdrop-blur-sm border border-gray-100 dark:border-white/10 rounded-full p-1.5 shadow-sm"
+                            className="absolute top-3 left-3 cursor-pointer z-[2000] bg-gray-100/50 rounded-full p-1 self-end mb-1"
                             onClick={() => { setViewAll(false); setViewLeadData(null); }}
                         >
-                            <GoArrowLeft size={22} className="text-gray-700 dark:text-white" />
+                            <GoArrowLeft size={26} />
                         </button>
-
                         <CustomerImageSlider
-                            images={viewLeadData?.CustomerImage?.length ? viewLeadData.CustomerImage : ["/siteplan2.png"]}
+                            images={
+                                viewLeadData?.CustomerImage?.length
+                                    ? viewLeadData.CustomerImage
+                                    : ["/siteplan2.png"]
+                            }
                         />
-
                         <div className="max-h-[calc(80vh-240px)] absolute top-[380px] w-full bg-white dark:bg-[var(--color-childbgdark)] overflow-y-auto px-4 py-6 rounded-t-3xl">
-                            {/* Header */}
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="flex-1 h-px bg-gray-100 dark:bg-white/[0.06]" />
-                                <h2 className="text-base font-bold tracking-tight px-2" style={{ color: "var(--color-primary)" }}>
-                                    Customer Information
-                                </h2>
-                                <div className="flex-1 h-px bg-gray-100 dark:bg-white/[0.06]" />
-                            </div>
+                            <h2 className="text-2xl font-bold text-center mb-8 text-[var(--color-primary)]">Customer Information</h2>
 
-                            <div className="space-y-2">
-                                {allLabelLeads?.map((item, j) => (
-                                    <div
-                                        key={j}
-                                        className={`flex ${viewLeadData?.[item.key]?.length > 30 ? "flex-col gap-1.5" : "items-center justify-between"} p-3 bg-gray-50 dark:bg-[var(--color-secondary-darker)] rounded-xl`}
-                                    >
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-[var(--color-txtlight)]">
-                                            {item.label}
+                            {/* Standard Fields */}
+                            {allLabelLeads?.map((item, j) => (
+                                <div
+                                    key={j}
+                                    className={`flex ${viewLeadData?.[item.key]?.length > 30 && "flex-col gap-2"} my-1 justify-between p-3 bg-gray-50 dark:bg-[var(--color-secondary-darker)] rounded-lg`}
+                                >
+                                    <span className="font-semibold text-gray-700 dark:text-[var(--color-txtlight)] text-sm">
+                                        {item.label}
+                                    </span>
+                                    {item.label === "Contact No" ? (
+                                        <a
+                                            href={`tel:+91${viewLeadData?.[item.key] ?? ""}`}
+                                            className="text-[var(--color-primary)] font-medium hover:underline text-sm"
+                                        >
+                                            {viewLeadData?.[item.key] ?? ""}
+                                        </a>
+                                    ) : item.label === "Address" ? (
+                                        <span
+                                            className="text-[var(--color-primary)] cursor-pointer underline text-sm text-right max-w-[60%]"
+                                            onClick={() => onGoogleMapViewAddress?.(viewLeadData?.[item.key])}
+                                        >
+                                            {viewLeadData?.[item.key] ?? ""}
                                         </span>
+                                    ) : item.label === "URL" ? (
+                                        <a
+                                            href={viewLeadData?.[item.key] ?? "#"}
+                                            target="_blank"
+                                            className="text-[var(--color-primary)] cursor-pointer underline text-sm text-right max-w-[60%]"
 
-                                        {item.label === "Contact No" ? (
-                                            <a
-                                                href={`tel:+91${viewLeadData?.[item.key] ?? ""}`}
-                                                className="text-sm font-semibold hover:underline"
-                                                style={{ color: "var(--color-primary)" }}
-                                            >
-                                                {viewLeadData?.[item.key] ?? ""}
-                                            </a>
-                                        ) : item.label === "Address" ? (
-                                            <span
-                                                className="text-sm font-medium underline cursor-pointer text-right"
-                                                style={{ color: "var(--color-primary)" }}
-                                                onClick={() => onGoogleMapViewAddress?.(viewLeadData?.[item.key])}
-                                            >
-                                                {viewLeadData?.[item.key] ?? ""}
+                                        >
+                                            {viewLeadData?.[item.key] ?? ""}
+                                        </a>
+                                    ) : item.label === "AssignTo" ? (
+                                        <span className="font-semibold text-gray-700 dark:text-[var(--color-txtlight)] text-sm">
+                                            {Array.isArray(viewLeadData?.[item.key]) && viewLeadData[item.key].length > 0
+                                                ? viewLeadData[item.key].map((e: any) => e.name).join(", ")
+                                                : "N/A"}
+                                        </span>
+                                    ) : (
+                                        <span className={`text-gray-900 dark:text-[var(--color-txtlight)] font-medium text-right max-w-[60%] text-sm ${(viewLeadData?.[item.key]?.length > 30) && "flex-col gap-2 max-w-full"}`}>
+                                            <p className="text-left">
+                                                {Array.isArray(viewLeadData?.[item.key])
+                                                    ? viewLeadData[item.key].length > 0
+                                                        ? viewLeadData[item.key].map((e: any) => typeof e === "object" ? e.name || JSON.stringify(e) : e).join(", ")
+                                                        : "N/A"
+                                                    : typeof viewLeadData?.[item.key] === "object" && viewLeadData?.[item.key] !== null
+                                                        ? viewLeadData[item.key].name || JSON.stringify(viewLeadData[item.key])
+                                                        : viewLeadData?.[item.key] ?? "N/A"}
+                                            </p>
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+
+                            {/* ── NEW: Additional Information (Dynamic CustomerFields) ── */}
+                            {viewLeadData?.CustomerFields && Object.keys(viewLeadData.CustomerFields).length > 0 && (
+                                <div className="mt-4 border-t border-gray-100 dark:border-white/10 pt-6">
+                                    <h3 className="text-xl font-bold text-left mb-6 px-2">
+                                        Additional Information
+                                    </h3>
+                                    {Object.entries(viewLeadData.CustomerFields).map(([key, value], i) => (
+                                        <div
+                                            key={`custom-field-${i}`}
+                                            className={`flex ${String(value)?.length > 30 ? "flex-col gap-2" : ""} my-1 justify-between p-3 bg-gray-50 dark:bg-[var(--color-secondary-darker)] rounded-lg`}
+                                        >
+                                            <span className="font-semibold text-gray-700 dark:text-[var(--color-txtlight)] text-sm capitalize">
+                                                {/* Formats camelCase keys to spaced strings, e.g., "customKey" -> "Custom Key" */}
+                                                {key.replace(/([A-Z])/g, ' $1').trim()}
                                             </span>
-                                        ) : (
-                                            <span className={`text-sm font-medium text-gray-800 dark:text-[var(--color-txtlight)] ${viewLeadData?.[item.key]?.length > 30 ? "w-full" : "text-right max-w-[60%]"}`}>
-                                                {viewLeadData?.[item.key] ?? ""}
+                                            <span className={`text-gray-900 dark:text-[var(--color-txtlight)] font-medium text-sm ${String(value)?.length > 30 ? "text-left max-w-full" : "text-right max-w-[60%]"}`}>
+                                                {typeof value === "object" && value !== null
+                                                    ? JSON.stringify(value)
+                                                    : String(value || "N/A")}
                                             </span>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {/* ──────────────────────────────────────────────────────── */}
+
                         </div>
                     </div>
                 </PopupMenu>
             )}
 
-            {/* ── Lead cards ────────────────────────────────────────────────────── */}
-            <div className="px-3 pb-4 space-y-3">
+            {/* ── LEAD CARDS ── */}
+            <div className="px-3 pb-4 flex flex-col gap-3">
+
                 {paginatedLeads.length === 0 && (
-                    <div className="w-full flex flex-col items-center justify-center py-16 gap-3">
-                        <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-white/[0.04] border border-gray-100 dark:border-white/[0.06] flex items-center justify-center">
-                            <svg className="w-6 h-6 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                            </svg>
-                        </div>
-                        <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">No customers available</p>
+                    <div className="w-full flex flex-col justify-center items-center gap-2 py-16 text-gray-400">
+                        <span className="text-4xl">🙅</span>
+                        <span className="text-sm font-medium">No customers available</span>
                     </div>
                 )}
 
                 {paginatedLeads.map((lead, index) => (
-                    <motion.div
+                    <div
                         key={index}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.04, duration: 0.22 }}
-                        className="w-full bg-white dark:bg-[var(--color-childbgdark)] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/[0.06] shadow-sm dark:shadow-none"
+                        className="w-full bg-white dark:bg-[var(--color-childbgdark)] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/5 shadow-sm"
                     >
-                        {/* Top brand stripe */}
-                        <div className="h-1" style={{ background: "var(--color-primary)" }} />
+                        {/* ── Accent top strip ── */}
+                        <div className="h-1 w-full bg-[var(--color-primary)]" />
 
-                        {/* Card body */}
-                        <div className="flex gap-3 p-4">
-                            {/* ── Left: lead info ───────────────────────────────── */}
+                        {/* ── Card body ── */}
+                        <div className="flex gap-3 p-3">
+
+                            {/* LEFT: label data */}
                             <div className="flex-1 min-w-0">
                                 {labelLeads.map((item, j) => (
-                                    <div key={j} className="flex items-baseline gap-1.5 mb-1.5">
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-[var(--color-primary-light)] shrink-0 w-[72px]">
+                                    <div
+                                        key={j}
+                                        className="grid grid-cols-[max-content_8px_1fr] items-start gap-x-2 gap-y-0.5 mb-1.5"
+                                    >
+                                        <span className="text-xs font-semibold text-gray-500 dark:text-[var(--color-primary-light)] whitespace-nowrap leading-5">
                                             {item.label}
                                         </span>
-                                        <span className="text-[10px] text-gray-300 dark:text-white/20 shrink-0">·</span>
-                                        <span className="text-sm font-medium text-gray-800 dark:text-[var(--color-primary-lighter)] truncate">
-                                            {String(lead[item.key])}
+                                        <span className="text-xs text-gray-300 dark:text-white/20 leading-5">—</span>
+                                        <span className="text-xs text-gray-800 dark:text-[var(--color-primary-lighter)] font-medium leading-5 break-words line-clamp-2">
+                                            {Array.isArray(lead[item.key])
+                                                ? lead[item.key].length > 0
+                                                    ? lead[item.key].map((e: any) => typeof e === "object" ? e.name || JSON.stringify(e) : e).join(", ")
+                                                    : "N/A"
+                                                : typeof lead[item.key] === "object" && lead[item.key] !== null
+                                                    ? JSON.stringify(lead[item.key])
+                                                    : lead[item.key] ?? "N/A"}
                                         </span>
                                     </div>
                                 ))}
                             </div>
 
-                            {/* ── Right: image + action buttons ─────────────────── */}
-                            <div className="flex flex-col items-center gap-2.5 shrink-0">
+                            {/* RIGHT: image + all action buttons in one unified column */}
+                            <div className="flex flex-col items-center gap-2 shrink-0 w-[76px]">
+
                                 {/* Thumbnail */}
                                 <div
-                                    className="w-[88px] h-[64px] rounded-xl overflow-hidden bg-gray-100 dark:bg-[var(--color-secondary-darker)] border border-gray-100 dark:border-white/[0.06] cursor-pointer active:scale-95 transition-transform"
+                                    className="w-[72px] h-[56px] rounded-xl overflow-hidden bg-gray-200 text-white dark:bg-[var(--color-secondary-darker)] border border-gray-200 dark:border-white/10 flex items-center justify-center cursor-pointer shrink-0"
                                     onClick={() => { setViewAll(true); setViewLeadData(lead); }}
                                 >
                                     <img
-                                        width={88}
-                                        className={`w-full h-full ${lead.SitePlan?.length > 0 ? "object-cover" : "object-contain p-2"}`}
+                                        width={72}
+                                        className={lead.SitePlan?.length > 0 ? "w-full h-full object-cover" : "w-8 h-8 opacity-100"}
                                         src={lead.SitePlan?.length > 0 ? lead.SitePlan : "/siteplan2.png"}
                                     />
                                 </div>
 
-                                {/* Row 1: followup + favourite */}
-                                <div className="flex gap-2 w-full justify-between">
+                                {/* ── Buttons: 2-column grid so every button lines up ── */}
+                                <div className="grid grid-cols-2 gap-1.5 w-full">
+
+                                    {/* Follow-up */}
                                     <button
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm transition-all active:scale-95"
-                                        style={{ backgroundColor: "color-mix(in srgb, var(--color-primary) 12%, transparent)" }}
+                                        className="w-8 h-8 rounded-full bg-[var(--color-primary-lighter)] dark:bg-[var(--color-primary)] flex items-center justify-center shadow-sm hover:scale-105 transition-transform cursor-pointer"
                                         onClick={() => onViewFollowup?.(lead._id, lead.Name)}
                                     >
-                                        <UserPlus size={15} style={{ color: "var(--color-primary)" }} />
+                                        <UserPlus size={15} className="text-[var(--color-primary)] dark:text-white" />
                                     </button>
+
+                                    {/* Favourite */}
                                     <button
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm bg-gray-50 dark:bg-white/[0.05] transition-all active:scale-95"
+                                        className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[var(--color-primary)] flex items-center justify-center shadow-sm hover:scale-105 transition-transform cursor-pointer"
                                         onClick={() => onFavourite?.(lead)}
                                     >
                                         {lead.isFavourite
-                                            ? <IoIosHeart size={17} style={{ color: "var(--color-primary)" }} />
-                                            : <AiOutlineHeart size={17} className="text-gray-400 dark:text-gray-500" />
-                                        }
+                                            ? <IoIosHeart size={16} className="text-[var(--color-primary)] dark:text-white" />
+                                            : <AiOutlineHeart size={16} className="text-[var(--color-primary)] dark:text-white" />}
                                     </button>
-                                </div>
 
-                                {/* Row 2: duplicate eye + edit */}
-                                <div className="flex gap-2 w-full justify-between">
+                                    {/* Duplicate / spacer */}
                                     {duplicateContacts?.[String(lead.ContactNumber)] ? (
                                         <button
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm transition-all active:scale-95"
-                                            style={{ backgroundColor: "color-mix(in srgb, var(--color-primary) 12%, transparent)" }}
+                                            className="w-8 h-8 rounded-full bg-amber-50 dark:bg-[var(--color-primary)] flex items-center justify-center shadow-sm hover:scale-105 transition-transform cursor-pointer"
                                             onClick={() => onViewDuplicate?.(String(lead.ContactNumber))}
                                         >
-                                            <FaEye size={14} style={{ color: "var(--color-primary)" }} />
+                                            <FaEye size={14} className="text-amber-500 dark:text-white" />
                                         </button>
-                                    ) : <div className="w-8" />}
+                                    ) : (
+                                        <div className="w-8 h-8" /> /* spacer keeps grid aligned */
+                                    )}
+
+                                    {/* Edit */}
                                     <button
-                                        className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/[0.05] flex items-center justify-center shadow-sm transition-all active:scale-95"
+                                        className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[var(--color-primary)] flex items-center justify-center shadow-sm hover:scale-105 transition-transform cursor-pointer"
                                         onClick={() => onEdit?.(lead._id)}
                                     >
-                                        <MdEdit size={16} style={{ color: "var(--color-primary)" }} />
+                                        <MdEdit size={16} className="text-[var(--color-primary)] dark:text-white" />
                                     </button>
+
+                                    {/* renderActions — spans both columns */}
+                                    {renderActions && (
+                                        <div className="col-span-2 w-full">
+                                            {renderActions(lead)}
+                                        </div>
+                                    )}
+
                                 </div>
                             </div>
                         </div>
 
-                        {/* ── Action footer ─────────────────────────────────────── */}
-                        <div
-                            className="flex items-center justify-between px-4 py-2.5 mx-3 mb-3 rounded-xl"
-                            style={{ backgroundColor: "var(--color-primary)" }}
-                        >
+                        {/* ── Bottom action bar ── */}
+                        <div className="bg-[var(--color-primary)] px-4 py-2.5 flex items-center justify-between">
                             <button
                                 onClick={() => onAdd?.(lead._id)}
-                                className="flex items-center gap-1.5 text-white text-xs font-bold tracking-wider uppercase border border-white/30 rounded-full px-3 py-1.5 active:scale-95 transition-transform"
+                                className="text-white border border-white/60 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide hover:bg-white/10 transition-colors cursor-pointer"
                             >
-                                <UserPlus size={12} />
-                                Follow Up
+                                FOLLOW UP
                             </button>
 
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-5">
                                 <a
                                     href={`tel:+91${String(lead["ContactNumber"]) ?? String(lead["ContactNo"]) ?? ""}`}
-                                    className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center active:bg-white/25 transition-colors"
                                     onClick={() => onAdd?.(lead._id)}
+                                    className="text-white/90 hover:text-white transition-colors"
                                 >
-                                    <MdPhone size={17} className="text-white" />
+                                    <MdPhone size={22} />
                                 </a>
+
                                 <button
                                     onClick={() => onMailClick?.(lead)}
-                                    className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center active:bg-white/25 transition-colors"
+                                    className="text-white/90 hover:text-white transition-colors cursor-pointer"
                                 >
-                                    <MdEmail size={17} className="text-white" />
+                                    <MdEmail size={22} />
                                 </button>
+
                                 <button
                                     onClick={() => onWhatsappClick?.(lead)}
-                                    className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center active:bg-white/25 transition-colors"
+                                    className="text-white/90 hover:text-white transition-colors cursor-pointer"
                                 >
-                                    <FaWhatsapp size={17} className="text-white" />
+                                    <FaWhatsapp size={22} />
                                 </button>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
 
-                {/* ── Pagination ────────────────────────────────────────────────── */}
+                {/* ── Pagination ── */}
                 {paginatedLeads.length > 0 && (
-                    <div className="flex items-center justify-center pt-2 pb-1">
-                        <div className="flex items-center gap-1.5 bg-white dark:bg-[var(--color-childbgdark)] border border-gray-100 dark:border-white/[0.07] rounded-2xl shadow-sm px-3 py-2">
-                            {/* First */}
+                    <div className="flex items-center justify-center pt-2">
+                        <div className="inline-flex items-center gap-1.5 bg-white dark:bg-[var(--color-childbgdark)] border border-gray-100 dark:border-white/10 rounded-2xl px-3 py-2 shadow-sm">
+
                             <button
                                 onClick={() => setCurrentPage(1)}
-                                className="w-7 h-7 rounded-lg bg-gray-50 dark:bg-white/[0.04] hover:bg-gray-100 dark:hover:bg-white/[0.08] flex items-center justify-center text-gray-400 transition-colors"
+                                className="w-7 h-7 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:bg-[var(--color-primary)] hover:text-white transition-all cursor-pointer"
                             >
                                 <AiOutlineBackward size={13} />
                             </button>
 
-                            {/* Prev */}
                             <button
                                 onClick={prevPage}
                                 disabled={currentPage === 1}
-                                className={`w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 transition-colors ${currentPage === 1 ? "opacity-30 cursor-not-allowed" : "bg-gray-50 dark:bg-white/[0.04] hover:bg-gray-100 dark:hover:bg-white/[0.08]"}`}
+                                className="w-7 h-7 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:bg-[var(--color-primary)] hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                                <GrFormPrevious size={15} />
+                                <GrFormPrevious size={14} />
                             </button>
 
-                            {/* Page numbers */}
                             <AnimatePresence mode="popLayout">
                                 {pages.map((num, i) => (
                                     <motion.button
-                                        key={num}
+                                        key={i}
                                         onClick={() => setCurrentPage(num)}
-                                        layout
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        exit={{ scale: 0.8, opacity: 0 }}
                                         transition={{ duration: 0.15 }}
-                                        className={`rounded-lg text-sm font-semibold flex items-center justify-center transition-all ${
-                                            num === currentPage
-                                                ? "w-8 h-8 text-white shadow-sm"
-                                                : "w-7 h-7 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-white/[0.04] hover:bg-gray-100 dark:hover:bg-white/[0.08]"
-                                        }`}
-                                        style={num === currentPage ? { backgroundColor: "var(--color-primary)" } : {}}
+                                        className={`rounded-full text-xs font-semibold flex items-center justify-center transition-all cursor-pointer
+                                            ${num === currentPage
+                                                ? "w-8 h-8 bg-[var(--color-primary)] text-white shadow-md"
+                                                : "w-7 h-7 bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-100"
+                                            }`}
                                     >
                                         {num}
                                     </motion.button>
                                 ))}
                             </AnimatePresence>
 
-                            {/* Next */}
                             <button
                                 onClick={nextPage}
                                 disabled={!hasMoreCustomers && currentPage === totalPages}
-                                className={`w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 transition-colors ${(!hasMoreCustomers && currentPage === totalPages) ? "opacity-30 cursor-not-allowed" : "bg-gray-50 dark:bg-white/[0.04] hover:bg-gray-100 dark:hover:bg-white/[0.08]"}`}
+                                className="w-7 h-7 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:bg-[var(--color-primary)] hover:text-white transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                                <GrFormNext size={15} />
+                                <GrFormNext size={14} />
                             </button>
 
-                            {/* Last */}
                             <button
                                 onClick={() => setCurrentPage(totalPages)}
-                                className="w-7 h-7 rounded-lg bg-gray-50 dark:bg-white/[0.04] hover:bg-gray-100 dark:hover:bg-white/[0.08] flex items-center justify-center text-gray-400 transition-colors"
+                                className="w-7 h-7 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:bg-[var(--color-primary)] hover:text-white transition-all cursor-pointer"
                             >
                                 <AiOutlineForward size={13} />
                             </button>

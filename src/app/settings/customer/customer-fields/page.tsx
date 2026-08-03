@@ -13,6 +13,7 @@ const CUSTOMER_FIELD_KEYS = [
     "CustomerType",
     "CustomerSubType",
     "customerName",
+    "LeadType",
     "ContactNumber",
     "Email",
     "City",

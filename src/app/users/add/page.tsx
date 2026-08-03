@@ -11,6 +11,7 @@ import { CreateAdminData } from "@/store/auth.interface"; // ✅ types
 import BackButton from "@/app/component/buttons/BackButton";
 import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 import { getCity } from "@/store/masters/city/city";
+import { useAuth } from "@/context/AuthContext";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -27,15 +28,15 @@ export default function AdminCreatePage() {
     AddressLine1: "",
     AddressLine2: "",
   });
-
+  const { admin } = useAuth();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ErrorInterface>({});
   const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
   const router = useRouter();
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchFields();
-  },[])
+  }, [])
 
   // ✅ Handle input change
   const handleInputChange = useCallback(
@@ -62,7 +63,7 @@ export default function AdminCreatePage() {
     else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(userData.Email))
       newErrors.Email = "Invalid email format";
     if (!userData.Password.trim()) newErrors.Password = "Password is required";
-    if (userData.Password.trim() && userData.Password.trim().length<6) newErrors.Password = "Password is must be 6 characters";
+    if (userData.Password.trim() && userData.Password.trim().length < 6) newErrors.Password = "Password is must be 6 characters";
     if (!userData.Role.trim()) newErrors.Role = "Role is required";
     if (!userData.AddressLine1.trim()) newErrors.AddressLine1 = "AddressLine1 is required";
     return newErrors;
@@ -88,7 +89,9 @@ export default function AdminCreatePage() {
           ? "administrator"
           : userData.Role === "city_admin"
             ? "city_admin"
-            : "user",
+            : userData.Role === "agent"
+              ? "agent"
+              : "user",
       city: userData.City, // hide for admin
       phone: userData.MobileNumber,
       AddressLine1: userData.AddressLine1,
@@ -125,7 +128,7 @@ export default function AdminCreatePage() {
   };
 
   // ✅ Dropdown data
-  const roles = ["administrator", "city_admin", "user"];
+  const roles = admin?.role === "administrator" ? ["administrator", "city_admin", "user", "agent"] : ["city_admin", "user"];
   const statusOptions = ["Active", "Inactive"];
   const cities = ["Jaipur", "Ajmer", "Udaipur"];
 

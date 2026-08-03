@@ -31,6 +31,7 @@ import { getPrice } from "@/store/masters/price/price";
 import { getCustomerFields } from "@/store/masters/customerfields/customerfields";
 import { useCustomerFieldLabel } from "@/context/customer/CustomerFieldLabelContext";
 import dayjs from "dayjs";
+import { getLeadType } from "@/store/masters/leadtype/leadtype";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -56,10 +57,12 @@ export default function CustomerAdd() {
     Facilities: "",
     ReferenceId: "",
     CustomerId: "",
+    ClientId: "",
     CustomerDate: dayjs().format("YYYY-MM-DD"),
     CustomerYear: "",
     Other: "",
     Price: "",
+    LeadType: "",
     URL: "",
     Description: "",
     Video: "",
@@ -209,7 +212,7 @@ export default function CustomerAdd() {
   const handleSubmit = async () => {
     /*  const duplicate = await isContactNoExist(customerData.ContactNumber);
     if (duplicate) return; */
-console.log(" file object customerfields : ",customFields)
+    console.log(" file object customerfields : ", customFields)
 
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -235,9 +238,11 @@ console.log(" file object customerfields : ",customFields)
     if (customerData.Facilities) formData.append("Facillities", customerData.Facilities);
     if (customerData.ReferenceId) formData.append("ReferenceId", customerData.ReferenceId);
     if (customerData.CustomerId) formData.append("CustomerId", customerData.CustomerId);
+    if (customerData.ClientId) formData.append("ClientId", customerData.ClientId);
     if (customerData.CustomerDate) formData.append("CustomerDate", customerData.CustomerDate);
     if (customerData.CustomerYear) formData.append("CustomerYear", customerData.CustomerYear);
     if (customerData.Price) formData.append("Price", customerData.Price);
+    if (customerData.LeadType) formData.append("LeadType", customerData.LeadType);
     if (customerData.URL) formData.append("URL", customerData.URL);
     if (customerData.Other) formData.append("Other", customerData.Other);
     if (customerData.Description) formData.append("Description", customerData.Description);
@@ -287,7 +292,8 @@ console.log(" file object customerfields : ",customFields)
     { key: "Gender", staticData: ["male", "female", "other"] },
     { key: "Facilities", fetchFn: getFacilities },
     { key: "ReferenceId", fetchFn: getReferences },
-    { key: "Price", fetchFn: getPrice }
+    { key: "Price", fetchFn: getPrice },
+    { key: "LeadType", fetchFn: getLeadType }
     /*     { key: "Location", fetchFn: getLocation }, */
   ];
 
@@ -512,21 +518,26 @@ console.log(" file object customerfields : ",customFields)
               <InputField className=" max-sm:hidden" label={getLabel("Area", "Area")} name="Area" value={customerData.Area} onChange={handleInputChange} />
               <InputField className=" max-sm:hidden" label={getLabel("Address", "Address")} name="Address" value={customerData.Address} onChange={handleInputChange} />
               <InputField className=" max-sm:hidden" label={getLabel("Email", "Email")} name="Email" value={customerData.Email} onChange={handleInputChange} error={errors.Email} />
-              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Facilities) ? fieldOptions.Facilities : []} label={getLabel("Facillities", "Facilities")} value={customerData.Facilities} onChange={(v) => handleSelectChange("Facilities", v)} />
-              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.ReferenceId) ? fieldOptions.ReferenceId : []} label={getLabel("ReferenceId", "Reference Id")} value={customerData.ReferenceId} onChange={(v) => handleSelectChange("ReferenceId", v)} />
+              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Facilities) ? fieldOptions.Facilities : []} label={getLabel("Facillities", "Facilities")} value={customerData.Facilities} onChange={(v: any) => handleSelectChange("Facilities", v)} />
+              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.ReferenceId) ? fieldOptions.ReferenceId : []} label={getLabel("ReferenceId", "Reference Id")} value={customerData.ReferenceId} onChange={(v: any) => handleSelectChange("ReferenceId", v)} />
 
               <InputField className=" max-sm:hidden" label={getLabel("CustomerId", "Customer ID")} name="CustomerId" value={customerData.CustomerId} onChange={handleInputChange} />
+              <InputField className=" max-sm:hidden" label={getLabel("ClientId", "Client ID")} name="ClientId" value={customerData.ClientId ?? ""} onChange={handleInputChange} />
+
               <div className=" max-sm:hidden">
                 <DateSelector label={getLabel("CustomerDate", "Customer Date")} value={customerData.CustomerDate} onChange={(val) => handleSelectChange("CustomerDate", val)} />
               </div>
+
               <InputField className=" max-sm:hidden" label={getLabel("CustomerYear", "Customer Year")} name="CustomerYear" value={customerData.CustomerYear} onChange={handleInputChange} />
               <InputField className=" max-sm:hidden" label={getLabel("Other", "Others")} name="Other" value={customerData.Other} onChange={handleInputChange} />
-              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Price) ? fieldOptions.Price : []} label={getLabel("Price", "Price")} value={customerData.Price} onChange={(v) => handleSelectChange("Price", v)} />
+              {/*   <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Price) ? fieldOptions.Price : []} label={getLabel("Price", "Price")} value={customerData.Price} onChange={(v: any) => handleSelectChange("Price", v)} /> */}
+              <InputField className=" max-sm:hidden" label={getLabel("Price", "Price")} name="Price" value={customerData.Price ?? ""} onChange={handleInputChange} />
+              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.LeadType) ? fieldOptions.LeadType : []} label={getLabel("LeadType", "LeadType")} value={customerData.LeadType} onChange={(v: any) => handleSelectChange("LeadType", v)} />
               <InputField className=" max-sm:hidden" label={getLabel("URL", "URL")} name="URL" value={customerData.URL ?? ""} onChange={handleInputChange} />
               <TextareaField label={getLabel("Description", "Description")} name="Description" value={customerData.Description} onChange={handleInputChange} />
               <InputField className=" max-sm:hidden" label={getLabel("Video", "Video")} name="Video" value={customerData.Video} onChange={handleInputChange} />
               <InputField className=" max-sm:hidden" label={getLabel("GoogleMap", "Google Map")} name="GoogleMap" value={customerData.GoogleMap} onChange={handleInputChange} />
-              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Verified) ? fieldOptions.Verified : []} label={getLabel("Verified", "Verified")} value={customerData.Verified} onChange={(v) => handleSelectChange("Verified", v)} />
+              <SingleSelect className=" max-sm:hidden" options={Array.isArray(fieldOptions?.Verified) ? fieldOptions.Verified : []} label={getLabel("Verified", "Verified")} value={customerData.Verified} onChange={(v: any) => handleSelectChange("Verified", v)} />
             </div>
 
             <div className=" sm:flex flex-wrap my-5 gap-5">
@@ -534,24 +545,24 @@ console.log(" file object customerfields : ",customFields)
               <FileUpload label={getLabel("SitePlan", "Site Plan")} previews={sitePlanPreview ? [sitePlanPreview] : []} onChange={(e) => handleFileChange(e, "SitePlan")} onRemove={handleRemoveSitePlan} />
             </div>
 
-             <div className=" mt-10">
+            <div className=" mt-10">
               <h2 className="text-xl font-semibold text-gray-700 mb-4 ">
-                  Additional Information
-                </h2>
-            <div className=" grid grid-cols-3 gap-6 max-lg:grid-cols-1 my-6">
-              {Object.keys(customFields).map((key) => (
-                <InputField
-                  key={key}
-                  className="max-sm:hidden"
-                  label={key}
-                  name={key}
-                  value={customFields[key]}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-                    handleCustomInputChange(key, e.target.value)
-                  }
-                />
-              ))}
-            </div>
+                Additional Information
+              </h2>
+              <div className=" grid grid-cols-3 gap-6 max-lg:grid-cols-1 my-6">
+                {Object.keys(customFields).map((key) => (
+                  <InputField
+                    key={key}
+                    className="max-sm:hidden"
+                    label={key}
+                    name={key}
+                    value={customFields[key]}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+                      handleCustomInputChange(key, e.target.value)
+                    }
+                  />
+                ))}
+              </div>
 
             </div>
 

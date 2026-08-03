@@ -50,7 +50,6 @@ import { handleFieldOptionsObject } from "../utils/handleFieldOptionsObject";
 import ObjectSelect from "../component/ObjectSelect";
 import { exportToExcel } from "../utils/exportToExcel";
 import { useAuth } from "@/context/AuthContext";
-import MobilePageTitle from "../component/labels/MobilePageTitle";
 
 interface DeleteAllDialogDataInterface { }
 
@@ -611,11 +610,10 @@ export default function Contacts() {
       )}
       <div className=" sm:hidden min-h-[calc(100vh-56px)] overflow-auto max-sm:py-2">
 
-        {/* <div className=" flex justify-between items-center px-0 pb-0  ">
+        <div className=" flex justify-between items-center px-0 pb-0  ">
           <h1 className=" text-[var(--color-primary)] font-extrabold text-2xl ">Contacts</h1>
 
-        </div> */}
-        <MobilePageTitle title="Contacts" />
+        </div>
         <div className=" w-full">
           <DynamicAdvance addUrl="/contact/add">
             <SingleSelect options={Array.isArray(fieldOptions.StatusAssign) ? fieldOptions.StatusAssign : []} value={filters.StatusAssign[0]} label="Status Assign" onChange={(v) => handleSelectChange("StatusAssign", v)} />
@@ -959,7 +957,7 @@ export default function Contacts() {
               </div>
             </div>
             <div className=" overflow-auto">
-              <div className="flex gap-5 items-center px-3 py-4 text-[13px] min-w-max text-gray-700">
+              <div className="flex gap-10 items-center px-3 py-4 min-w-max text-gray-700">
 
                 <label htmlFor="selectall" className=" relative overflow-hidden py-[2px] group hover:bg-[var(--color-primary-lighter)] hover:text-white text-[var(--color-primary)] bg-[var(--color-primary-lighter)]  rounded-tr-sm rounded-br-sm  border-l-[3px] px-2 border-l-[var(--color-primary)] cursor-pointer">
                   <div className=" absolute top-0 left-0 z-0 h-full bg-[var(--color-primary)] w-0 group-hover:w-full transition-all duration-300 "></div>
