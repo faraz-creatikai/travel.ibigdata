@@ -605,6 +605,74 @@ export const reopenDeal = async (id: string) => {
 }
 
 
+//ARCHIEVE CUSTOMER
+export const getArchivedCustomer = async () => {
+  try {
+    const response = await fetch(API_ROUTES.CUSTOMER.GETARCHIEVEDCUSTOMER, { credentials: "include" });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    console.log(data)
+    return data;
+  }
+  catch (error) {
+    console.log("SERVER ERROR: ", error)
+    return null;
+  }
+}
+
+export const getFilteredArchievedCustomer = async (params: string) => {
+  try {
+    const response = await fetch(API_ROUTES.CUSTOMER.GET_ARCHIEVEDCUSTOMER_BY_PARAMS(params), { credentials: "include" });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    console.log(" params : ", params,"\n"," Data:", data)
+    return data;
+  }
+  catch (error) {
+    console.log("SERVER ERROR: ", error)
+    return null;
+  }
+}
+
+export const archieveCustomer = async (id: string) => { 
+  try {
+    const response = await fetch(API_ROUTES.CUSTOMER.ARCHIEVECUSTOMER(id),
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include"
+      }
+    );
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.log("SERVER ERROR: ", error)
+    return null;
+  }
+}
+
+export const unArchieveCustomer = async (id: string) => {
+  try {
+    const response = await fetch(API_ROUTES.CUSTOMER.UNARCHIEVECUSTOMER(id),
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include"
+      }
+    );
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.log("SERVER ERROR: ", error)
+    return null;
+  }
+}
+
+
 //short list api calls
 export const addToShortlist = async (data: any) => {
     try {

@@ -5,6 +5,7 @@ export interface BrandSettingsData {
     id?: number;
     appName?: string;
     shortName?: string;
+    primaryColor?: string;
     themeColor?: string;
     backgroundColor?: string;
     faviconUrl?: string;

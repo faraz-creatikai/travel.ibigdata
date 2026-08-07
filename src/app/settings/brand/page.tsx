@@ -6,6 +6,8 @@ import {
   updateBrandSettings,
   BrandSettingsData,
 } from "@/store/brand/brand";
+import { applyCrmTheme } from "@/app/utils/themePlatte";
+
 
 type ImageFieldKey =
   | "favicon"
@@ -69,6 +71,7 @@ export default function BrandSettingsPage() {
   // Form state
   const [appName, setAppName] = useState<string>("EstateAI Agent Platform");
   const [shortName, setShortName] = useState<string>("EstateAI");
+  const [primaryColor, setPrimaryColor] = useState<string>("#0066cc"); // <-- NEW
   const [themeColor, setThemeColor] = useState<string>("#ffffff");
   const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff");
 
@@ -102,10 +105,23 @@ export default function BrandSettingsPage() {
       setCurrentSettings(data);
       setAppName(data.appName || "EstateAI Agent Platform");
       setShortName(data.shortName || "EstateAI");
+      setPrimaryColor(data.primaryColor || "#0066cc");
       setThemeColor(data.themeColor || "#ffffff");
       setBackgroundColor(data.backgroundColor || "#ffffff");
+
+      // Apply saved color theme to DOM
+      if (data.primaryColor) {
+        applyCrmTheme(data.primaryColor);
+      }
     }
     setLoading(false);
+  };
+
+  // Trigger instant live preview when color picker changes
+  const handlePrimaryColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newColor = e.target.value;
+    setPrimaryColor(newColor);
+    applyCrmTheme(newColor); // Live updates --color-primary and all shades!
   };
 
   const handleFileChange = (
@@ -129,6 +145,7 @@ export default function BrandSettingsPage() {
     const formData = new FormData();
     formData.append("appName", appName);
     formData.append("shortName", shortName);
+    formData.append("primaryColor", primaryColor); // <-- Add to FormData
     formData.append("themeColor", themeColor);
     formData.append("backgroundColor", backgroundColor);
 
@@ -170,7 +187,7 @@ export default function BrandSettingsPage() {
             White-Label Brand & App Settings
           </h1>
           <p className="text-sm text-[var(--color-gray)] mt-1">
-            Update your CRM identity, PWA manifest colors, and cloud-hosted logos.
+            Update your CRM identity, theme colors, and cloud-hosted logos.
           </p>
         </div>
 
@@ -202,9 +219,30 @@ export default function BrandSettingsPage() {
             />
           </div>
 
+          {/* NEW: CRM Primary Color Picker */}
           <div>
             <label className="block text-sm font-semibold text-[var(--color-txtdark)] dark:text-[var(--color-txtlight)] mb-2">
-              Theme Color (PWA Top Bar)
+              CRM Primary Brand Color (UI Accent)
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={primaryColor}
+                onChange={handlePrimaryColorChange}
+                className="h-10 w-16 p-1 border border-[var(--color-primary-light)] rounded-lg bg-[var(--color-childbglight)] dark:bg-[var(--color-childbgdark)] cursor-pointer"
+              />
+              <span className="text-sm font-mono text-[var(--color-gray)]">
+                {primaryColor}
+              </span>
+              <span className="text-xs text-[var(--color-primary)] font-semibold ml-2">
+                • Auto-generates shades & updates live
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[var(--color-txtdark)] dark:text-[var(--color-txtlight)] mb-2">
+              PWA Top Bar Color
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -221,7 +259,7 @@ export default function BrandSettingsPage() {
 
           <div>
             <label className="block text-sm font-semibold text-[var(--color-txtdark)] dark:text-[var(--color-txtlight)] mb-2">
-              Background Color (PWA Splash Screen)
+              PWA Splash Background Color
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -262,7 +300,6 @@ export default function BrandSettingsPage() {
                       {item.helperText}
                     </p>
 
-                    {/* Image Preview Container */}
                     <div className="w-full h-36 bg-white dark:bg-black/40 border border-dashed border-[var(--color-primary)] rounded-lg flex items-center justify-center p-2 mb-4 overflow-hidden">
                       {displayUrl ? (
                         <img

@@ -210,7 +210,7 @@ export default function MobileHamburger() {
             >
               <div className="flex flex-col max-h-screen overflow-y-auto p-5 gap-5">
                 <div className=" self-start mb-2">
-                  <BrandLogo
+                 <BrandLogo
                        variant="text"
                        className="h-12 w-40 object-contain"
                      />

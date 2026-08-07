@@ -63,9 +63,6 @@ const Login = () => {
               className="h-10 w-auto object-contain"
             />
           </div>
-          <p className="text-gray-400 text-sm font-light mt-1">
-            Domain Insights, Made Easy
-          </p>
         </div>
 
         <div className="text-center max-w-[350px]">
@@ -81,7 +78,7 @@ const Login = () => {
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="flex flex-col justify-between items-center w-full max-lg:bg-[url('/loginbg.png')] max-lg:bg-cover max-lg:bg-center max-lg:bg-no-repeat min-h-full bg-white dark:bg-linear-to-b dark:from-[var(--color-primary)] dark:to-[var(--color-secondary)] px-1">
+      <div className="flex flex-col lg:justify-between items-center w-full  max-lg:bg-cover max-lg:bg-center max-lg:bg-no-repeat min-h-full bg-white dark:bg-linear-to-b dark:from-[var(--color-primary)] dark:to-[var(--color-secondary)] px-1">
         {/* MOBILE HEADER */}
         <div className="self-start w-full px-5 py-5">
           <div className="lg:hidden">
@@ -92,14 +89,11 @@ const Login = () => {
                 className="h-9 w-auto object-contain"
               />
             </div>
-            <p className="text-[var(--color-primary-light)] text-sm font-light mt-1">
-              Domain Insights, Made Easy
-            </p>
           </div>
         </div>
 
         {/* FORM CARD */}
-        <div className="w-full max-w-[500px] flex flex-col justify-center items-center max-lg:-mt-10 p-4 lg:p-8 py-16 rounded-lg bg-white">
+        <div className="w-full max-w-[500px] max-lg:mt-20 flex flex-col justify-center items-center max-lg:-mt-10 p-4 lg:p-8 py-16 rounded-lg bg-white">
           <h3 className="text-2xl font-semibold text-[var(--color-primary)] text-center mb-6">
             Admin Login
           </h3>
@@ -173,7 +167,7 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="text-[var(--color-primary-light)] text-sm my-10">
+        <div className="text-[var(--color-primary-light)] text-sm my-10 max-lg:absolute max-lg:bottom-0 max-lg:left-1/2 max-lg:-translate-x-1/2">
           &copy;{currentYear} all rights reserved
         </div>
       </div>

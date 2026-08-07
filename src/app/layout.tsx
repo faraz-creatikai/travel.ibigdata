@@ -7,6 +7,7 @@ import AppLayoutClient from "./component/providers/AppLayoutClient";
 import { Metadata, Viewport } from "next";
 import { getBrandSettings } from "@/store/brand/brand";
 import { DEFAULT_BRAND } from "@/config/defaultBrand";
+import ThemeInitializer from "./component/providers/ThemeInitializer";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`min-h-screen w-full custom-scrollbar overflow-x-hidden ${poppins.className}`}
     >
       <body className="min-h-screen w-full bg-violet-100 overflow-x-hidden">
+        <ThemeInitializer/>
         <ClientProviders>
           <AppLayoutClient>{children}</AppLayoutClient>
         </ClientProviders>

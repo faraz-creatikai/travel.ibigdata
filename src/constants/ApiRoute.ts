@@ -58,6 +58,11 @@ export const API_ROUTES = {
     CLOSEDEAL: (id: string) => `${BASE_URL}/customer/close-deal/${id}`,
     REOPENDEAL: (id: string) => `${BASE_URL}/customer/reopen-deal/${id}`,
 
+    GETARCHIEVEDCUSTOMER: `${BASE_URL}/customer/archived`,
+    GET_ARCHIEVEDCUSTOMER_BY_PARAMS: (params: string) => `${BASE_URL}/customer/archived?${params}`,
+    ARCHIEVECUSTOMER: (id: string) => `${BASE_URL}/customer/archive/${id}`,
+    UNARCHIEVECUSTOMER: (id: string) => `${BASE_URL}/customer/unarchive/${id}`,
+
     ADDSHORTLIST: `${BASE_URL}/customer/shortlist`,
     GETSHORTLIST: (id: string) => `${BASE_URL}/customer/shortlist/${id}`,
     REMOVESHORTLIST:`${BASE_URL}/customer/shortlist`,

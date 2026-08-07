@@ -86,39 +86,37 @@
 
 
 
- /* custom colors - PURPLE VARIANT */
---color-primary: #8C42FF;         /* main purple */
---color-primary-dark: #7326E6;    /* darker purple */
---color-primary-darker: #5C0FCC;  /* darkest purple */
---color-primary-light: #E5CCFF;   /* light purple */
---color-primary-lighter: #F2E6FF; /* very light purple */
+ /*custom colors */
+  --color-primary: #0066cc;
+--color-primary-dark: #005bb8;
+--color-primary-darker: #004c99;
+--color-primary-light: #cce0ff;
+--color-primary-lighter: #e6f0ff;
 
-/* secondary - analogous purple tone */
---color-secondary: #B366FF;       /* lighter secondary purple */
---color-secondary-dark: #9933E6;  /* darker secondary */
---color-secondary-darker: #5C1A99;/* darkest secondary */
---color-secondary-light: #D9B3FF; /* light secondary */
+--color-secondary: #0066cc;
+--color-secondary-dark: #005bb8;
+--color-secondary-darker: #004c99;
+--color-secondary-light: #cce0ff;
 
-/* accents and feedback */
---color-accent: #CC80FF;          /* purple accent */
---color-muted: #E0B2FF;           /* muted/pastel purple */
---color-destructive: #FF6B6B;     /* red-ish destructive stays for contrast */
+--color-accent: #99c2ff;
+--color-muted: #cce0ff;
+--color-destructive: #F87171;
 
 /* Additional colors */
---color-gray: #6b7280;            /* gray stays neutral */
---color-textlightdark: #ffffff;   /* text white stays */
---color-bglightdark: #000000;     /* background black stays */
+--color-gray: #6b7280;
+--color-textlightdark: #ffffff;
+--color-bglightdark: #000000;
 
 /* table phone screen color */
---table: #A500FF;                 /* bright purple for tables */
+--table: #4d79ff;
 
-    /* dark/light */
+/* dark/light */
 
-  --color-bgdark:#04171c;
-  --color-bglight:white;
+--color-bgdark: #04171c;
+--color-bglight: white;
 
-  --color-childbglight:#EDE9FE;
-  --color-childbgdark:#052b36;
+--color-childbglight: #e6f0ff;
+--color-childbgdark: #052b36;
 
   --color-txtdark:black;
   --color-txtlight:white;
