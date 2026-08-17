@@ -105,7 +105,7 @@ const Register = () => {
               {/* 👇 DYNAMIC BRAND LOGO (DESKTOP) */}
               <BrandLogo
                 variant="text"
-                className="h-10 w-auto object-contain"
+                className="h-16 w-auto object-contain"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ const Register = () => {
                 {/* 👇 DYNAMIC BRAND LOGO (MOBILE) */}
                 <BrandLogo
                   variant="text"
-                  className="h-9 w-auto object-contain"
+                  className="h-14 w-auto object-contain"
                 />
               </div>
              
